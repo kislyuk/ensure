@@ -66,6 +66,7 @@ Synopsis
     ensure({1, 2, 3}).is_a_set_of(int)
     ensure({1: 2, 3: 4}).is_a_mapping_of(int).to(int)
     ensure({1: 2, 3: 4}).is_a_dict_of(int).to(int)
+    ensure({1: 2, 3: 4}).is_a(dict).of(int).to(int)
     ensure(10**100).is_numeric()
     ensure(lambda: 1).is_callable()
     ensure("abc").has_length(3)

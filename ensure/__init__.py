@@ -35,7 +35,7 @@ class Inspector(object):
         return self
 
     def __repr__(self):
-        desc = "<{module}.{classname} object at 0x{mem_loc:x} working on {subject}>"
+        desc = "<{module}.{classname} object at 0x{mem_loc:x} inspecting {subject}>"
         return desc.format(module=self.__module__,
                            classname=self.__class__.__name__,
                            mem_loc=id(self),
