@@ -6,9 +6,9 @@ Pythonic code for validating conditions. It's inspired by `should.js <https://gi
 `expect.js <https://github.com/LearnBoost/expect.js>`_, and builds on top of the
 `unittest/JUnit assert helpers <http://docs.python.org/2/library/unittest.html#assert-methods>`_.
 
-Because *ensure* is a standalone library (not part of a test framework), doesn't monkey-patch anything, and doesn't use
-the assert statement (which is liable to be turned off with the ``-O`` flag), it can be used to validate conditions in
-production code, not just for testing.
+Because *ensure* is a standalone library (not part of a test framework), doesn't monkey-patch anything or use DSLs, and
+doesn't use the assert statement (which is liable to be turned off with the ``-O`` flag), it can be used to validate
+conditions in production code, not just for testing.
 
 Aside from better looking code, a big reason to use *ensure* is that it provides more readable and informative error
 messages when things go wrong. Going forward, this will be a major development focus. You will be in control of how much
