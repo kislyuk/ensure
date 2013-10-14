@@ -10,6 +10,12 @@ Because *ensure* is a standalone library (not part of a test framework), doesn't
 the assert statement (which is liable to be turned off with the ``-O`` flag), it can be used to validate conditions in
 production code, not just for testing.
 
+Installation
+------------
+::
+
+    pip install ensure
+
 Synopsis
 --------
 
@@ -71,6 +77,7 @@ Synopsis
         w00t
 
 Raising custom exceptions
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -88,12 +95,6 @@ Raising custom exceptions
 
     ensure = Ensure(error_factory=build_fancy_exception)
     ensure("w00t").is_an(int)
-
-Installation
-------------
-::
-
-    pip install ensure
 
 Links
 -----
