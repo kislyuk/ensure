@@ -10,6 +10,11 @@ Because *ensure* is a standalone library (not part of a test framework), doesn't
 the assert statement (which is liable to be turned off with the ``-O`` flag), it can be used to validate conditions in
 production code, not just for testing.
 
+Aside from better looking code, a big reason to use *ensure* is that it provides more readable and informative error
+messages when things go wrong. Going forward, this will be a major development focus. You will be in control of how much
+information is presented in each error, which context it's thrown from, and what introspection capabilities the
+exception object will have.
+
 Installation
 ------------
 ::
