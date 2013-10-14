@@ -12,6 +12,9 @@ test3: env
 release: docs
 	python setup.py sdist upload -s -i D2069255
 
+init_docs:
+	cd docs; sphinx-quickstart
+
 docs:
 	$(MAKE) -C docs html
 
