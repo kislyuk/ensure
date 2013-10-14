@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
-import glob
+import os, glob
 from setuptools import setup, find_packages
 
-install_requires = [line.rstrip() for line in open(os.path.join(os.path.dirname(__file__), "requirements.txt"))]
+# install_requires = [line.rstrip() for line in open(os.path.join(os.path.dirname(__file__), "requirements.txt"))]
+install_requires = []
 
 setup(
     name='ensure',
-    version='0.0.1',
+    version='0.0.2',
     url='https://github.com/kislyuk/ensure',
     license='Apache Software License',
     author='Andrey Kislyuk',
