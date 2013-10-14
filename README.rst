@@ -10,10 +10,8 @@ Because *ensure* is a standalone library (not part of a test framework), doesn't
 doesn't use the assert statement (which is liable to be turned off with the ``-O`` flag), it can be used to validate
 conditions in production code, not just for testing.
 
-Aside from better looking code, a big reason to use *ensure* is that it provides more readable and informative error
-messages when things go wrong. Going forward, this will be a major development focus. You will be in control of how much
-information is presented in each error, which context it's thrown from, and what introspection capabilities the
-exception object will have.
+Aside from better looking code, a big reason to use *ensure* is that it provides more consistent, readable, and
+informative error messages when things go wrong. See `Motivation and Goals <#motivation-and-goals>`_ for more.
 
 Installation
 ------------
@@ -37,6 +35,8 @@ Synopsis
     ensure(True).is_(True)
     ensure(True).is_not(False)
 
+.. code-block:: python
+
     ensure(range(10)).contains(5)
     ensure(["spam"]).contains_none_of(["eggs", "ham"])
     ensure(["train", "boat"]).contains_one_of(["train"])
@@ -51,6 +51,8 @@ Synopsis
     ensure(None).is_not_in([])
     ensure(dict).has_attribute('__contains__')
 
+.. code-block:: python
+
     ensure(1).is_true()
     ensure(0).is_false()
     ensure(None).is_none()
@@ -63,7 +65,10 @@ Synopsis
     ensure({}).is_an_empty(dict)
     ensure(None).is_not_a(list)
 
-    import re; ensure("abc").matches("A", flags=re.IGNORECASE)
+.. code-block:: python
+
+    import re
+    ensure("abc").matches("A", flags=re.IGNORECASE)
     ensure([1, 2, 3]).is_an_iterable_of(int)
     ensure([1, 2, 3]).is_a_list_of(int)
     ensure({1, 2, 3}).is_a_set_of(int)
@@ -77,6 +82,8 @@ Synopsis
     ensure(0).is_less_than(1)
     ensure(1).is_greater_than_or_equal_to(1)
     ensure(0).is_less_than_or_equal_to(0)
+
+.. code-block:: python
 
     ensure("{x} {y}".format).called_with(x=1, y=2).equals("1 2")
     ensure("{x} {y}".format).with_args(x=1, y=2).is_a(str)
@@ -105,6 +112,23 @@ Raising custom exceptions
 
     ensure = Ensure(error_factory=build_fancy_exception)
     ensure("w00t").is_an(int)
+
+Motivation and goals
+~~~~~~~~~~~~~~~~~~~~
+Many BDD assertion libraries suffer from an excess of magic, or end up having to construct statements that don't parse
+as English easily. *ensure* is deliberately kept simple to avoid succumbing to either issue. The 
+`source <https://github.com/kislyuk/ensure/blob/master/ensure/__init__.py>`_ is easy to read and extend.
+
+Work remains to make error messages raised by *ensure* even more readable, informative, and consistent. Going forward,
+ability to introspect exceptions to extract structured error information will be a major development
+focus. You will be in control of how much information is presented in each error, which context it's thrown from, and
+what introspection capabilities the exception object will have.
+
+The original use case for *ensure* is as an I/O validation helper for API endpoints, where the client needs to be sent a
+very clear message about what went wrong, some structured information (such as an HTTP error code and machine-readable
+reference to a failing element) may need to be added, and some information may need to be hidden from the client. To
+further improve on that, we will work on better error translation, marshalling, message formatting, and schema
+validation helpers.
 
 Links
 -----
