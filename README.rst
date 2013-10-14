@@ -33,10 +33,11 @@ Synopsis
     ensure(True).does_not_equal(False)
     ensure(1).is_an(int)
     ensure(1).is_in(range(10))
-    ensure(range(10)).contains(5)
     ensure(True).is_a(bool)
     ensure(True).is_(True)
     ensure(True).is_not(False)
+
+    ensure(range(10)).contains(5)
     ensure(["spam"]).contains_none_of(["eggs", "ham"])
     ensure(["train", "boat"]).contains_one_of(["train"])
     ensure("abcdef").contains_some_of("abcxyz")
@@ -45,10 +46,11 @@ Synopsis
     ensure("abcd").contains_only("dcba")
     ensure("abc").does_not_contain("xyz")
     ensure([1, 2, 3]).contains_no(float)
-    ensure(dict).has_attribute('__contains__')
     ensure(1).is_in(range(10))
     ensure("z").is_not_in("abc")
     ensure(None).is_not_in([])
+    ensure(dict).has_attribute('__contains__')
+
     ensure(1).is_true()
     ensure(0).is_false()
     ensure(None).is_none()
@@ -60,6 +62,7 @@ Synopsis
     ensure({x: str(x) for x in range(5)}).is_a_nonempty(dict).of(int).to(str)
     ensure({}).is_an_empty(dict)
     ensure(None).is_not_a(list)
+
     import re; ensure("abc").matches("A", flags=re.IGNORECASE)
     ensure([1, 2, 3]).is_an_iterable_of(int)
     ensure([1, 2, 3]).is_a_list_of(int)
@@ -74,6 +77,7 @@ Synopsis
     ensure(0).is_less_than(1)
     ensure(1).is_greater_than_or_equal_to(1)
     ensure(0).is_less_than_or_equal_to(0)
+
     ensure("{x} {y}".format).called_with(x=1, y=2).equals("1 2")
     ensure("{x} {y}".format).with_args(x=1, y=2).is_a(str)
     ensure(dict).called_with(1, 2).raises(TypeError)
