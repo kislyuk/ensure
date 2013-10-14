@@ -175,6 +175,7 @@ class Ensure(Inspector):
             return IterableInspector(self.subject)
 
     is_an = is_a
+    is_an_instance_of = is_a
 
     def is_a_nonempty(self, prototype):
         self.is_nonempty()
