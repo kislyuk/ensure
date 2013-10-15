@@ -50,6 +50,7 @@ Synopsis
     ensure("z").is_not_in("abc")
     ensure(None).is_not_in([])
     ensure(dict).has_attribute('__contains__').which.is_callable()
+    ensure({1: "a"}).has_key(1).whose_value.has_length(1)
 
 .. code-block:: python
 

@@ -50,8 +50,9 @@ class TestEnsure(unittest.TestCase):
         Ensure(0).is_nonnegative()
         Ensure(0).is_a_nonnegative(int)
         Ensure((collections.namedtuple('Thing', ['x']))(x={})).has_attribute('x').which.is_a(dict)
-
+        Ensure({1:"a"}).has_key(1).whose_value.has_length(1)
         Ensure({}).is_empty()
+
         for assertion, args in ((Ensure(x).contains, [-1]),
                                 (Ensure(x).contains_all_of, [range(20)]),
                                 (Ensure(x).contains_no, [int]),
@@ -76,7 +77,8 @@ class TestEnsure(unittest.TestCase):
                                 (Ensure(1).is_negative, []),
                                 (Ensure(-0).is_a_negative, [int]),
                                 (Ensure(-0.1).is_nonnegative, []),
-                                (Ensure(None).is_a_nonnegative, [int])):
+                                (Ensure(None).is_a_nonnegative, [int]),
+                                (Ensure({1: "a"}).has_key(1).whose_value.has_length, [2])):
             with self.assertRaises(EnsureError):
                 print(assertion, args)
                 assertion(*args)

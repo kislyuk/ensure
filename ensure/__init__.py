@@ -88,6 +88,11 @@ class AttributeInspector(Inspector):
     def which(self):
         return Ensure(self._subject)
 
+class KeyInspector(Inspector):
+    @property
+    def whose_value(self):
+        return Ensure(self._subject)
+
 class Ensure(Inspector):
     def equals(self, other):
         self._run(unittest_case.assertEqual, (self._subject, other))
@@ -139,6 +144,11 @@ class Ensure(Inspector):
     def contains_no(self, prototype):
         for element in self._subject:
             self._run(unittest_case.assertNotIsInstance, (element, prototype))
+
+    def has_key(self, key):
+        self.is_a(Mapping)
+        self.contains(key)
+        return KeyInspector(self._subject[key])
 
     def has_attribute(self, attr):
         if not hasattr(self._subject, attr):
