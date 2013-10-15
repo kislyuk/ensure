@@ -20,18 +20,18 @@ class EnsureError(AssertionError):
 
 class Inspector(object):
     def __init__(self, subject=None, error_factory=EnsureError, catch=Exception):
-        self.orig_subject = subject
-        self.error_factory = error_factory
-        self.catch = catch
-        self.args = []
-        self.kwargs = {}
-        self.call_subject = False
+        self._orig_subject = subject
+        self._error_factory = error_factory
+        self._catch = catch
+        self._args = []
+        self._kwargs = {}
+        self._call_subject = False
 
     def __call__(self, subject=None):
-        self.orig_subject = subject
-        self.args = []
-        self.kwargs = {}
-        self.call_subject = False
+        self._orig_subject = subject
+        self._args = []
+        self._kwargs = {}
+        self._call_subject = False
         return self
 
     def __repr__(self):
@@ -39,14 +39,14 @@ class Inspector(object):
         return desc.format(module=self.__module__,
                            classname=self.__class__.__name__,
                            mem_loc=id(self),
-                           subject=_repr(self.orig_subject))
+                           subject=_repr(self._orig_subject))
 
     @property
-    def subject(self):
-        if self.call_subject:
-            return self._run(self.orig_subject, self.args, self.kwargs)
+    def _subject(self):
+        if self._call_subject:
+            return self._run(self._orig_subject, self._args, self._kwargs)
         else:
-            return self.orig_subject
+            return self._orig_subject
 
     def _run(self, func, args=None, kwargs=None):
         if args is None:
@@ -55,124 +55,130 @@ class Inspector(object):
             kwargs = {}
         try:
             return func(*args, **kwargs)
-        except self.catch as err:
-            new_err = self.error_factory(err)
+        except self._catch as err:
+            new_err = self._error_factory(err)
             raise new_err
 
 class IterableInspector(Inspector):
     def of(self, prototype):
-        for item in self.subject:
+        for item in self._subject:
             self._run(unittest_case.assertIsInstance, (item, prototype))
-        if isinstance(self.subject, Mapping):
-            return MappingInspector(self.subject)
+        if isinstance(self._subject, Mapping):
+            return MappingInspector(self._subject)
 
     def of_nonempty(self, prototype):
-        for item in self.subject:
+        for item in self._subject:
             if len(item) == 0:
-                raise self.error_factory(_format("Expected {} to be non-empty", item))
+                raise self._error_factory(_format("Expected {} to be non-empty", item))
         return self.of(prototype)
 
 class MappingInspector(Inspector):
     def to(self, prototype):
-        for value in self.subject.values():
+        for value in self._subject.values():
             self._run(unittest_case.assertIsInstance, (value, prototype))
 
     def to_nonempty(self, prototype):
-        for value in self.subject.values():
+        for value in self._subject.values():
             if len(value) == 0:
-                raise self.error_factory(_format("Expected {} to be non-empty", value))
+                raise self._error_factory(_format("Expected {} to be non-empty", value))
         return self.to(prototype)
+
+class ElementInspector(Inspector):
+    @property
+    def which(self):
+        return Ensure(self._subject)
 
 class Ensure(Inspector):
     def equals(self, other):
-        self._run(unittest_case.assertEqual, (self.subject, other))
+        self._run(unittest_case.assertEqual, (self._subject, other))
 
     def is_not_equal_to(self, other):
-        self._run(unittest_case.assertNotEqual, (self.subject, other))
+        self._run(unittest_case.assertNotEqual, (self._subject, other))
 
     does_not_equal = is_not_equal_to
 
     def is_(self, other):
-        self._run(unittest_case.assertIs, (self.subject, other))
+        self._run(unittest_case.assertIs, (self._subject, other))
 
     def is_not(self, other):
-        self._run(unittest_case.assertIsNot, (self.subject, other))
+        self._run(unittest_case.assertIsNot, (self._subject, other))
 
     def contains(self, element):
-        self._run(unittest_case.assertIn, (element, self.subject))
+        self._run(unittest_case.assertIn, (element, self._subject))
+        return ElementInspector(element)
 
     def contains_none_of(self, elements):
         for element in elements:
-            self._run(unittest_case.assertNotIn, (element, self.subject))
+            self._run(unittest_case.assertNotIn, (element, self._subject))
 
     def contains_one_of(self, elements):
-        if sum(e in self.subject for e in elements) != 1:
-            raise self.error_factory(_format("Expected {} to have exactly one of {}", self.subject, elements))
+        if sum(e in self._subject for e in elements) != 1:
+            raise self._error_factory(_format("Expected {} to have exactly one of {}", self._subject, elements))
 
     def contains_only(self, elements):
-        for element in self.subject:
+        for element in self._subject:
             if element not in elements:
-                raise self.error_factory(_format("Expected {} to have only {}, but it contains {}",
-                                                 self.subject, elements, element))
+                raise self._error_factory(_format("Expected {} to have only {}, but it contains {}",
+                                                 self._subject, elements, element))
         self.contains_all_of(elements)
 
     def contains_some_of(self, elements):
-        if all(e not in self.subject for e in elements):
-            raise self.error_factory(_format("Expected {} to have some of {}", self.subject, elements))
+        if all(e not in self._subject for e in elements):
+            raise self._error_factory(_format("Expected {} to have some of {}", self._subject, elements))
 
     contains_one_or_more_of = contains_some_of
 
     def contains_all_of(self, elements):
         for element in elements:
-            if element not in self.subject:
-                raise self.error_factory(_format("Expected {} to have all of {}, but it does not contain {}",
-                                                 self.subject, elements, element))
+            if element not in self._subject:
+                raise self._error_factory(_format("Expected {} to have all of {}, but it does not contain {}",
+                                                 self._subject, elements, element))
 
     def does_not_contain(self, element):
-        self._run(unittest_case.assertNotIn, (element, self.subject))
+        self._run(unittest_case.assertNotIn, (element, self._subject))
 
     def contains_no(self, prototype):
-        for element in self.subject:
+        for element in self._subject:
             self._run(unittest_case.assertNotIsInstance, (element, prototype))
 
     def has_attribute(self, attr):
-        if not hasattr(self.subject, attr):
-            raise self.error_factory(_format("Expected {} to have attribute {}", self.subject, attr))
+        if not hasattr(self._subject, attr):
+            raise self._error_factory(_format("Expected {} to have attribute {}", self._subject, attr))
 
     hasattr = has_attribute
 
     def is_in(self, iterable):
-        self._run(unittest_case.assertIn, (self.subject, iterable))
+        self._run(unittest_case.assertIn, (self._subject, iterable))
 
     def is_not_in(self, iterable):
-        self._run(unittest_case.assertNotIn, (self.subject, iterable))
+        self._run(unittest_case.assertNotIn, (self._subject, iterable))
 
     not_in = is_not_in
 
     def is_true(self):
-        self._run(unittest_case.assertTrue, (self.subject,))
+        self._run(unittest_case.assertTrue, (self._subject,))
 
     def is_false(self):
-        self._run(unittest_case.assertFalse, (self.subject,))
+        self._run(unittest_case.assertFalse, (self._subject,))
 
     def is_none(self):
-        self._run(unittest_case.assertIsNone, (self.subject,))
+        self._run(unittest_case.assertIsNone, (self._subject,))
 
     def is_not_none(self):
-        self._run(unittest_case.assertIsNotNone, (self.subject,))
+        self._run(unittest_case.assertIsNotNone, (self._subject,))
 
     def is_empty(self):
-        if len(self.subject) > 0:
-            raise self.error_factory(_format("Expected {} to be empty", self.subject))
+        if len(self._subject) > 0:
+            raise self._error_factory(_format("Expected {} to be empty", self._subject))
 
     def is_nonempty(self):
-        if len(self.subject) == 0:
-            raise self.error_factory(_format("Expected {} to be non-empty", self.subject))
+        if len(self._subject) == 0:
+            raise self._error_factory(_format("Expected {} to be non-empty", self._subject))
 
     def is_a(self, prototype):
-        self._run(unittest_case.assertIsInstance, (self.subject, prototype))
-        if hasattr(self.subject, '__iter__'):
-            return IterableInspector(self.subject)
+        self._run(unittest_case.assertIsInstance, (self._subject, prototype))
+        if hasattr(self._subject, '__iter__'):
+            return IterableInspector(self._subject)
 
     is_an = is_a
     is_an_instance_of = is_a
@@ -186,40 +192,40 @@ class Ensure(Inspector):
         return self.is_a(prototype)
 
     def is_positive(self):
-        self._run(unittest_case.assertGreater, (self.subject, 0))
+        self._run(unittest_case.assertGreater, (self._subject, 0))
 
     def is_a_positive(self, prototype):
         self.is_positive()
         return self.is_a(prototype)
 
     def is_negative(self):
-        self._run(unittest_case.assertLess, (self.subject, 0))
+        self._run(unittest_case.assertLess, (self._subject, 0))
 
     def is_a_negative(self, prototype):
         self.is_negative()
         return self.is_a(prototype)
 
     def is_nonnegative(self):
-        self._run(unittest_case.assertGreaterEqual, (self.subject, 0))
+        self._run(unittest_case.assertGreaterEqual, (self._subject, 0))
 
     def is_a_nonnegative(self, prototype):
         self.is_nonnegative()
         return self.is_a(prototype)
 
     def is_not_a(self, prototype):
-        self._run(unittest_case.assertNotIsInstance, (self.subject, prototype))
+        self._run(unittest_case.assertNotIsInstance, (self._subject, prototype))
 
     not_a = is_not_a
 
     def matches(self, pattern, flags=0):
-        if not re.match(pattern, self.subject, flags):
-            raise self.error_factory(_format("Expected {} to match {}", self.subject, pattern))
+        if not re.match(pattern, self._subject, flags):
+            raise self._error_factory(_format("Expected {} to match {}", self._subject, pattern))
 
     def is_an_iterable_of(self, prototype):
-        for element in self.subject:
+        for element in self._subject:
             self._run(unittest_case.assertIsInstance, (element, prototype))
-        if isinstance(self.subject, Mapping):
-            return MappingInspector(self.subject)
+        if isinstance(self._subject, Mapping):
+            return MappingInspector(self._subject)
 
     def is_a_list_of(self, prototype):
         self.is_a(list)
@@ -238,61 +244,61 @@ class Ensure(Inspector):
         return self.is_an_iterable_of(prototype)
 
     def is_numeric(self):
-        if not isinstance(self.subject, (int, float, long)):
-            raise self.error_factory(_format("Expected {} to be numeric (int, float, or long)", self.subject))
+        if not isinstance(self._subject, (int, float, long)):
+            raise self._error_factory(_format("Expected {} to be numeric (int, float, or long)", self._subject))
 
     def is_callable(self):
-        if not callable(self.subject):
-            raise self.error_factory(_format("Expected {} to be callable", self.subject))
+        if not callable(self._subject):
+            raise self._error_factory(_format("Expected {} to be callable", self._subject))
 
     def has_length(self, length):
         try:
-            unittest_case.assertTrue(len(self.subject) == length)
-        except self.catch as err:
-            raise self.error_factory(_format("Expected {} to have length {}", self.subject, length))
+            unittest_case.assertTrue(len(self._subject) == length)
+        except self._catch as err:
+            raise self._error_factory(_format("Expected {} to have length {}", self._subject, length))
 
     def is_greater_than(self, other):
         try:
-            unittest_case.assertTrue(self.subject > other)
-        except self.catch as err:
-            raise self.error_factory(_format("Expected {} to be greater than {}", self.subject, other))
+            unittest_case.assertTrue(self._subject > other)
+        except self._catch as err:
+            raise self._error_factory(_format("Expected {} to be greater than {}", self._subject, other))
 
     def is_less_than(self, other):
         try:
-            unittest_case.assertTrue(self.subject < other)
-        except self.catch as err:
-            raise self.error_factory(_format("Expected {} to be less than {}", self.subject, other))
+            unittest_case.assertTrue(self._subject < other)
+        except self._catch as err:
+            raise self._error_factory(_format("Expected {} to be less than {}", self._subject, other))
 
     def is_greater_than_or_equal_to(self, other):
         try:
-            unittest_case.assertTrue(self.subject >= other)
-        except self.catch as err:
-            raise self.error_factory(_format("Expected {} to be greater than or equal to {}", self.subject, other))
+            unittest_case.assertTrue(self._subject >= other)
+        except self._catch as err:
+            raise self._error_factory(_format("Expected {} to be greater than or equal to {}", self._subject, other))
 
     def is_less_than_or_equal_to(self, other):
         try:
-            unittest_case.assertTrue(self.subject <= other)
-        except self.catch as err:
-            raise self.error_factory(_format("Expected {} to be less than or equal to {}", self.subject, other))
+            unittest_case.assertTrue(self._subject <= other)
+        except self._catch as err:
+            raise self._error_factory(_format("Expected {} to be less than or equal to {}", self._subject, other))
 
     def called_with(self, *args, **kwargs):
-        self.args = args
-        self.kwargs = kwargs
-        self.call_subject = True
+        self._args = args
+        self._kwargs = kwargs
+        self._call_subject = True
         return self
 
     with_args = called_with
 
     def raises(self, expected_exception):
-        return unittest_case.assertRaises(expected_exception, self.orig_subject, *self.args, **self.kwargs)
+        return unittest_case.assertRaises(expected_exception, self._orig_subject, *self._args, **self._kwargs)
 
     def raises_regex(self, expected_exception, expected_regexp):
-        return unittest_case.assertRaisesRegexp(expected_exception, expected_regexp, self.orig_subject,
-                                                  *self.args, **self.kwargs)
+        return unittest_case.assertRaisesRegexp(expected_exception, expected_regexp, self._orig_subject,
+                                                  *self._args, **self._kwargs)
 
     #def has_schema(self, schema):
     #    import jsonschema
-    #    self._run(jsonschema.validate, (self.subject, schema))
+    #    self._run(jsonschema.validate, (self._subject, schema))
 
 ensure = Ensure()
 ensure_raises = unittest_case.assertRaises

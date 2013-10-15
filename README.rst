@@ -37,7 +37,7 @@ Synopsis
 
 .. code-block:: python
 
-    ensure(range(10)).contains(5)
+    ensure(range(8)).contains(5).which.is_an(int)
     ensure(["spam"]).contains_none_of(["eggs", "ham"])
     ensure(["train", "boat"]).contains_one_of(["train"])
     ensure("abcdef").contains_some_of("abcxyz")
