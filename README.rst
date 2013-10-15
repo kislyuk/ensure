@@ -11,7 +11,8 @@ doesn't use the assert statement (which is liable to be turned off with the ``-O
 conditions in production code, not just for testing.
 
 Aside from better looking code, a big reason to use *ensure* is that it provides more consistent, readable, and
-informative error messages when things go wrong. See `Motivation and Goals <#motivation-and-goals>`_ for more.
+informative error messages when things go wrong. See
+`Motivation and Goals <https://github.com/kislyuk/ensure#motivation-and-goals>`_ for more.
 
 Installation
 ------------
@@ -123,7 +124,7 @@ Raising custom exceptions
 Motivation and goals
 ~~~~~~~~~~~~~~~~~~~~
 Many BDD assertion libraries suffer from an excess of magic, or end up having to construct statements that don't parse
-as English easily. *ensure* is deliberately kept simple to avoid succumbing to either issue. The 
+as English easily. *ensure* is deliberately kept simple to avoid succumbing to either issue. The
 `source <https://github.com/kislyuk/ensure/blob/master/ensure/__init__.py>`_ is easy to read and extend.
 
 Work remains to make error messages raised by *ensure* even more readable, informative, and consistent. Going forward,
