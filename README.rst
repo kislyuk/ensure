@@ -35,6 +35,8 @@ Synopsis
     ensure(True).is_(True)
     ensure(True).is_not(False)
 
+.. code-block:: python
+
     ensure(range(8)).contains(5)
     ensure(["spam"]).contains_none_of(["eggs", "ham"])
     ensure(["train", "boat"]).contains_one_of(["train"])
@@ -50,6 +52,8 @@ Synopsis
     ensure(dict).has_attribute('__contains__').which.is_callable()
     ensure({1: "a"}).has_key(1).whose_value.has_length(1)
 
+.. code-block:: python
+
     ensure(1).is_true()
     ensure(0).is_false()
     ensure(None).is_none()
@@ -61,6 +65,8 @@ Synopsis
     ensure({x: str(x) for x in range(5)}).is_a_nonempty(dict).of(int).to(str)
     ensure({}).is_an_empty(dict)
     ensure(None).is_not_a(list)
+
+.. code-block:: python
 
     import re
     ensure("abc").matches("A", flags=re.IGNORECASE)
@@ -83,6 +89,8 @@ Synopsis
     ensure(-1).is_a_negative(int)
     ensure(0).is_nonnegative()
     ensure(0).is_a_nonnegative(int)
+
+.. code-block:: python
 
     ensure("{x} {y}".format).called_with(x=1, y=2).equals("1 2")
     ensure("{x} {y}".format).with_args(x=1, y=2).is_a(str)
