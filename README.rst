@@ -37,7 +37,7 @@ Synopsis
 
 .. code-block:: python
 
-    ensure(range(8)).contains(5).which.is_an(int)
+    ensure(range(8)).contains(5)
     ensure(["spam"]).contains_none_of(["eggs", "ham"])
     ensure(["train", "boat"]).contains_one_of(["train"])
     ensure("abcdef").contains_some_of("abcxyz")
@@ -49,7 +49,7 @@ Synopsis
     ensure(1).is_in(range(10))
     ensure("z").is_not_in("abc")
     ensure(None).is_not_in([])
-    ensure(dict).has_attribute('__contains__')
+    ensure(dict).has_attribute('__contains__').which.is_callable()
 
 .. code-block:: python
 

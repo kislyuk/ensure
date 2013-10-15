@@ -83,7 +83,7 @@ class MappingInspector(Inspector):
                 raise self._error_factory(_format("Expected {} to be non-empty", value))
         return self.to(prototype)
 
-class ElementInspector(Inspector):
+class AttributeInspector(Inspector):
     @property
     def which(self):
         return Ensure(self._subject)
@@ -105,7 +105,6 @@ class Ensure(Inspector):
 
     def contains(self, element):
         self._run(unittest_case.assertIn, (element, self._subject))
-        return ElementInspector(element)
 
     def contains_none_of(self, elements):
         for element in elements:
@@ -144,6 +143,7 @@ class Ensure(Inspector):
     def has_attribute(self, attr):
         if not hasattr(self._subject, attr):
             raise self._error_factory(_format("Expected {} to have attribute {}", self._subject, attr))
+        return AttributeInspector(getattr(self._subject, attr))
 
     hasattr = has_attribute
 

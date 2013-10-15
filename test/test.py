@@ -49,8 +49,7 @@ class TestEnsure(unittest.TestCase):
         Ensure(-1).is_a_negative(int)
         Ensure(0).is_nonnegative()
         Ensure(0).is_a_nonnegative(int)
-        Ensure(range(10)).contains(5).which.is_an(int)
-        Ensure([1, 2.3, float, None]).contains(None).which.is_a(type(None))
+        Ensure((collections.namedtuple('Thing', ['x']))(x={})).has_attribute('x').which.is_a(dict)
 
         Ensure({}).is_empty()
         for assertion, args in ((Ensure(x).contains, [-1]),
