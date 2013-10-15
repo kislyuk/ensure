@@ -185,6 +185,27 @@ class Ensure(Inspector):
         self.is_empty()
         return self.is_a(prototype)
 
+    def is_positive(self):
+        self._run(unittest_case.assertGreater, (self.subject, 0))
+
+    def is_a_positive(self, prototype):
+        self.is_positive()
+        return self.is_a(prototype)
+
+    def is_negative(self):
+        self._run(unittest_case.assertLess, (self.subject, 0))
+
+    def is_a_negative(self, prototype):
+        self.is_negative()
+        return self.is_a(prototype)
+
+    def is_nonnegative(self):
+        self._run(unittest_case.assertGreaterEqual, (self.subject, 0))
+
+    def is_a_nonnegative(self, prototype):
+        self.is_nonnegative()
+        return self.is_a(prototype)
+
     def is_not_a(self, prototype):
         self._run(unittest_case.assertNotIsInstance, (self.subject, prototype))
 

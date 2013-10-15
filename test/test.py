@@ -43,6 +43,13 @@ class TestEnsure(unittest.TestCase):
         Ensure(1.1).is_greater_than_or_equal_to(1.1)
         Ensure(1.1).is_less_than_or_equal_to(1.1)
         Ensure(1).is_less_than(1.1)
+        Ensure(1).is_positive()
+        Ensure(1.1).is_a_positive(float)
+        Ensure(-1).is_negative()
+        Ensure(-1).is_a_negative(int)
+        Ensure(0).is_nonnegative()
+        Ensure(0).is_a_nonnegative(int)
+
         Ensure({}).is_empty()
         for assertion, args in ((Ensure(x).contains, [-1]),
                                 (Ensure(x).contains_all_of, [range(20)]),
@@ -62,7 +69,13 @@ class TestEnsure(unittest.TestCase):
                                 (Ensure(1).is_greater_than_or_equal_to, [1.1]),
                                 (Ensure(None).is_greater_than_or_equal_to, [1.1]),
                                 (Ensure(5).is_less_than_or_equal_to, [1]),
-                                (Ensure(1).is_less_than, [None])):
+                                (Ensure(1).is_less_than, [None]),
+                                (Ensure(0).is_positive, []),
+                                (Ensure(1).is_a_positive, [float]),
+                                (Ensure(1).is_negative, []),
+                                (Ensure(-0).is_a_negative, [int]),
+                                (Ensure(-0.1).is_nonnegative, []),
+                                (Ensure(None).is_a_nonnegative, [int])):
             with self.assertRaises(EnsureError):
                 print(assertion, args)
                 assertion(*args)
