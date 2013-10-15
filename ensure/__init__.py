@@ -93,6 +93,13 @@ class KeyInspector(Inspector):
     def whose_value(self):
         return Ensure(self._subject)
 
+class CallableInspector(Inspector):
+    def returns(self, value):
+        return self._subject.equals(value)
+
+    def __getattr__(self, item):
+        return getattr(self._subject, item)
+
 class Ensure(Inspector):
     def equals(self, other):
         self._run(unittest_case.assertEqual, (self._subject, other))
@@ -295,7 +302,7 @@ class Ensure(Inspector):
         self._args = args
         self._kwargs = kwargs
         self._call_subject = True
-        return self
+        return CallableInspector(self)
 
     with_args = called_with
 

@@ -94,6 +94,7 @@ Synopsis
 .. code-block:: python
 
     ensure("{x} {y}".format).called_with(x=1, y=2).equals("1 2")
+    ensure(int).called_with("1100101", base=2).returns(101) # returns is a synonym for equals only for called_with()
     ensure("{x} {y}".format).with_args(x=1, y=2).is_a(str)
     ensure(dict).called_with(1, 2).raises(TypeError)
     with ensure().raises(ZeroDivisionError):

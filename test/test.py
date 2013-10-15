@@ -52,6 +52,8 @@ class TestEnsure(unittest.TestCase):
         Ensure((collections.namedtuple('Thing', ['x']))(x={})).has_attribute('x').which.is_a(dict)
         Ensure({1:"a"}).has_key(1).whose_value.has_length(1)
         Ensure({}).is_empty()
+        Ensure(os.path.join).called_with('a', 'b').returns(os.path.join('a', 'b'))
+        Ensure(int).called_with("1100101", base=2).returns(101)
 
         for assertion, args in ((Ensure(x).contains, [-1]),
                                 (Ensure(x).contains_all_of, [range(20)]),
@@ -78,7 +80,8 @@ class TestEnsure(unittest.TestCase):
                                 (Ensure(-0).is_a_negative, [int]),
                                 (Ensure(-0.1).is_nonnegative, []),
                                 (Ensure(None).is_a_nonnegative, [int]),
-                                (Ensure({1: "a"}).has_key(1).whose_value.has_length, [2])):
+                                (Ensure({1: "a"}).has_key(1).whose_value.has_length, [2]),
+                                (Ensure(os.path.join).called_with('a', 'b').returns, [None])):
             with self.assertRaises(EnsureError):
                 print(assertion, args)
                 assertion(*args)
