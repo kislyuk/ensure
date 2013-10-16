@@ -8,7 +8,7 @@ Pythonic code for validating conditions. It's inspired by `should.js <https://gi
 
 Because *ensure* is a standalone library (not part of a test framework), doesn't monkey-patch anything or use DSLs, and
 doesn't use the assert statement (which is liable to be turned off with the ``-O`` flag), it can be used to validate
-conditions in production code, not just for testing.
+conditions in production code, not just for testing (though it certainly works as a BDD test utility library).
 
 Aside from better looking code, a big reason to use *ensure* is that it provides more consistent, readable, and
 informative error messages when things go wrong. See
