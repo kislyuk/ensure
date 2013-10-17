@@ -1,3 +1,5 @@
+SHELL=/bin/bash
+
 env: requirements.txt
 	virtualenv env
 	source env/bin/activate; pip install --requirement=requirements.txt
