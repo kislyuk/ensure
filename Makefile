@@ -5,7 +5,7 @@ env: requirements.txt
 	source env/bin/activate; pip install --requirement=requirements.txt
 
 test: env
-	-pylint -E flask-assert
+	-pylint -E ensure
 	source env/bin/activate; ./test/test.py -v
 
 test3: env

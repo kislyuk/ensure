@@ -1,6 +1,6 @@
-import collections, re
+import collections, re, functools
 from unittest.case import TestCase
-from collections import namedtuple, Mapping
+from collections import namedtuple, Mapping, Iterable
 
 try:
     from repr import Repr
@@ -95,12 +95,52 @@ class KeyInspector(Inspector):
 
 class CallableInspector(Inspector):
     def returns(self, value):
+        """
+        returns is a synonym for equals only for called_with()
+        """
         return self._subject.equals(value)
 
     def __getattr__(self, item):
         return getattr(self._subject, item)
 
+class MultiEnsure(Inspector):
+    """
+    Maps a single Ensure object to an iterable.
+    """
+    def __init__(self, iterable, inspector):
+        Inspector.__init__(self, iterable)
+        self._inspector = inspector
+        self._inspector(iterable).is_an(Iterable)
+
+    def __getattr__(self, item):
+        # @functools.wraps(getattr(self._inspector, item))
+        def inspect(*args, **kwargs):
+            sub_inspectors = []
+            for element in self._subject:
+                inspect_method = getattr(self._inspector(element), item)
+                sub_inspectors.append(inspect_method(*args, **kwargs))
+            return MultiInspector(sub_inspectors)
+        return inspect
+
+class MultiInspector(Inspector):
+    """
+    Calls a list of inspector objects.
+    """
+    def __getattr__(self, item):
+        # @functools.wraps(getattr(self._subject[0], item))
+        def inspect(*args, **kwargs):
+            sub_inspectors = []
+            for inspector in self._subject:
+                inspect_method = getattr(inspector, item)
+                sub_inspectors.append(inspect_method(*args, **kwargs))
+            return MultiInspector(sub_inspectors)
+        return inspect
+
 class Ensure(Inspector):
+    @classmethod
+    def each_of(cls, iterable):
+        return MultiEnsure(iterable, cls())
+
     def equals(self, other):
         self._run(unittest_case.assertEqual, (self._subject, other))
 
@@ -156,6 +196,14 @@ class Ensure(Inspector):
         self.is_a(Mapping)
         self.contains(key)
         return KeyInspector(self._subject[key])
+
+    def has_keys(self, keys):
+        self.is_a(Mapping)
+        self.contains_all_of(keys)
+
+    def has_only_keys(self, keys):
+        self.is_a(Mapping)
+        self.contains_only(keys)
 
     def has_attribute(self, attr):
         if not hasattr(self._subject, attr):

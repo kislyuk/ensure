@@ -52,6 +52,9 @@ Synopsis
     ensure(None).is_not_in([])
     ensure(dict).has_attribute('__contains__').which.is_callable()
     ensure({1: "a"}).has_key(1).whose_value.has_length(1)
+    ensure({1: "a", 2: "b", 3: "c"}).has_keys([1, 2])
+    ensure({1: "a", 2: "b"}).has_only_keys([1, 2])
+    ensure.each_of([{1: 2}, {3: 4}]).is_a(dict).of(int).to(int)
 
 .. code-block:: python
 
@@ -94,7 +97,7 @@ Synopsis
 .. code-block:: python
 
     ensure("{x} {y}".format).called_with(x=1, y=2).equals("1 2")
-    ensure(int).called_with("1100101", base=2).returns(101) # returns is a synonym for equals only for called_with()
+    ensure(int).called_with("1100101", base=2).returns(101)
     ensure("{x} {y}".format).with_args(x=1, y=2).is_a(str)
     ensure(dict).called_with(1, 2).raises(TypeError)
     with ensure().raises(ZeroDivisionError):
