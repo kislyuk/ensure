@@ -103,38 +103,35 @@ class CallableInspector(Inspector):
     def __getattr__(self, item):
         return getattr(self._subject, item)
 
-class MultiEnsure(Inspector):
+class MultiInspector(Inspector):
     """
-    Maps a single Ensure object to an iterable.
+    Calls a list of inspector objects on a single subject.
+    """
+    def _get_inspector(self, subject):
+        return subject
+
+    def __getattr__(self, item):
+        # @functools.wraps(getattr(self._subject[0], item))
+        def inspect(*args, **kwargs):
+            sub_inspectors = []
+            for subject in self._subject:
+                inspector = self._get_inspector(subject)
+                inspect_method = getattr(inspector, item)
+                sub_inspectors.append(inspect_method(*args, **kwargs))
+            return MultiInspector(sub_inspectors)
+        return inspect
+
+class MultiEnsure(MultiInspector):
+    """
+    Maps a single Ensure object to an iterable of subjects.
     """
     def __init__(self, iterable, inspector):
         Inspector.__init__(self, iterable)
         self._inspector = inspector
         self._inspector(iterable).is_an(Iterable)
 
-    def __getattr__(self, item):
-        # @functools.wraps(getattr(self._inspector, item))
-        def inspect(*args, **kwargs):
-            sub_inspectors = []
-            for element in self._subject:
-                inspect_method = getattr(self._inspector(element), item)
-                sub_inspectors.append(inspect_method(*args, **kwargs))
-            return MultiInspector(sub_inspectors)
-        return inspect
-
-class MultiInspector(Inspector):
-    """
-    Calls a list of inspector objects.
-    """
-    def __getattr__(self, item):
-        # @functools.wraps(getattr(self._subject[0], item))
-        def inspect(*args, **kwargs):
-            sub_inspectors = []
-            for inspector in self._subject:
-                inspect_method = getattr(inspector, item)
-                sub_inspectors.append(inspect_method(*args, **kwargs))
-            return MultiInspector(sub_inspectors)
-        return inspect
+    def _get_inspector(self, subject):
+        return self._inspector(subject)
 
 class Ensure(Inspector):
     @classmethod
