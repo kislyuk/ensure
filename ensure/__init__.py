@@ -118,7 +118,8 @@ class MultiInspector(Inspector):
                 inspector = self._get_inspector(subject)
                 inspect_method = getattr(inspector, item)
                 sub_inspectors.append(inspect_method(*args, **kwargs))
-            return MultiInspector(sub_inspectors)
+            if not all(i == None for i in sub_inspectors):
+                return MultiInspector(sub_inspectors)
         return inspect
 
 class MultiEnsure(MultiInspector):
