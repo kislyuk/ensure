@@ -1,6 +1,5 @@
 ensure: Literate assertions in Python
 =====================================
-
 *ensure* is a set of simple assertion helpers that let you write more expressive, literate, concise, and readable
 Pythonic code for validating conditions. It's inspired by `should.js <https://github.com/visionmedia/should.js>`_,
 `expect.js <https://github.com/LearnBoost/expect.js>`_, and builds on top of the
