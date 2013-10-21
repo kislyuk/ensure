@@ -120,6 +120,7 @@ immediately. It saves them and chains the methods `otherwise()`, `or_raise()` an
 above.
 
 .. code-block:: python
+
     from ensure import check
 
     class MyException(Exception):
@@ -130,6 +131,7 @@ above.
     check("w00t").is_an(int).or_raise(MyException)
 
 .. code-block:: python
+
     def build_fancy_exception(original_exception):
         return MyException(original_exception)
 
