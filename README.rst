@@ -105,7 +105,7 @@ Synopsis
         w00t
 
 Notes
------
+~~~~~
 The ``ensure`` module exports the ``Ensure`` class and its convenience instance ``ensure``. Instances of the class are
 callable, and the call will reset the contents that the instance is inspecting, so you can reuse it for many checks (as
 seen above).
