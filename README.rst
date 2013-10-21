@@ -104,25 +104,36 @@ Synopsis
     with ensure().raises_regex(NameError, "'w00t' is not defined"):
         w00t
 
+Notes
+-----
+The ``ensure`` module exports the ``Ensure`` class and its convenience instance ``ensure``. The class is callable, and
+the call will reset the class contents, so you can reuse it for many checks (as seen above).
+
+The class raises ``EnsureError`` (a subclass of ``AssertionError``) by default.
+
 Raising custom exceptions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
+You can pass a callable or exception class as the ``error_factory`` keyword argument to ``Ensure()``, or you can use the
+``Check`` class or its convenience instance ``check()``. This class behaves like ``Ensure()``, but does not raise errors
+immediately. It saves them and chains the methods `otherwise()`, `or_raise()` and `or_call()` to the end of the clauses
+above.
 
 .. code-block:: python
-
-    from ensure import Ensure
+    from ensure import check
 
     class MyException(Exception):
         def __init__(self, e):
             pass
 
-    ensure = Ensure(error_factory=MyException)
-    ensure("w00t").is_an(int)
+    check("w00t").is_an(int).otherwise(MyException)
+    check("w00t").is_an(int).or_raise(MyException)
 
+.. code-block:: python
     def build_fancy_exception(original_exception):
         return MyException(original_exception)
 
-    ensure = Ensure(error_factory=build_fancy_exception)
-    ensure("w00t").is_an(int)
+    check("w00t").is_an(int).otherwise(build_fancy_exception)
+    check("w00t").is_an(int).or_call(build_fancy_exception, *args, **kwargs)
 
 Motivation and goals
 ~~~~~~~~~~~~~~~~~~~~

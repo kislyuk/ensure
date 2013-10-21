@@ -1,4 +1,4 @@
-import collections, re, functools
+import collections, types, re, functools
 from unittest.case import TestCase
 from collections import namedtuple, Mapping, Iterable
 
@@ -363,6 +363,45 @@ class Ensure(Inspector):
     #    import jsonschema
     #    self._run(jsonschema.validate, (self._subject, schema))
 
+class Check(object):
+    """
+    Like Ensure, but holds the raised error for introspection, and adds otherwise().
+    TODO: support each_of
+    """
+    def __init__(self, *args, **kwargs):
+        self._inspector = Ensure(*args, **kwargs)
+        self._exception = None
+
+    def __call__(self, *args, **kwargs):
+        self.__init__(*args, **kwargs)
+        return self
+
+    def __getattr__(self, item):
+        inspect_method = getattr(self._inspector, item)
+        if isinstance(inspect_method, Inspector):
+            self._inspector = inspect_method
+            return self
+
+        def inspect(*args, **kwargs):
+            if self._exception is None:
+                try:
+                    self._inspector = inspect_method(*args, **kwargs)
+                except self._inspector._catch as e:
+                    self._exception = e
+            return self
+        return inspect
+
+    def otherwise(self, error_factory):
+        if self._exception:
+            raise error_factory(self._exception)
+
+    or_raise = otherwise
+
+    def or_call(self, _callable, *args, **kwargs):
+        if self._exception:
+            _callable(*args, **kwargs)
+
 ensure = Ensure()
+check = Check()
 ensure_raises = unittest_case.assertRaises
 ensure_raises_regex = unittest_case.assertRaisesRegexp
