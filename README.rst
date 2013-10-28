@@ -115,9 +115,9 @@ The class raises ``EnsureError`` (a subclass of ``AssertionError``) by default.
 Raising custom exceptions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 You can pass a callable or exception class as the ``error_factory`` keyword argument to ``Ensure()``, or you can use the
-``Check`` class or its convenience instance ``check()``. This class behaves like ``Ensure()``, but does not raise errors
-immediately. It saves them and chains the methods `otherwise()`, `or_raise()` and `or_call()` to the end of the clauses
-above.
+``Check`` class or its convenience instance ``check()``. This class behaves like ``Ensure``, but does not raise errors
+immediately. It saves them and chains the methods ``otherwise()``, ``or_raise()`` and ``or_call()`` to the end of the
+clauses above.
 
 .. code-block:: python
 
