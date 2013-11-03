@@ -151,6 +151,11 @@ class Ensure(Inspector):
         e = Ensure()
         e(1).is_an(int)
 
+    Some predicates return child inspectors which can be chained into a series of predicates, for example:
+
+    .. code-block:: python
+
+        ensure({1: {2: "a"}}).has_key(1).whose_value.is_a(dict).of(int).to(str)
 
     '''
     @classmethod
