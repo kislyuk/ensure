@@ -2,6 +2,8 @@ import collections, types, re, functools
 from unittest.case import TestCase
 from collections import namedtuple, Mapping, Iterable
 
+__all__ = ['EnsureError', 'Ensure', 'Check', 'ensure', 'check', 'ensure_raises', 'ensure_raises_regex']
+
 try:
     from repr import Repr
 except ImportError:
@@ -135,36 +137,79 @@ class MultiEnsure(MultiInspector):
         return self._inspector(subject)
 
 class Ensure(Inspector):
+    ''' Constructs a root-level inspector, which can perform a variety of checks (*predicates*) on subjects passed to
+    it. If the checks do not pass, by default :class:`EnsureError` is raised. This can be configured by passing the
+    ``error_factory`` keyword to the constructor.
+
+    Subjects can be passed to the inspector at construction time or by calling the resulting object (each call resets
+    the subject):
+
+    .. code-block:: python
+
+        Ensure(1).is_an(int)
+
+        e = Ensure()
+        e(1).is_an(int)
+
+
+    '''
     @classmethod
     def each_of(cls, iterable):
+        """
+        Applies subsequent predicate(s) to all items in *iterable*.
+        """
         return MultiEnsure(iterable, cls())
 
     def equals(self, other):
+        """
+        Ensures :attr:`subject` is equal to *other*.
+        """
         self._run(unittest_case.assertEqual, (self._subject, other))
 
     def is_not_equal_to(self, other):
+        """
+        Ensures :attr:`subject` is not equal to *other*.
+        """
         self._run(unittest_case.assertNotEqual, (self._subject, other))
 
     does_not_equal = is_not_equal_to
 
     def is_(self, other):
+        """
+        Ensures :attr:`subject` is *other* (object identity check).
+        """
         self._run(unittest_case.assertIs, (self._subject, other))
 
     def is_not(self, other):
+        """
+        Ensures :attr:`subject` is not *other* (object identity check).
+        """
         self._run(unittest_case.assertIsNot, (self._subject, other))
 
     def contains(self, element):
+        """
+        Ensures :attr:`subject` contains *other*.
+        """
         self._run(unittest_case.assertIn, (element, self._subject))
 
     def contains_none_of(self, elements):
+        """
+        Ensures :attr:`subject` contains none of *elements*, which must be an iterable.
+        """
         for element in elements:
             self._run(unittest_case.assertNotIn, (element, self._subject))
 
     def contains_one_of(self, elements):
+        """
+        Ensures :attr:`subject` contains exactly one of *elements*, which must be an iterable.
+        """
         if sum(e in self._subject for e in elements) != 1:
             raise self._error_factory(_format("Expected {} to have exactly one of {}", self._subject, elements))
 
     def contains_only(self, elements):
+        """
+        Ensures :attr:`subject` contains all of *elements*, which must be an iterable, and no other items.
+        """
         for element in self._subject:
             if element not in elements:
                 raise self._error_factory(_format("Expected {} to have only {}, but it contains {}",
@@ -172,38 +217,62 @@ class Ensure(Inspector):
         self.contains_all_of(elements)
 
     def contains_some_of(self, elements):
+        """
+        Ensures :attr:`subject` contains at least one of *elements*, which must be an iterable.
+        """
         if all(e not in self._subject for e in elements):
             raise self._error_factory(_format("Expected {} to have some of {}", self._subject, elements))
 
     contains_one_or_more_of = contains_some_of
 
     def contains_all_of(self, elements):
+        """
+        Ensures :attr:`subject` contains all of *elements*, which must be an iterable.
+        """
         for element in elements:
             if element not in self._subject:
                 raise self._error_factory(_format("Expected {} to have all of {}, but it does not contain {}",
                                                  self._subject, elements, element))
 
     def does_not_contain(self, element):
+        """
+        Ensures :attr:`subject` does not contain *element*.
+        """
         self._run(unittest_case.assertNotIn, (element, self._subject))
 
     def contains_no(self, prototype):
+        """
+        Ensures no item of :attr:`subject` is of class *prototype*.
+        """
         for element in self._subject:
             self._run(unittest_case.assertNotIsInstance, (element, prototype))
 
     def has_key(self, key):
+        """
+        Ensures :attr:`subject` is a :class:`collections.Mapping` and contains *key*.
+        """
         self.is_a(Mapping)
         self.contains(key)
         return KeyInspector(self._subject[key])
 
     def has_keys(self, keys):
+        """
+        Ensures :attr:`subject` is a :class:`collections.Mapping` and contains *keys*, which must be an iterable.
+        """
         self.is_a(Mapping)
         self.contains_all_of(keys)
 
     def has_only_keys(self, keys):
+        """
+        Ensures :attr:`subject` is a :class:`collections.Mapping` and contains *keys*, and no other keys.
+        """
         self.is_a(Mapping)
         self.contains_only(keys)
 
     def has_attribute(self, attr):
+        """
+        Ensures :attr:`subject` has an attribute *attr*.
+        """
         if not hasattr(self._subject, attr):
             raise self._error_factory(_format("Expected {} to have attribute {}", self._subject, attr))
         return AttributeInspector(getattr(self._subject, attr))
@@ -211,34 +280,61 @@ class Ensure(Inspector):
     hasattr = has_attribute
 
     def is_in(self, iterable):
+        """
+        Ensures :attr:`subject` is contained in *iterable*.
+        """
         self._run(unittest_case.assertIn, (self._subject, iterable))
 
     def is_not_in(self, iterable):
+        """
+        Ensures :attr:`subject` is not contained in *iterable*.
+        """
         self._run(unittest_case.assertNotIn, (self._subject, iterable))
 
     not_in = is_not_in
 
     def is_true(self):
+        """
+        Ensures :attr:`subject` is ``True``.
+        """
         self._run(unittest_case.assertTrue, (self._subject,))
 
     def is_false(self):
+        """
+        Ensures :attr:`subject` is ``False``.
+        """
         self._run(unittest_case.assertFalse, (self._subject,))
 
     def is_none(self):
+        """
+        Ensures :attr:`subject` is ``None``.
+        """
         self._run(unittest_case.assertIsNone, (self._subject,))
 
     def is_not_none(self):
+        """
+        Ensures :attr:`subject` is not ``None``.
+        """
         self._run(unittest_case.assertIsNotNone, (self._subject,))
 
     def is_empty(self):
+        """
+        Ensures :attr:`subject` has length zero.
+        """
         if len(self._subject) > 0:
             raise self._error_factory(_format("Expected {} to be empty", self._subject))
 
     def is_nonempty(self):
+        """
+        Ensures :attr:`subject` has non-zero length.
+        """
         if len(self._subject) == 0:
             raise self._error_factory(_format("Expected {} to be non-empty", self._subject))
 
     def is_a(self, prototype):
+        """
+        Ensures :attr:`subject` is an object of class *prototype*.
+        """
         self._run(unittest_case.assertIsInstance, (self._subject, prototype))
         if hasattr(self._subject, '__iter__'):
             return IterableInspector(self._subject)
@@ -247,104 +343,174 @@ class Ensure(Inspector):
     is_an_instance_of = is_a
 
     def is_a_nonempty(self, prototype):
+        """
+        Ensures :attr:`subject` is an object of class *prototype* and has non-zero length.
+        """
         self.is_nonempty()
         return self.is_a(prototype)
 
     def is_an_empty(self, prototype):
+        """
+        Ensures :attr:`subject` is an object of class *prototype* and has zero length.
+        """
         self.is_empty()
         return self.is_a(prototype)
 
     def is_positive(self):
+        """
+        Ensures :attr:`subject` is greater than 0.
+        """
         self._run(unittest_case.assertGreater, (self._subject, 0))
 
     def is_a_positive(self, prototype):
+        """
+        Ensures :attr:`subject` is greater than 0 and is an object of class *prototype*.
+        """
         self.is_positive()
         return self.is_a(prototype)
 
     def is_negative(self):
+        """
+        Ensures :attr:`subject` is less than 0.
+        """
         self._run(unittest_case.assertLess, (self._subject, 0))
 
     def is_a_negative(self, prototype):
+        """
+        Ensures :attr:`subject` is less than 0 and is an object of class *prototype*.
+        """
         self.is_negative()
         return self.is_a(prototype)
 
     def is_nonnegative(self):
+        """
+        Ensures :attr:`subject` is greater than or equal to 0.
+        """
         self._run(unittest_case.assertGreaterEqual, (self._subject, 0))
 
     def is_a_nonnegative(self, prototype):
+        """
+        Ensures :attr:`subject` is greater than or equal to 0 and is an object of class *prototype*.
+        """
         self.is_nonnegative()
         return self.is_a(prototype)
 
     def is_not_a(self, prototype):
+        """
+        Ensures :attr:`subject` is not an object of class *prototype*.
+        """
         self._run(unittest_case.assertNotIsInstance, (self._subject, prototype))
 
     not_a = is_not_a
 
     def matches(self, pattern, flags=0):
+        """
+        Ensures :attr:`subject` matches regular expression *pattern*.
+        """
         if not re.match(pattern, self._subject, flags):
             raise self._error_factory(_format("Expected {} to match {}", self._subject, pattern))
 
     def is_an_iterable_of(self, prototype):
+        """
+        Ensures :attr:`subject` is an iterable containing only objects of class *prototype*.
+        """
         for element in self._subject:
             self._run(unittest_case.assertIsInstance, (element, prototype))
         if isinstance(self._subject, Mapping):
             return MappingInspector(self._subject)
 
     def is_a_list_of(self, prototype):
+        """
+        Ensures :attr:`subject` is a :class:`list` containing only objects of class *prototype*.
+        """
         self.is_a(list)
         return self.is_an_iterable_of(prototype)
 
     def is_a_set_of(self, prototype):
+        """
+        Ensures :attr:`subject` is a :class:`set` containing only objects of class *prototype*.
+        """
         self.is_a(set)
         return self.is_an_iterable_of(prototype)
 
     def is_a_mapping_of(self, prototype):
+        """
+        Ensures :attr:`subject` is a :class:`collections.Mapping` containing only objects of class *prototype*.
+        """
         self.is_a(Mapping)
         return self.is_an_iterable_of(prototype)
 
     def is_a_dict_of(self, prototype):
+        """
+        Ensures :attr:`subject` is a :class:`dict` containing only objects of class *prototype*.
+        """
         self.is_a(dict)
         return self.is_an_iterable_of(prototype)
 
     def is_numeric(self):
+        """
+        Ensures :attr:`subject` is an int, float, or long.
+        """
         if not isinstance(self._subject, (int, float, long)):
             raise self._error_factory(_format("Expected {} to be numeric (int, float, or long)", self._subject))
 
     def is_callable(self):
+        """
+        Ensures :attr:`subject` is a callable.
+        """
         if not callable(self._subject):
             raise self._error_factory(_format("Expected {} to be callable", self._subject))
 
     def has_length(self, length):
+        """
+        Ensures :attr:`subject` has length *length*.
+        """
         try:
             unittest_case.assertTrue(len(self._subject) == length)
         except self._catch as err:
             raise self._error_factory(_format("Expected {} to have length {}", self._subject, length))
 
     def is_greater_than(self, other):
+        """
+        Ensures :attr:`subject` is greater than *other*.
+        """
         try:
             unittest_case.assertTrue(self._subject > other)
         except self._catch as err:
             raise self._error_factory(_format("Expected {} to be greater than {}", self._subject, other))
 
     def is_less_than(self, other):
+        """
+        Ensures :attr:`subject` is less than *other*.
+        """
         try:
             unittest_case.assertTrue(self._subject < other)
         except self._catch as err:
             raise self._error_factory(_format("Expected {} to be less than {}", self._subject, other))
 
     def is_greater_than_or_equal_to(self, other):
+        """
+        Ensures :attr:`subject` is greater than or equal to *other*.
+        """
         try:
             unittest_case.assertTrue(self._subject >= other)
         except self._catch as err:
             raise self._error_factory(_format("Expected {} to be greater than or equal to {}", self._subject, other))
 
     def is_less_than_or_equal_to(self, other):
+        """
+        Ensures :attr:`subject` is less than or equal to *other*.
+        """
         try:
             unittest_case.assertTrue(self._subject <= other)
         except self._catch as err:
             raise self._error_factory(_format("Expected {} to be less than or equal to {}", self._subject, other))
 
     def called_with(self, *args, **kwargs):
+        """
+        Before evaluating subsequent predicates, calls :attr:`subject` with given arguments (but unlike a direct call,
+        catches and transforms any exceptions that arise during the call).
+        """
         self._args = args
         self._kwargs = kwargs
         self._call_subject = True
@@ -353,9 +519,16 @@ class Ensure(Inspector):
     with_args = called_with
 
     def raises(self, expected_exception):
+        """
+        Ensures preceding predicates (specifically, :meth:`called_with()`) result in *expected_exception* being raised.
+        """
         return unittest_case.assertRaises(expected_exception, self._orig_subject, *self._args, **self._kwargs)
 
     def raises_regex(self, expected_exception, expected_regexp):
+        """
+        Ensures preceding predicates (specifically, :meth:`called_with()`) result in *expected_exception* being raised,
+        and the string representation of *expected_exception* must match regular expression *expected_regexp*.
+        """
         return unittest_case.assertRaisesRegexp(expected_exception, expected_regexp, self._orig_subject,
                                                   *self._args, **self._kwargs)
 
@@ -365,8 +538,10 @@ class Ensure(Inspector):
 
 class Check(object):
     """
-    Like Ensure, but holds the raised error for introspection, and adds otherwise().
-    TODO: support each_of
+    Like Ensure, but if a check fails, saves the error instead of raising it immediately. The error can then be acted
+    upon using :meth:`or_raise()` or :meth:`or_call()`.
+
+    ``.each_of()`` is not supported by the **Check** inspector; all other methods are supported.
     """
     def __init__(self, *args, **kwargs):
         self._inspector = Ensure(*args, **kwargs)
@@ -391,13 +566,21 @@ class Check(object):
             return self
         return inspect
 
-    def otherwise(self, error_factory):
+    def or_raise(self, error_factory):
+        """
+        Raises an exception produced by **error_factory** if a predicate fails.
+
+        :param error_factory: Class or callable (e.g. :class:`Exception`) which will be invoked to produce the resulting exception.
+        """
         if self._exception:
             raise error_factory(self._exception)
 
-    or_raise = otherwise
+    otherwise = or_raise
 
     def or_call(self, _callable, *args, **kwargs):
+        """
+        Calls **_callable** with supplied args and kwargs if a predicate fails.
+        """
         if self._exception:
             _callable(*args, **kwargs)
 
