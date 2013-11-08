@@ -1,5 +1,8 @@
 .. include:: ../README.rst
 
+API documentation
+=================
+
 .. automodule:: ensure
    :members:
 
