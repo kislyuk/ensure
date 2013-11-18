@@ -26,10 +26,44 @@ Synopsis
 
     from ensure import ensure
 
+    ensure(1).is_an(int)
     ensure({1: {2: 3}}).equals({1: {2: 3}})
+    ensure({1: "a"}).has_key(1).whose_value.has_length(1)
+    ensure.each_of([{1: 2}, {3: 4}]).is_a(dict).of(int).to(int)
+    ensure(int).called_with("1100101", base=2).returns(101)
+    ensure(dict).called_with(1, 2).raises(TypeError)
+    check(1).is_a(float).or_raise(Exception, "An error happened: {msg}. See http://example.com for more information.")
+
+Raising custom exceptions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+You can pass a callable or exception class as the ``error_factory`` keyword argument to ``Ensure()``, or you can use the
+``Check`` class or its convenience instance ``check()``. This class behaves like ``Ensure``, but does not raise errors
+immediately. It saves them and chains the methods ``otherwise()``, ``or_raise()`` and ``or_call()`` to the end of the
+clauses.
+
+.. code-block:: python
+
+    from ensure import check
+
+    check("w00t").is_an(int).or_raise(Exception)
+    check(1).is_a(float).or_raise(Exception, "An error happened: {msg}. See http://example.com for more information.")
+    check("w00t").is_an(int).or_raise(MyException, 1, 2, x=3, y=4)
+
+.. code-block:: python
+
+    def build_fancy_exception(original_exception):
+        return MyException(original_exception)
+
+    check("w00t").is_an(int).otherwise(build_fancy_exception)
+    check("w00t").is_an(int).or_call(build_fancy_exception, *args, **kwargs)
+
+More examples
+-------------
+
+.. code-block:: python
+
     ensure({1: {2: 3}}).is_not_equal_to({1: {2: 4}})
     ensure(True).does_not_equal(False)
-    ensure(1).is_an(int)
     ensure(1).is_in(range(10))
     ensure(True).is_a(bool)
     ensure(True).is_(True)
@@ -37,9 +71,9 @@ Synopsis
 
 .. code-block:: python
 
+    ensure(["train", "boat"]).contains_one_of(["train"])
     ensure(range(8)).contains(5)
     ensure(["spam"]).contains_none_of(["eggs", "ham"])
-    ensure(["train", "boat"]).contains_one_of(["train"])
     ensure("abcdef").contains_some_of("abcxyz")
     ensure("abcdef").contains_one_or_more_of("abcxyz")
     ensure("abcdef").contains_all_of("acf")
@@ -50,10 +84,8 @@ Synopsis
     ensure("z").is_not_in("abc")
     ensure(None).is_not_in([])
     ensure(dict).has_attribute('__contains__').which.is_callable()
-    ensure({1: "a"}).has_key(1).whose_value.has_length(1)
     ensure({1: "a", 2: "b", 3: "c"}).has_keys([1, 2])
     ensure({1: "a", 2: "b"}).has_only_keys([1, 2])
-    ensure.each_of([{1: 2}, {3: 4}]).is_a(dict).of(int).to(int)
 
 .. code-block:: python
 
@@ -98,7 +130,6 @@ Synopsis
     ensure("{x} {y}".format).called_with(x=1, y=2).equals("1 2")
     ensure(int).called_with("1100101", base=2).returns(101)
     ensure("{x} {y}".format).with_args(x=1, y=2).is_a(str)
-    ensure(dict).called_with(1, 2).raises(TypeError)
     with ensure().raises(ZeroDivisionError):
         1/0
     with ensure().raises_regex(NameError, "'w00t' is not defined"):
@@ -111,32 +142,6 @@ callable, and the call will reset the contents that the instance is inspecting, 
 seen above).
 
 The class raises ``EnsureError`` (a subclass of ``AssertionError``) by default.
-
-Raising custom exceptions
-~~~~~~~~~~~~~~~~~~~~~~~~~
-You can pass a callable or exception class as the ``error_factory`` keyword argument to ``Ensure()``, or you can use the
-``Check`` class or its convenience instance ``check()``. This class behaves like ``Ensure``, but does not raise errors
-immediately. It saves them and chains the methods ``otherwise()``, ``or_raise()`` and ``or_call()`` to the end of the
-clauses above.
-
-.. code-block:: python
-
-    from ensure import check
-
-    class MyException(Exception):
-        def __init__(self, e):
-            pass
-
-    check("w00t").is_an(int).otherwise(MyException)
-    check("w00t").is_an(int).or_raise(MyException)
-
-.. code-block:: python
-
-    def build_fancy_exception(original_exception):
-        return MyException(original_exception)
-
-    check("w00t").is_an(int).otherwise(build_fancy_exception)
-    check("w00t").is_an(int).or_call(build_fancy_exception, *args, **kwargs)
 
 Motivation and goals
 ~~~~~~~~~~~~~~~~~~~~

@@ -571,14 +571,20 @@ class Check(object):
             return self
         return inspect
 
-    def or_raise(self, error_factory):
+    def or_raise(self, error_factory, message=None, *args, **kwargs):
         """
         Raises an exception produced by **error_factory** if a predicate fails.
 
         :param error_factory: Class or callable (e.g. :class:`Exception`) which will be invoked to produce the resulting exception.
+        :param message: String to be formatted and passed as the first argument to *error_factory*. The following substrings are replaced by formatting: "{type}" by the exception type, "{msg}" by the exception's string representation, and "{}" by both. If *message* is ``None``, the original exception is passed.
         """
         if self._exception:
-            raise error_factory(self._exception)
+            if message is None:
+                raise error_factory(self._exception, *args, **kwargs)
+            else:
+                raise error_factory(message.format('{}: {}'.format(type(self._exception).__name__, self._exception),
+                                                   msg=self._exception, type=type(self._exception).__name__),
+                                    *args, **kwargs)
 
     otherwise = or_raise
 
