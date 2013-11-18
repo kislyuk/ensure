@@ -34,6 +34,14 @@ Synopsis
     ensure(dict).called_with(1, 2).raises(TypeError)
     check(1).is_a(float).or_raise(Exception, "An error happened: {msg}. See http://example.com for more information.")
 
+Notes
+~~~~~
+The ``ensure`` module exports the ``Ensure`` class and its convenience instance ``ensure``. Instances of the class are
+callable, and the call will reset the contents that the instance is inspecting, so you can reuse it for many checks (as
+seen above).
+
+The class raises ``EnsureError`` (a subclass of ``AssertionError``) by default.
+
 Raising custom exceptions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 You can pass a callable or exception class as the ``error_factory`` keyword argument to ``Ensure()``, or you can use the
@@ -134,14 +142,6 @@ More examples
         1/0
     with ensure().raises_regex(NameError, "'w00t' is not defined"):
         w00t
-
-Notes
-~~~~~
-The ``ensure`` module exports the ``Ensure`` class and its convenience instance ``ensure``. Instances of the class are
-callable, and the call will reset the contents that the instance is inspecting, so you can reuse it for many checks (as
-seen above).
-
-The class raises ``EnsureError`` (a subclass of ``AssertionError``) by default.
 
 Motivation and goals
 ~~~~~~~~~~~~~~~~~~~~
