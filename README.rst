@@ -34,7 +34,7 @@ Synopsis
     ensure(dict).called_with(1, 2).raises(TypeError)
     check(1).is_a(float).or_raise(Exception, "An error happened: {msg}. See http://example.com for more information.")
 
-See **More Examples** below.
+See **More examples** below.
 
 Notes
 ~~~~~
