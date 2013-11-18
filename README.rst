@@ -34,6 +34,8 @@ Synopsis
     ensure(dict).called_with(1, 2).raises(TypeError)
     check(1).is_a(float).or_raise(Exception, "An error happened: {msg}. See http://example.com for more information.")
 
+See **More Examples** below.
+
 Notes
 ~~~~~
 The ``ensure`` module exports the ``Ensure`` class and its convenience instance ``ensure``. Instances of the class are
