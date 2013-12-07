@@ -145,6 +145,8 @@ More examples
     with ensure().raises_regex(NameError, "'w00t' is not defined"):
         w00t
 
+See `complete API documentation <https://ensure.readthedocs.org/en/latest/#module-ensure>`_.
+
 Motivation and goals
 ~~~~~~~~~~~~~~~~~~~~
 Many BDD assertion libraries suffer from an excess of magic, or end up having to construct statements that don't parse
