@@ -13,7 +13,7 @@ Aside from better looking code, a big reason to use *ensure* is that it provides
 informative error messages when things go wrong. See
 `Motivation and Goals <https://github.com/kislyuk/ensure#motivation-and-goals>`_ for more.
 
-If you're at liberty to use Python 3.3+ only, you may be interested in 
+If you are at liberty to use Python 3.3+ only, you may be interested in 
 `Function Annotations <http://www.python.org/dev/peps/pep-3107/>`_, a new Python feature that complements *ensure*
 nicely.
 
