@@ -13,6 +13,10 @@ Aside from better looking code, a big reason to use *ensure* is that it provides
 informative error messages when things go wrong. See
 `Motivation and Goals <https://github.com/kislyuk/ensure#motivation-and-goals>`_ for more.
 
+If you are at liberty to use Python 3.3+ only, you may be interested in 
+`Function Annotations <http://www.python.org/dev/peps/pep-3107/>`_, a new Python feature that complements *ensure*
+nicely.
+
 Installation
 ------------
 ::
@@ -33,6 +37,16 @@ Synopsis
     ensure(int).called_with("1100101", base=2).returns(101)
     ensure(dict).called_with(1, 2).raises(TypeError)
     check(1).is_a(float).or_raise(Exception, "An error happened: {msg}. See http://example.com for more information.")
+
+See **More examples** below.
+
+Notes
+~~~~~
+The ``ensure`` module exports the ``Ensure`` class and its convenience instance ``ensure``. Instances of the class are
+callable, and the call will reset the contents that the instance is inspecting, so you can reuse it for many checks (as
+seen above).
+
+The class raises ``EnsureError`` (a subclass of ``AssertionError``) by default.
 
 Raising custom exceptions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -135,13 +149,7 @@ More examples
     with ensure().raises_regex(NameError, "'w00t' is not defined"):
         w00t
 
-Notes
-~~~~~
-The ``ensure`` module exports the ``Ensure`` class and its convenience instance ``ensure``. Instances of the class are
-callable, and the call will reset the contents that the instance is inspecting, so you can reuse it for many checks (as
-seen above).
-
-The class raises ``EnsureError`` (a subclass of ``AssertionError``) by default.
+See `complete API documentation <https://ensure.readthedocs.org/en/latest/#module-ensure>`_.
 
 Motivation and goals
 ~~~~~~~~~~~~~~~~~~~~
