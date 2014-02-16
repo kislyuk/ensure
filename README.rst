@@ -176,7 +176,7 @@ Use the ``@ensure_annotations`` decorator to enforce
 
     f(1, 2.3)
 
-.. code-block::
+::
 
     >>> 3.3
 
@@ -184,7 +184,7 @@ Use the ``@ensure_annotations`` decorator to enforce
 
     f(1, 2)
 
-.. code-block::
+::
 
     >>> ensure.EnsureError: Argument y to <function f at 0x109b7c710> does not match annotation type <class 'float'>
 
