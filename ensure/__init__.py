@@ -625,16 +625,16 @@ def ensure_annotations(f):
             if arg in f.__annotations__:
                 templ = f.__annotations__[arg]
                 try:
-                    Ensure(val).is_a(templ)
-                except EnsureError as e:
+                    unittest_case.assertIsInstance(val, templ)
+                except AssertionError:
                     msg = "Argument {arg} to {f} does not match annotation type {t}"
                     raise EnsureError(msg.format(arg=arg, f=f, t=templ))
         return_val = f(*args, **kwargs)
         if 'return' in f.__annotations__:
             templ = f.__annotations__['return']
             try:
-                Ensure(return_val).is_a(templ)
-            except EnsureError as e:
+                unittest_case.assertIsInstance(return_val, templ)
+            except AssertionError:
                 msg = "Return value of {f} does not match annotation type {t}"
                 raise EnsureError(msg.format(f=f, t=templ))
         return return_val
