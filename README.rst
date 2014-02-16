@@ -5,12 +5,13 @@ Pythonic code for validating conditions. It's inspired by `should.js <https://gi
 `expect.js <https://github.com/LearnBoost/expect.js>`_, and builds on top of the
 `unittest/JUnit assert helpers <http://docs.python.org/2/library/unittest.html#assert-methods>`_.
 
+If you use Python 3, you can use *ensure* to enforce your
+`function signature annotations <http://www.python.org/dev/peps/pep-3107/>`_: see the ``@ensure_annotations`` decorator
+below.
+
 Because *ensure* is a standalone library (not part of a test framework), doesn't monkey-patch anything or use DSLs, and
 doesn't use the assert statement (which is liable to be turned off with the ``-O`` flag), it can be used to validate
 conditions in production code, not just for testing (though it certainly works as a BDD test utility library).
-
-If you use Python 3, you can use *ensure* to enforce your function signature annotations: see the
-``@ensure_annotations`` decorator below.
 
 Aside from better looking code, a big reason to use *ensure* is that it provides more consistent, readable, and
 informative error messages when things go wrong. See
@@ -159,6 +160,33 @@ More examples
         w00t
 
 See `complete API documentation <https://ensure.readthedocs.org/en/latest/#module-ensure>`_.
+
+Enforcing function annotations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Use the ``@ensure_annotations`` decorator to enforce
+`function signature annotations <http://www.python.org/dev/peps/pep-3107/>`_:
+
+.. code-block:: python
+
+    from ensure import ensure_annotations
+
+    @ensure_annotations
+    def f(x: int, y: float) -> float:
+        return x+y
+
+    f(1, 2.3)
+
+.. code-block:: python
+
+    >>> 3.3
+
+.. code-block:: python
+
+    f(1, 2)
+
+.. code-block:: python
+
+    >>> ensure.EnsureError: Argument y to <function f at 0x109b7c710> does not match annotation type <class 'float'>
 
 Motivation and goals
 ~~~~~~~~~~~~~~~~~~~~
