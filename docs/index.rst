@@ -6,6 +6,8 @@ API documentation
 .. automodule:: ensure
    :members:
 
+.. autofunction:: ensure.ensure_annotations
+
 .. toctree::
    :maxdepth: 2
 
