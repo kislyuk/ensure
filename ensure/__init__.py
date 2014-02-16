@@ -625,12 +625,12 @@ def ensure_annotations(f):
             if arg in f.__annotations__:
                 templ = f.__annotations__[arg]
                 msg = "Argument {arg} to {f} does not match annotation type {t}"
-                Check(val).is_an(templ).or_raise(EnsureError, msg.format(arg=arg, f=f, t=templ))
+                Check(val).is_a(templ).or_raise(EnsureError, msg.format(arg=arg, f=f, t=templ))
         return_val = f(*args, **kwargs)
         if 'return' in f.__annotations__:
             templ = f.__annotations__['return']
             msg = "Return value of {f} does not match annotation type {t}"
-            Check(return_val).is_an(templ).or_raise(EnsureError, msg.format(f=f, t=templ))
+            Check(return_val).is_a(templ).or_raise(EnsureError, msg.format(f=f, t=templ))
         return return_val
     return wrapper
 
