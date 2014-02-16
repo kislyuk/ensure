@@ -126,9 +126,8 @@ class TestEnsure(unittest.TestCase):
         Ensure(lambda x: x).called_with().raises(TypeError)
         Ensure(lambda x: x).called_with(y=2).raises(TypeError)
 
+    @unittest.skipIf(sys.version_info < (3, 0), "Skipping test that requires Python 3 features")
     def test_annotations(self):
-        if sys.version_info < (3, 0):
-            return
         f_code = """
 from ensure import ensure_annotations
 
