@@ -116,7 +116,6 @@ class TestEnsure(unittest.TestCase):
             Ensure(x).called_with().is_an(int)
         Ensure(lambda: True).is_callable()
 
-
     def test_called_with(self):
         for i in None, True, 1, {}, [], lambda: True:
             with self.assertRaises(EnsureError):
@@ -126,6 +125,25 @@ class TestEnsure(unittest.TestCase):
         Ensure(lambda x: x).called_with(x=1).is_an(int)
         Ensure(lambda x: x).called_with().raises(TypeError)
         Ensure(lambda x: x).called_with(y=2).raises(TypeError)
+
+    def test_annotations(self):
+        if sys.version_info < (3, 0):
+            return
+        f_code = """
+from ensure import ensure_annotations
+
+global f
+
+@ensure_annotations
+def f(x: int, y: float) -> float:
+    return x+y if x+y > 0 else int(x+y)
+"""
+        exec(f_code)
+        self.assertEqual(f(1, 2.3), 3.3)
+        with self.assertRaisesRegexp(EnsureError, "Argument y to <function f at .+> does not match annotation type <class 'float'>"):
+            self.assertEqual(f(1, 2), 3.3)
+        with self.assertRaisesRegexp(EnsureError, "Return value of <function f at .+> does not match annotation type <class 'float'>"):
+            self.assertEqual(f(1, -2.3), 4)
 
 if __name__ == '__main__':
     unittest.main()

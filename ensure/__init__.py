@@ -595,7 +595,45 @@ class Check(object):
         if self._exception:
             _callable(*args, **kwargs)
 
+def ensure_annotations(f):
+    """
+    Decorator to be used on functions with annotations. Runs type checks to enforce annotations. Raises
+    :class:`EnsureError` if any argument passed to *f* is not of the type specified by the annotation. Also raises
+    :class:`EnsureError` if the return value of *f* is not of the type specified by the annotation. Examples:
+
+        from ensure import ensure_annotations
+
+        @ensure_annotations
+        def f(x: int, y: float) -> float:
+            return x+y
+
+        print(f(1, y=2.2))
+
+        >>> 3.2
+
+        print(f(1, y=2))
+
+        >>> ensure.EnsureError: 2 is not an instance of <class 'float'>
+    """
+    from functools import wraps
+    from inspect import getcallargs
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        for arg, val in getcallargs(f, *args, **kwargs).items():
+            if arg in f.__annotations__:
+                templ = f.__annotations__[arg]
+                msg = "Argument {arg} to {f} does not match annotation type {t}"
+                Check(val).is_an(templ).or_raise(EnsureError, msg.format(arg=arg, f=f, t=templ))
+        return_val = f(*args, **kwargs)
+        if 'return' in f.__annotations__:
+            templ = f.__annotations__['return']
+            msg = "Return value of {f} does not match annotation type {t}"
+            Check(return_val).is_an(templ).or_raise(EnsureError, msg.format(f=f, t=templ))
+        return return_val
+    return wrapper
+
 ensure = Ensure()
 check = Check()
+
 ensure_raises = unittest_case.assertRaises
 ensure_raises_regex = unittest_case.assertRaisesRegexp
