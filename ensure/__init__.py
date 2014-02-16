@@ -601,6 +601,8 @@ def ensure_annotations(f):
     :class:`EnsureError` if any argument passed to *f* is not of the type specified by the annotation. Also raises
     :class:`EnsureError` if the return value of *f* is not of the type specified by the annotation. Examples:
 
+    .. code-block:: python
+
         from ensure import ensure_annotations
 
         @ensure_annotations
@@ -613,7 +615,7 @@ def ensure_annotations(f):
 
         print(f(1, y=2))
 
-        >>> ensure.EnsureError: 2 is not an instance of <class 'float'>
+        >>> ensure.EnsureError: Argument y to <function f at 0x109b7c710> does not match annotation type <class 'float'>
     """
     from functools import wraps
     from inspect import getcallargs
