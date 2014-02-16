@@ -618,17 +618,27 @@ def ensure_annotations(f):
         >>> ensure.EnsureError: Argument y to <function f at 0x109b7c710> does not match annotation type <class 'float'>
     """
     from functools import wraps
-    from inspect import getcallargs
     @wraps(f)
     def wrapper(*args, **kwargs):
-        for arg, val in getcallargs(f, *args, **kwargs).items():
-            if arg in f.__annotations__:
-                templ = f.__annotations__[arg]
-                try:
-                    unittest_case.assertIsInstance(val, templ)
-                except AssertionError:
-                    msg = "Argument {arg} to {f} does not match annotation type {t}"
-                    raise EnsureError(msg.format(arg=arg, f=f, t=templ))
+        arg_pos = None
+        for arg, templ in f.__annotations__.items():
+            if arg == 'return':
+                continue
+            elif arg in kwargs:
+                value = kwargs[arg]
+            else:
+                if arg_pos is None:
+                    arg_pos = {arg: pos for pos, arg in enumerate(f.__code__.co_varnames)}
+                if arg in arg_pos:
+                    value = args[arg_pos[arg]]
+                else:
+                    continue
+            try:
+                unittest_case.assertIsInstance(value, templ)
+            except AssertionError:
+                msg = "Argument {arg} to {f} does not match annotation type {t}"
+                raise EnsureError(msg.format(arg=arg, f=f, t=templ))
+
         return_val = f(*args, **kwargs)
         if 'return' in f.__annotations__:
             templ = f.__annotations__['return']

@@ -139,10 +139,16 @@ def f(x: int, y: float) -> float:
 """
         exec(f_code)
         self.assertEqual(f(1, 2.3), 3.3)
+        self.assertEqual(f(1, y=2.3), 3.3)
+        self.assertEqual(f(y=1.2, x=3), 4.2)
         with self.assertRaisesRegexp(EnsureError, "Argument y to <function f at .+> does not match annotation type <class 'float'>"):
             self.assertEqual(f(1, 2), 3.3)
+        with self.assertRaisesRegexp(EnsureError, "Argument y to <function f at .+> does not match annotation type <class 'float'>"):
+            self.assertEqual(f(y=2, x=1), 3.3)
         with self.assertRaisesRegexp(EnsureError, "Return value of <function f at .+> does not match annotation type <class 'float'>"):
             self.assertEqual(f(1, -2.3), 4)
+        with self.assertRaisesRegexp(EnsureError, "Return value of <function f at .+> does not match annotation type <class 'float'>"):
+            self.assertEqual(f(x=1, y=-2.3), 4)
 
 if __name__ == '__main__':
     unittest.main()
