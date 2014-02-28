@@ -139,6 +139,7 @@ More examples
     ensure(lambda: 1).is_callable()
     ensure("abc").has_length(3)
     ensure(1).is_greater_than(0)
+    ensure(1).exceeds(0)
     ensure(0).is_less_than(1)
     ensure(1).is_greater_than_or_equal_to(1)
     ensure(0).is_less_than_or_equal_to(0)

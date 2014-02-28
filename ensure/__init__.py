@@ -484,6 +484,8 @@ class Ensure(Inspector):
         except self._catch as err:
             raise self._error_factory(_format("Expected {} to be greater than {}", self._subject, other))
 
+    exceeds = is_greater_than
+
     def is_less_than(self, other):
         """
         Ensures :attr:`subject` is less than *other*.
