@@ -2,7 +2,7 @@ import collections, types, re, functools
 from unittest.case import TestCase
 from collections import namedtuple, Mapping, Iterable
 
-__all__ = ['EnsureError', 'Ensure', 'Check', 'ensure', 'check', 'ensure_raises', 'ensure_raises_regex']
+__all__ = ['EnsureError', 'Ensure', 'Check', 'ensure', 'check', 'ensure_raises', 'ensure_raises_regex', 'ensure_annotations']
 
 try:
     from repr import Repr
