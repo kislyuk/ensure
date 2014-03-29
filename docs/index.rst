@@ -8,13 +8,13 @@ API documentation
 
 .. autofunction:: ensure.ensure_annotations
 
+Table of Contents
+=================
+
 .. toctree::
    :maxdepth: 5
 
    index
-
-Indices and tables
-==================
 
 * :ref:`genindex`
 * :ref:`modindex`
