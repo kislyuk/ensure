@@ -9,7 +9,9 @@ API documentation
 .. autofunction:: ensure.ensure_annotations
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 5
+
+   index
 
 Indices and tables
 ==================
