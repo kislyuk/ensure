@@ -8,7 +8,6 @@ import os, sys, unittest, collections, copy, re
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ensure import *
 
-
 class TestEnsure(unittest.TestCase):
     def test_basic_ensure_statements(self):
         ensure(range(10)).contains(5)
