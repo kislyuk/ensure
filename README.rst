@@ -6,8 +6,8 @@ Pythonic code for validating conditions. It's inspired by `should.js <https://gi
 `unittest/JUnit assert helpers <http://docs.python.org/2/library/unittest.html#assert-methods>`_.
 
 If you use Python 3, you can use *ensure* to enforce your
-`function signature annotations <http://www.python.org/dev/peps/pep-3107/>`_: see the ``@ensure_annotations`` decorator
-below.
+`function signature annotations <http://www.python.org/dev/peps/pep-3107/>`_: see the
+`@ensure_annotations <https://ensure.readthedocs.org/en/latest/#ensure.ensure_annotations>`_ decorator below.
 
 Because *ensure* is a standalone library (not part of a test framework), doesn't monkey-patch anything or use DSLs, and
 doesn't use the assert statement (which is liable to be turned off with the ``-O`` flag), it can be used to validate
