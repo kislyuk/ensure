@@ -1,3 +1,5 @@
+from __future__ import print_function, unicode_literals
+
 import collections, types, re, functools
 from unittest.case import TestCase
 from collections import namedtuple, Mapping, Iterable
