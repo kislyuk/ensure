@@ -1,10 +1,15 @@
 from __future__ import print_function, unicode_literals
 
-import collections, types, re, functools
+import sys, collections, types, re, functools
 from unittest.case import TestCase
 from collections import namedtuple, Mapping, Iterable
 
+USING_PYTHON2 = True if sys.version_info < (3, 0) else False
+
 __all__ = ['EnsureError', 'Ensure', 'Check', 'ensure', 'check', 'ensure_raises', 'ensure_raises_regex', 'ensure_annotations']
+
+if USING_PYTHON2:
+    __all__ = map(bytes, __all__)
 
 try:
     from repr import Repr
