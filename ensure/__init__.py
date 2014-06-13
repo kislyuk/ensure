@@ -639,7 +639,11 @@ def ensure_annotations(f):
                 if arg_pos is None:
                     arg_pos = {arg: pos for pos, arg in enumerate(f.__code__.co_varnames)}
                 if arg in arg_pos:
-                    value = args[arg_pos[arg]]
+                    pos = arg_pos[arg]
+                    if len(args) > pos:
+                        value = args[pos]
+                    else:
+                        continue
                 else:
                     continue
             if not isinstance(value, templ):
