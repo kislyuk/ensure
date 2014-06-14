@@ -1,3 +1,7 @@
+Version 0.1.9 (2014-02-17)
+--------------------------
+- Fix issue with keyword arguments used as positionals by the caller (#1). Thanks to @harrisonmetz.
+
 Version 0.1.8 (2014-02-17)
 --------------------------
 - Speed up function annotation enforcement.
