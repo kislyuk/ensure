@@ -132,11 +132,15 @@ class TestEnsure(unittest.TestCase):
         f_code = """
 from ensure import ensure_annotations
 
-global f
+global f, g
 
 @ensure_annotations
 def f(x: int, y: float) -> float:
     return x+y if x+y > 0 else int(x+y)
+
+@ensure_annotations
+def g(x: str, y: str="default") -> str:
+    return x+y
 """
         exec(f_code)
         self.assertEqual(f(1, 2.3), 3.3)
@@ -150,6 +154,11 @@ def f(x: int, y: float) -> float:
             self.assertEqual(f(1, -2.3), 4)
         with self.assertRaisesRegexp(EnsureError, "Return value of <function f at .+> does not match annotation type <class 'float'>"):
             self.assertEqual(f(x=1, y=-2.3), 4)
+
+        # Test with mixtures of keyword and positional args
+        self.assertEqual(g("the "), "the default")
+        self.assertEqual(g("the ", "bomb"), "the bomb")
+        self.assertEqual(g(y=g("the ", y="bomb"), x="somebody set up us "), "somebody set up us the bomb")
 
 if __name__ == '__main__':
     unittest.main()
