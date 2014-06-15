@@ -653,25 +653,23 @@ def ensure_annotations(f):
                     if not isinstance(value, templ):
                         msg = "Default argument {arg} to {f} does not match annotation type {t}"
                         raise EnsureError(msg.format(arg=arg, f=f, t=templ))
-    arg_pos = {arg: pos for pos, arg in enumerate(f.__code__.co_varnames)}
+    arg_properties = []
+    for pos, arg in enumerate(f.__code__.co_varnames):
+        if arg in f.__annotations__:
+            templ = f.__annotations__[arg]
+            arg_properties.append((arg, templ, pos))
     from functools import wraps
 
     @wraps(f)
     def wrapper(*args, **kwargs):
-        for arg, templ in f.__annotations__.items():
-            if arg == 'return':
-                continue
+        for arg, templ, pos in arg_properties:
+            if len(args) > pos:
+                value = args[pos]
             elif arg in kwargs:
                 value = kwargs[arg]
             else:
-                if arg in arg_pos:
-                    pos = arg_pos[arg]
-                    if len(args) > pos:
-                        value = args[pos]
-                    else:
-                        continue
-                else:
-                    continue
+                continue
+
             if not isinstance(value, templ):
                 msg = "Argument {arg} to {f} does not match annotation type {t}"
                 raise EnsureError(msg.format(arg=arg, f=f, t=templ))
