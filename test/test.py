@@ -58,7 +58,7 @@ class TestEnsure(unittest.TestCase):
                       'Ensure(int).called_with("1100101", base=2).returns(101)',
                       'Ensure.each_of([1,2,3]).is_an(int)',
                       'Ensure.each_of([lambda x: x, lambda y: y]).called_with(1).returns(1)')
-        
+
         for clause in ok_clauses:
             print("Testing OK clause", clause)
             eval(clause)
@@ -97,14 +97,14 @@ class TestEnsure(unittest.TestCase):
                        'Ensure({1: "a", 2: "b"}).has_only_keys([1])',
                        'Ensure({1: "a", 2: "b"}).has_only_keys([1, 2, 3])',
                        'Ensure([1, 2, 3]).has_only_keys([1, 2, 3])',
-                       'Ensure(os.path.join).called_with("a", "b").returns(None)', 
+                       'Ensure(os.path.join).called_with("a", "b").returns(None)',
                        'Ensure.each_of([lambda x: x, lambda y: y]).called_with(2).returns(1)')
 
         for clause in bad_clauses:
             print("Testing bad clause", clause)
             with self.assertRaises(EnsureError):
                 eval(clause)
-            if 'each_of' not in clause:                
+            if 'each_of' not in clause:
                 for sub in r'Check\1.otherwise(Exception)', r'Check\1.or_raise(Exception)', r'Check\1.or_call(self.assertTrue, False)':
                     with self.assertRaises(Exception):
                         eval(re.sub(r'^Ensure(.+)', sub, clause))
@@ -159,6 +159,28 @@ def g(x: str, y: str="default") -> str:
         self.assertEqual(g("the "), "the default")
         self.assertEqual(g("the ", "bomb"), "the bomb")
         self.assertEqual(g(y=g("the ", y="bomb"), x="somebody set up us "), "somebody set up us the bomb")
+
+    @unittest.skipIf(sys.version_info < (3, 0), "Skipping test that requires Python 3 features")
+    def test_annotations_with_bad_default(self):
+        f_code = """
+from ensure import ensure_annotations
+
+global f, g
+
+@ensure_annotations
+def f(x: int, y: float=None) -> float:
+    return x+y if x+y > 0 else int(x+y)
+
+@ensure_annotations
+def g(x: str, y: str=5, z='untyped with default') -> str:
+    return x+y+str(z)
+"""
+        with self.assertRaisesRegexp(EnsureError, "Default argument y to <function g at .+> does not match annotation type <class 'str'>"):
+            exec(f_code)
+        # Make sure f still works as None should be excluded from default test
+        self.assertEqual(f(1, 2.3), 3.3)
+        self.assertEqual(f(1, y=2.3), 3.3)
+        self.assertEqual(f(y=1.2, x=3), 4.2)
 
 if __name__ == '__main__':
     unittest.main()
