@@ -626,6 +626,16 @@ def ensure_annotations(f):
 
         >>> ensure.EnsureError: Argument y to <function f at 0x109b7c710> does not match annotation type <class 'float'>
     """
+    if f.__defaults__:
+        for rpos, value in enumerate(f.__defaults__):
+            if value is not None:
+                pos = f.__code__.co_argcount - len(f.__defaults__) + rpos
+                arg = f.__code__.co_varnames[pos]
+                if arg in f.__annotations__:
+                    templ = f.__annotations__[arg]
+                    if not isinstance(value, templ):
+                        msg = "Default argument {arg} to {f} does not match annotation type {t}"
+                        raise EnsureError(msg.format(arg=arg, f=f, t=templ))
     from functools import wraps
     @wraps(f)
     def wrapper(*args, **kwargs):
