@@ -1,6 +1,10 @@
 from __future__ import print_function, unicode_literals
 
-import sys, collections, types, re, functools
+import sys
+import collections
+import types
+import re
+import functools
 from unittest.case import TestCase
 from collections import namedtuple, Mapping, Iterable
 
@@ -20,12 +24,15 @@ _repr = Repr().repr
 
 unittest_case = TestCase(methodName='__init__')
 
+
 def _format(message, *args):
     return message.format(*map(_repr, args))
+
 
 class EnsureError(AssertionError):
     # TODO: preserve original error type, define API for introspecting EnsureError
     pass
+
 
 class Inspector(object):
     def __init__(self, subject=None, error_factory=EnsureError, catch=Exception):
@@ -68,6 +75,7 @@ class Inspector(object):
             new_err = self._error_factory(err)
             raise new_err
 
+
 class IterableInspector(Inspector):
     def of(self, prototype):
         for item in self._subject:
@@ -81,6 +89,7 @@ class IterableInspector(Inspector):
                 raise self._error_factory(_format("Expected {} to be non-empty", item))
         return self.of(prototype)
 
+
 class MappingInspector(Inspector):
     def to(self, prototype):
         for value in self._subject.values():
@@ -92,15 +101,18 @@ class MappingInspector(Inspector):
                 raise self._error_factory(_format("Expected {} to be non-empty", value))
         return self.to(prototype)
 
+
 class AttributeInspector(Inspector):
     @property
     def which(self):
         return Ensure(self._subject)
 
+
 class KeyInspector(Inspector):
     @property
     def whose_value(self):
         return Ensure(self._subject)
+
 
 class CallableInspector(Inspector):
     def returns(self, value):
@@ -111,6 +123,7 @@ class CallableInspector(Inspector):
 
     def __getattr__(self, item):
         return getattr(self._subject, item)
+
 
 class MultiInspector(Inspector):
     """
@@ -127,9 +140,10 @@ class MultiInspector(Inspector):
                 inspector = self._get_inspector(subject)
                 inspect_method = getattr(inspector, item)
                 sub_inspectors.append(inspect_method(*args, **kwargs))
-            if not all(i == None for i in sub_inspectors):
+            if not all(i is None for i in sub_inspectors):
                 return MultiInspector(sub_inspectors)
         return inspect
+
 
 class MultiEnsure(MultiInspector):
     """
@@ -142,6 +156,7 @@ class MultiEnsure(MultiInspector):
 
     def _get_inspector(self, subject):
         return self._inspector(subject)
+
 
 class Ensure(Inspector):
     ''' Constructs a root-level inspector, which can perform a variety of checks (*predicates*) on subjects passed to
@@ -550,6 +565,7 @@ class Ensure(Inspector):
     #    import jsonschema
     #    self._run(jsonschema.validate, (self._subject, schema))
 
+
 class Check(object):
     """
     Like Ensure, but if a check fails, saves the error instead of raising it immediately. The error can then be acted
@@ -604,6 +620,7 @@ class Check(object):
         if self._exception:
             _callable(*args, **kwargs)
 
+
 def ensure_annotations(f):
     """
     Decorator to be used on functions with annotations. Runs type checks to enforce annotations. Raises
@@ -636,18 +653,17 @@ def ensure_annotations(f):
                     if not isinstance(value, templ):
                         msg = "Default argument {arg} to {f} does not match annotation type {t}"
                         raise EnsureError(msg.format(arg=arg, f=f, t=templ))
+    arg_pos = {arg: pos for pos, arg in enumerate(f.__code__.co_varnames)}
     from functools import wraps
+
     @wraps(f)
     def wrapper(*args, **kwargs):
-        arg_pos = None
         for arg, templ in f.__annotations__.items():
             if arg == 'return':
                 continue
             elif arg in kwargs:
                 value = kwargs[arg]
             else:
-                if arg_pos is None:
-                    arg_pos = {arg: pos for pos, arg in enumerate(f.__code__.co_varnames)}
                 if arg in arg_pos:
                     pos = arg_pos[arg]
                     if len(args) > pos:
