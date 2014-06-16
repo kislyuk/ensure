@@ -206,6 +206,11 @@ reference to a failing element) may need to be added, and some information may n
 further improve on that, we will work on better error translation, marshalling, message formatting, and schema
 validation helpers.
 
+Authors
+-------
+* Andrey Kislyuk
+* Harrison Metzger
+
 Links
 -----
 * `Project home page (GitHub) <https://github.com/kislyuk/ensure>`_

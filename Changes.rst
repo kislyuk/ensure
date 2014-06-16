@@ -1,4 +1,8 @@
-Version 0.1.9 (2014-02-17)
+Version 0.2.0 (2014-06-16)
+--------------------------
+- Major performance improvements to function annotation enforcement (ensure_annotations). (#4, #5). Thanks to @harrisonmetz.
+
+Version 0.1.9 (2014-06-14)
 --------------------------
 - Fix issue with keyword arguments used as positionals by the caller (#1). Thanks to @harrisonmetz.
 
