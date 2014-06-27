@@ -241,7 +241,7 @@ def f(x: int, y: float, *args, z: int=5) -> str:
             self.assertEqual('3.0abc3.0def', f(3, 4.0, 'abc', 'def', z='school'))
 
     @unittest.skipIf(sys.version_info < (3, 0), "Skipping test that requires Python 3 features")
-    def test_annotations_with_bad_default(self):
+    def test_annotations_with_vararg_bad_default(self):
         f_code = """
 from ensure import ensure_annotations
 
