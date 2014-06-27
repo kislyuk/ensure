@@ -658,6 +658,8 @@ def ensure_annotations(f):
         if arg in f.__annotations__:
             templ = f.__annotations__[arg]
             arg_properties.append((arg, templ, pos))
+        elif pos >= f.__code__.co_argcount:
+            break
     from functools import wraps
 
     @wraps(f)

@@ -142,11 +142,14 @@ global f, g
 
 @ensure_annotations
 def f(x: int, y: float) -> float:
-    return x+y if x+y > 0 else int(x+y)
+    t = x+y
+    r = t > 0
+    return t if r else int(t)
 
 @ensure_annotations
 def g(x: str, y: str="default") -> str:
-    return x+y
+    t = x+y
+    return t
 """
         exec(f_code)
         self.assertEqual(f(1, 2.3), 3.3)
