@@ -191,5 +191,73 @@ def g(x: str, y: str=5, z='untyped with default') -> str:
         self.assertEqual(f(1, y=2.3), 3.3)
         self.assertEqual(f(y=1.2, x=3), 4.2)
 
+    @unittest.skipIf(sys.version_info < (3, 0), "Skipping test that requires Python 3 features")
+    def test_annotations_after_varargs(self):
+        f_code = """
+from ensure import ensure_annotations
+
+global f
+
+@ensure_annotations
+def f(x: int, y: float, *args, z: int=5) -> float:
+    t = x + y
+    s = sum(args)
+
+    return t + s - z
+
+"""
+        exec(f_code)
+        # Make sure f still works as None should be excluded from default test
+        self.assertEqual(2.0, f(3, 4.0))
+        self.assertEqual(62.0, f(3, 4.0, 10, 20, 30))
+        self.assertEqual(66.0, f(3, 4.0, 10, 20, 30, z=1))
+        with self.assertRaisesRegexp(EnsureError, "Argument z to <function f at .+> does not match annotation type <class 'int'>"):
+            self.assertEqual(66.0, f(3, 4.0, 10, 20, 30, z='hello world'))
+
+    @unittest.skipIf(sys.version_info < (3, 0), "Skipping test that requires Python 3 features")
+    def test_annotations_with_varargs(self):
+        f_code = """
+from ensure import ensure_annotations
+
+global f
+
+@ensure_annotations
+def f(x: int, y: float, *args, z: int=5) -> str:
+    t = x + y
+    r = ''
+    for s in args:
+        r = r + str(t - z) + s
+
+    return r
+
+"""
+        exec(f_code)
+        # Make sure f still works as None should be excluded from default test
+        self.assertEqual('', f(3, 4.0))
+        self.assertEqual('2.0abc', f(3, 4.0, 'abc'))
+        self.assertEqual('2.0abc2.0def', f(3, 4.0, 'abc', 'def'))
+        self.assertEqual('3.0abc3.0def', f(3, 4.0, 'abc', 'def', z=4))
+        with self.assertRaisesRegexp(EnsureError, "Argument z to <function f at .+> does not match annotation type <class 'int'>"):
+            self.assertEqual('3.0abc3.0def', f(3, 4.0, 'abc', 'def', z='school'))
+
+    @unittest.skipIf(sys.version_info < (3, 0), "Skipping test that requires Python 3 features")
+    def test_annotations_with_bad_default(self):
+        f_code = """
+from ensure import ensure_annotations
+
+global f
+
+@ensure_annotations
+def f(x: int, y: float, *args, z: int='not an int') -> str:
+    t = x + y
+    r = ''
+    for s in args:
+        r = r + str(t - z) + s
+
+    return r
+"""
+        with self.assertRaisesRegexp(EnsureError, "Default argument z to <function f at .+> does not match annotation type <class 'int'>"):
+            exec(f_code)
+
 if __name__ == '__main__':
     unittest.main()
