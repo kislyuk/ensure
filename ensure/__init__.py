@@ -620,6 +620,13 @@ class Check(object):
         if self._exception:
             _callable(*args, **kwargs)
 
+def _check_default_argument(f, arg, value):
+    if value is not None and arg in f.__annotations__:
+        templ = f.__annotations__[arg]
+        if not isinstance(value, templ):
+            msg = "Default argument {arg} to {f} does not match annotation type {t}"
+            raise EnsureError(msg.format(arg=arg, f=f, t=templ))
+
 
 def ensure_annotations(f):
     """
@@ -645,25 +652,29 @@ def ensure_annotations(f):
     """
     if f.__defaults__:
         for rpos, value in enumerate(f.__defaults__):
-            if value is not None:
-                pos = f.__code__.co_argcount - len(f.__defaults__) + rpos
-                arg = f.__code__.co_varnames[pos]
-                if arg in f.__annotations__:
-                    templ = f.__annotations__[arg]
-                    if not isinstance(value, templ):
-                        msg = "Default argument {arg} to {f} does not match annotation type {t}"
-                        raise EnsureError(msg.format(arg=arg, f=f, t=templ))
+            pos = f.__code__.co_argcount - len(f.__defaults__) + rpos
+            arg = f.__code__.co_varnames[pos]
+            _check_default_argument(f, arg, value)
+    if f.__kwdefaults__:
+        for arg, value in f.__kwdefaults__.items():
+            _check_default_argument(f, arg, value)
+
     arg_properties = []
     for pos, arg in enumerate(f.__code__.co_varnames):
-        if arg in f.__annotations__:
+        if pos >= f.__code__.co_argcount + f.__code__.co_kwonlyargcount:
+            break
+        elif arg in f.__annotations__:
             templ = f.__annotations__[arg]
-            arg_properties.append((arg, templ, pos))
+            if pos >= f.__code__.co_argcount:
+                arg_properties.append((arg, templ, None))
+            else:
+                arg_properties.append((arg, templ, pos))
     from functools import wraps
 
     @wraps(f)
     def wrapper(*args, **kwargs):
         for arg, templ, pos in arg_properties:
-            if len(args) > pos:
+            if pos is not None and len(args) > pos:
                 value = args[pos]
             elif arg in kwargs:
                 value = kwargs[arg]
