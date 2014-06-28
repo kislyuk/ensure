@@ -671,6 +671,11 @@ def ensure_annotations(f):
                 arg_properties.append((arg, templ, pos))
     from functools import wraps
 
+    has_return_annotation = False
+    if 'return' in f.__annotations__:
+        has_return_annotation = True
+        return_templ = f.__annotations__['return']
+
     @wraps(f)
     def wrapper(*args, **kwargs):
         for arg, templ, pos in arg_properties:
@@ -686,11 +691,10 @@ def ensure_annotations(f):
                 raise EnsureError(msg.format(arg=arg, f=f, t=templ))
 
         return_val = f(*args, **kwargs)
-        if 'return' in f.__annotations__:
-            templ = f.__annotations__['return']
-            if not isinstance(return_val, templ):
+        if has_return_annotation:
+            if not isinstance(return_val, return_templ):
                 msg = "Return value of {f} does not match annotation type {t}"
-                raise EnsureError(msg.format(f=f, t=templ))
+                raise EnsureError(msg.format(f=f, t=return_templ))
         return return_val
     return wrapper
 
