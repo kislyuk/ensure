@@ -1,3 +1,8 @@
+Version 0.2.1 (2014-06-28)
+--------------------------
+- Fix issue with function annotation enforcement in keyword-only arguments (#7).
+- Further performance improvements to function annotation enforcement (ensure_annotations).
+
 Version 0.2.0 (2014-06-16)
 --------------------------
 - Major performance improvements to function annotation enforcement (ensure_annotations). (#4, #5). Thanks to @harrisonmetz.
