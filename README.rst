@@ -9,8 +9,8 @@ If you use Python 3, you can use *ensure* to enforce your
 `function signature annotations <http://www.python.org/dev/peps/pep-3107/>`_: see the
 `@ensure_annotations <https://ensure.readthedocs.org/en/latest/#ensure.ensure_annotations>`_ decorator below.
 
-Because *ensure* is a standalone library (not part of a test framework), doesn't monkey-patch anything or use DSLs, and
-doesn't use the assert statement (which is liable to be turned off with the ``-O`` flag), it can be used to validate
+Because *ensure* is fast, is a standalone library (not part of a test framework), doesn't monkey-patch anything or use DSLs,
+and doesn't use the assert statement (which is liable to be turned off with the ``-O`` flag), it can be used to validate
 conditions in production code, not just for testing (though it certainly works as a BDD test utility library).
 
 Aside from better looking code, a big reason to use *ensure* is that it provides more consistent, readable, and
