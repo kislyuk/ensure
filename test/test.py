@@ -138,7 +138,7 @@ class TestEnsure(unittest.TestCase):
         f_code = """
 from ensure import ensure_annotations
 
-global f, g
+global f, g, h
 
 @ensure_annotations
 def f(x: int, y: float) -> float:
@@ -148,8 +148,14 @@ def f(x: int, y: float) -> float:
 
 @ensure_annotations
 def g(x: str, y: str="default") -> str:
+    '''Simply add numbers together'''
     t = x+y
     return t
+
+@ensure_annotations
+def h(x: str, y: int):
+    '''Does some work'''
+    return x * y
 """
         exec(f_code)
         self.assertEqual(f(1, 2.3), 3.3)
@@ -168,6 +174,11 @@ def g(x: str, y: str="default") -> str:
         self.assertEqual(g("the "), "the default")
         self.assertEqual(g("the ", "bomb"), "the bomb")
         self.assertEqual(g(y=g("the ", y="bomb"), x="somebody set up us "), "somebody set up us the bomb")
+
+        self.assertEqual('g', g.__name__)
+        self.assertEqual('Simply add numbers together', g.__doc__)
+        self.assertEqual('h', h.__name__)
+        self.assertEqual('Does some work', h.__doc__)
 
     @unittest.skipIf(sys.version_info < (3, 0), "Skipping test that requires Python 3 features")
     def test_annotations_with_bad_default(self):
