@@ -270,5 +270,25 @@ def f(x: int, y: float, *args, z: int='not an int') -> str:
         with self.assertRaisesRegex(EnsureError, "Default argument z to <function f at .+> does not match annotation type <class 'int'>"):
             exec(f_code)
 
+    @unittest.skipIf(sys.version_info < (3, 0), "Skipping test that requires Python 3 features")
+    def test_annotations_on_bound_methods(self):
+        f_code = """
+from ensure import ensure_annotations
+
+global C
+
+class C(object):
+    @ensure_annotations
+    def f(self, x: int, y: float) -> str:
+        return str(x+y)
+
+
+"""
+        exec(f_code)
+        self.assertEqual('3.3', C().f(1, 2.3))
+        with self.assertRaisesRegex(EnsureError, "Argument x to <function C.f at .+> does not match annotation type <class 'int'>"):
+            g = C().f(3.2, 1)
+
+
 if __name__ == '__main__':
     unittest.main()
