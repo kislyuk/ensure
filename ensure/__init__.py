@@ -657,6 +657,12 @@ class WrappedFunction:
     def __getattr__(self, attr_name):
         return getattr(self.f, attr_name)
 
+    def __repr__(self):
+        return repr(self.f)
+
+    def __str__(self):
+        return str(self.f)
+
     def __get__(self, obj, type=None):
         return types.MethodType(self, obj)
 
