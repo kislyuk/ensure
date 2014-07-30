@@ -690,6 +690,43 @@ class WrappedFunction:
         return BoundWrappedFunction(self.arg_properties, self.f, obj)
 
 
+class BoundWrappedFunctionReturn(BoundWrappedFunction):
+    """
+    Wrapper for bound methods to check argument annotations with return checking
+    """
+
+    def __init__(self, arg_properties, f, return_templ, __self__):
+        super().__init__(arg_properties, f, __self__)
+        self.return_templ = return_templ
+
+    def __call__(self, *args, **kwargs):
+        return_val = super().__call__(*args, **kwargs)
+        if not isinstance(return_val, self.return_templ):
+                msg = "Return value of {f} does not match annotation type {t}"
+                raise EnsureError(msg.format(f=self.f, t=self.return_templ))
+        return return_val
+
+
+class WrappedFunctionReturn(WrappedFunction):
+    """
+    Wrapper for functions to check argument annotations with return checking
+    """
+
+    def __init__(self, arg_properties, f, return_templ):
+        super().__init__(arg_properties, f)
+        self.return_templ = return_templ
+
+    def __call__(self, *args, **kwargs):
+        return_val = super().__call__(*args, **kwargs)
+        if not isinstance(return_val, self.return_templ):
+                msg = "Return value of {f} does not match annotation type {t}"
+                raise EnsureError(msg.format(f=self.f, t=self.return_templ))
+        return return_val
+
+    def __get__(self, obj, type=None):
+        return BoundWrappedFunctionReturn(self.arg_properties, self.f, self.return_templ, obj)
+
+
 def ensure_annotations(f):
     """
     Decorator to be used on functions with annotations. Runs type checks to enforce annotations. Raises
@@ -732,21 +769,12 @@ def ensure_annotations(f):
                 arg_properties.append((arg, templ, None))
             else:
                 arg_properties.append((arg, templ, pos))
-    from functools import wraps
 
-    wrapper = WrappedFunction(arg_properties, f)
     if 'return' in f.__annotations__:
         return_templ = f.__annotations__['return']
-        @wraps(f)
-        def return_check_wrapper(*args, **kwargs):
-            return_val = wrapper(*args, **kwargs)
-            if not isinstance(return_val, return_templ):
-                msg = "Return value of {f} does not match annotation type {t}"
-                raise EnsureError(msg.format(f=f, t=return_templ))
-            return return_val
-        return return_check_wrapper
+        return WrappedFunctionReturn(arg_properties, f, return_templ)
     else:
-        return wrapper
+        return WrappedFunction(arg_properties, f)
 
 
 ensure = Ensure()
