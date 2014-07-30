@@ -628,6 +628,68 @@ def _check_default_argument(f, arg, value):
             raise EnsureError(msg.format(arg=arg, f=f, t=templ))
 
 
+class BoundWrappedFunction:
+    """
+    Wrapper for bound methods to check argument annotations
+    """
+
+    def __init__(self, arg_properties, f, __self__):
+        self.arg_properties = arg_properties
+        self.f = f
+        self.__self__ = __self__
+        self.__doc__ = f.__doc__
+
+    def __call__(self, *args, **kwargs):
+        for arg, templ, pos in self.arg_properties:
+            if pos is not None and len(args) > pos - 1:
+                value = args[pos - 1]
+            elif arg in kwargs:
+                value = kwargs[arg]
+            else:
+                continue
+
+            if not isinstance(value, templ):
+                msg = "Argument {arg} to {f} does not match annotation type {t}"
+                raise EnsureError(msg.format(arg=arg, f=self.f, t=templ))
+
+        return self.f(self.__self__, *args, **kwargs)
+
+    def __getattr__(self, attr_name):
+        return getattr(self.f, attr_name)
+
+
+class WrappedFunction:
+    """
+    Wrapper for functions to check argument annotations
+    """
+
+    def __init__(self, arg_properties, f):
+        self.arg_properties = arg_properties
+        self.f = f
+        self.__doc__ = f.__doc__
+
+    def __call__(self, *args, **kwargs):
+        for arg, templ, pos in self.arg_properties:
+            if pos is not None and len(args) > pos:
+                value = args[pos]
+            elif arg in kwargs:
+                value = kwargs[arg]
+            else:
+                continue
+
+            if not isinstance(value, templ):
+                msg = "Argument {arg} to {f} does not match annotation type {t}"
+                raise EnsureError(msg.format(arg=arg, f=self.f, t=templ))
+
+        return self.f(*args, **kwargs)
+
+    def __getattr__(self, attr_name):
+        return getattr(self.f, attr_name)
+
+    def __get__(self, obj, type=None):
+        return BoundWrappedFunction(self.arg_properties, self.f, obj)
+
+
 def ensure_annotations(f):
     """
     Decorator to be used on functions with annotations. Runs type checks to enforce annotations. Raises
@@ -650,6 +712,7 @@ def ensure_annotations(f):
 
         >>> ensure.EnsureError: Argument y to <function f at 0x109b7c710> does not match annotation type <class 'float'>
     """
+
     if f.__defaults__:
         for rpos, value in enumerate(f.__defaults__):
             pos = f.__code__.co_argcount - len(f.__defaults__) + rpos
@@ -671,32 +734,20 @@ def ensure_annotations(f):
                 arg_properties.append((arg, templ, pos))
     from functools import wraps
 
-    has_return_annotation = False
+    wrapper = WrappedFunction(arg_properties, f)
     if 'return' in f.__annotations__:
-        has_return_annotation = True
         return_templ = f.__annotations__['return']
-
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        for arg, templ, pos in arg_properties:
-            if pos is not None and len(args) > pos:
-                value = args[pos]
-            elif arg in kwargs:
-                value = kwargs[arg]
-            else:
-                continue
-
-            if not isinstance(value, templ):
-                msg = "Argument {arg} to {f} does not match annotation type {t}"
-                raise EnsureError(msg.format(arg=arg, f=f, t=templ))
-
-        return_val = f(*args, **kwargs)
-        if has_return_annotation:
+        @wraps(f)
+        def return_check_wrapper(*args, **kwargs):
+            return_val = wrapper(*args, **kwargs)
             if not isinstance(return_val, return_templ):
                 msg = "Return value of {f} does not match annotation type {t}"
                 raise EnsureError(msg.format(f=f, t=return_templ))
-        return return_val
-    return wrapper
+            return return_val
+        return return_check_wrapper
+    else:
+        return wrapper
+
 
 ensure = Ensure()
 check = Check()

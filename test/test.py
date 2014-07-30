@@ -282,12 +282,20 @@ class C(object):
     def f(self, x: int, y: float) -> str:
         return str(x+y)
 
+    @ensure_annotations
+    def g(self, x: int, y: float):
+        return str(x+y)
 
 """
         exec(f_code)
-        self.assertEqual('3.3', C().f(1, 2.3))
+        c = C()
+        self.assertEqual('3.3', c.f(1, 2.3))
         with self.assertRaisesRegex(EnsureError, "Argument x to <function C.f at .+> does not match annotation type <class 'int'>"):
             g = C().f(3.2, 1)
+
+        self.assertEqual('3.3', c.g(1, 2.3))
+        with self.assertRaisesRegex(EnsureError, "Argument x to <function C.g at .+> does not match annotation type <class 'int'>"):
+            g = C().g(3.2, 1)
 
 
 if __name__ == '__main__':
