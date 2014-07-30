@@ -5,6 +5,7 @@ import collections
 import types
 import re
 import functools
+import types
 from unittest.case import TestCase
 from collections import namedtuple, Mapping, Iterable
 
@@ -628,36 +629,6 @@ def _check_default_argument(f, arg, value):
             raise EnsureError(msg.format(arg=arg, f=f, t=templ))
 
 
-class BoundWrappedFunction:
-    """
-    Wrapper for bound methods to check argument annotations
-    """
-
-    def __init__(self, arg_properties, f, __self__):
-        self.arg_properties = arg_properties
-        self.f = f
-        self.__self__ = __self__
-        self.__doc__ = f.__doc__
-
-    def __call__(self, *args, **kwargs):
-        for arg, templ, pos in self.arg_properties:
-            if pos is not None and len(args) > pos - 1:
-                value = args[pos - 1]
-            elif arg in kwargs:
-                value = kwargs[arg]
-            else:
-                continue
-
-            if not isinstance(value, templ):
-                msg = "Argument {arg} to {f} does not match annotation type {t}"
-                raise EnsureError(msg.format(arg=arg, f=self.f, t=templ))
-
-        return self.f(self.__self__, *args, **kwargs)
-
-    def __getattr__(self, attr_name):
-        return getattr(self.f, attr_name)
-
-
 class WrappedFunction:
     """
     Wrapper for functions to check argument annotations
@@ -687,24 +658,7 @@ class WrappedFunction:
         return getattr(self.f, attr_name)
 
     def __get__(self, obj, type=None):
-        return BoundWrappedFunction(self.arg_properties, self.f, obj)
-
-
-class BoundWrappedFunctionReturn(BoundWrappedFunction):
-    """
-    Wrapper for bound methods to check argument annotations with return checking
-    """
-
-    def __init__(self, arg_properties, f, return_templ, __self__):
-        super().__init__(arg_properties, f, __self__)
-        self.return_templ = return_templ
-
-    def __call__(self, *args, **kwargs):
-        return_val = super().__call__(*args, **kwargs)
-        if not isinstance(return_val, self.return_templ):
-                msg = "Return value of {f} does not match annotation type {t}"
-                raise EnsureError(msg.format(f=self.f, t=self.return_templ))
-        return return_val
+        return types.MethodType(self, obj)
 
 
 class WrappedFunctionReturn(WrappedFunction):
@@ -722,9 +676,6 @@ class WrappedFunctionReturn(WrappedFunction):
                 msg = "Return value of {f} does not match annotation type {t}"
                 raise EnsureError(msg.format(f=self.f, t=self.return_templ))
         return return_val
-
-    def __get__(self, obj, type=None):
-        return BoundWrappedFunctionReturn(self.arg_properties, self.f, self.return_templ, obj)
 
 
 def ensure_annotations(f):
