@@ -177,8 +177,10 @@ def h(x: str, y: int):
 
         self.assertEqual('g', g.__name__)
         self.assertEqual('Simply add numbers together', g.__doc__)
+        self.assertRegex(repr(g), '<function g at 0x[0-9a-f]+>')
         self.assertEqual('h', h.__name__)
         self.assertEqual('Does some work', h.__doc__)
+        self.assertRegex(repr(h), '<function h at 0x[0-9a-f]+>')
 
     @unittest.skipIf(sys.version_info < (3, 0), "Skipping test that requires Python 3 features")
     def test_annotations_with_bad_default(self):
@@ -282,12 +284,22 @@ class C(object):
     def f(self, x: int, y: float) -> str:
         return str(x+y)
 
+    @ensure_annotations
+    def g(self, x: int, y: float):
+        return str(x+y)
 
 """
         exec(f_code)
-        self.assertEqual('3.3', C().f(1, 2.3))
+        c = C()
+        self.assertEqual('3.3', c.f(1, 2.3))
+        self.assertRegex(repr(c.f), '<bound method C.f of <__main__.C object at 0x[0-9a-f]+>>')
         with self.assertRaisesRegex(EnsureError, "Argument x to <function C.f at .+> does not match annotation type <class 'int'>"):
             g = C().f(3.2, 1)
+
+        self.assertEqual('3.3', c.g(1, 2.3))
+        self.assertRegex(repr(c.g), '<bound method C.g of <__main__.C object at 0x[0-9a-f]+>>')
+        with self.assertRaisesRegex(EnsureError, "Argument x to <function C.g at .+> does not match annotation type <class 'int'>"):
+            g = C().g(3.2, 1)
 
 
 if __name__ == '__main__':
