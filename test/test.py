@@ -293,12 +293,12 @@ class C(object):
         c = C()
         self.assertEqual('3.3', c.f(1, 2.3))
         self.assertRegex(repr(c.f), '<bound method C.f of <__main__.C object at 0x[0-9a-f]+>>')
-        with self.assertRaisesRegex(EnsureError, "Argument x to <function C.f at .+> does not match annotation type <class 'int'>"):
+        with self.assertRaisesRegex(EnsureError, "Argument x to <function (C.f|f) at .+> does not match annotation type <class 'int'>"):
             g = C().f(3.2, 1)
 
         self.assertEqual('3.3', c.g(1, 2.3))
         self.assertRegex(repr(c.g), '<bound method C.g of <__main__.C object at 0x[0-9a-f]+>>')
-        with self.assertRaisesRegex(EnsureError, "Argument x to <function C.g at .+> does not match annotation type <class 'int'>"):
+        with self.assertRaisesRegex(EnsureError, "Argument x to <function (C.g|g) at .+> does not match annotation type <class 'int'>"):
             g = C().g(3.2, 1)
 
 
