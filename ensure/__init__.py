@@ -5,7 +5,6 @@ import collections
 import types
 import re
 import functools
-import types
 from unittest.case import TestCase
 from collections import namedtuple, Mapping, Iterable
 
@@ -620,6 +619,7 @@ class Check(object):
         """
         if self._exception:
             _callable(*args, **kwargs)
+
 
 def _check_default_argument(f, arg, value):
     if value is not None and arg in f.__annotations__:
