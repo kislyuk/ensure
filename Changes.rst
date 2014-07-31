@@ -1,3 +1,8 @@
+Version 0.2.2 (2014-07-30)
+--------------------------
+- Refactor function annotation enforcement to accommodate extensions (#11).
+- Improve handling of bound methods.
+
 Version 0.2.1 (2014-06-28)
 --------------------------
 - Fix issue with function annotation enforcement in keyword-only arguments (#7).
