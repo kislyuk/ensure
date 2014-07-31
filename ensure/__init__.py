@@ -677,7 +677,19 @@ class WrappedFunctionReturn(WrappedFunction):
         self.return_templ = return_templ
 
     def __call__(self, *args, **kwargs):
-        return_val = super().__call__(*args, **kwargs)
+        for arg, templ, pos in self.arg_properties:
+            if pos is not None and len(args) > pos:
+                value = args[pos]
+            elif arg in kwargs:
+                value = kwargs[arg]
+            else:
+                continue
+
+            if not isinstance(value, templ):
+                msg = "Argument {arg} to {f} does not match annotation type {t}"
+                raise EnsureError(msg.format(arg=arg, f=self.f, t=templ))
+
+        return_val = self.f(*args, **kwargs)
         if not isinstance(return_val, self.return_templ):
                 msg = "Return value of {f} does not match annotation type {t}"
                 raise EnsureError(msg.format(f=self.f, t=self.return_templ))
