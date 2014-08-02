@@ -5,8 +5,8 @@ Pythonic code for validating conditions. It's inspired by `should.js <https://gi
 `expect.js <https://github.com/LearnBoost/expect.js>`_, and builds on top of the
 `unittest/JUnit assert helpers <http://docs.python.org/2/library/unittest.html#assert-methods>`_.
 
-If you use Python 3, you can use *ensure* to enforce your
-`function signature annotations <http://www.python.org/dev/peps/pep-3107/>`_: see the
+If you use Python 3, you can use *ensure* to enforce your **function signature annotations**: see
+`PEP 3107 <http://www.python.org/dev/peps/pep-3107/>`_ and the
 `@ensure_annotations <https://ensure.readthedocs.org/en/latest/#ensure.ensure_annotations>`_ decorator below.
 
 Because *ensure* is fast, is a standalone library (not part of a test framework), doesn't monkey-patch anything or use DSLs,
