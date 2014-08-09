@@ -233,3 +233,5 @@ Licensed under the terms of the `Apache License, Version 2.0 <http://www.apache.
         :target: https://warehouse.python.org/project/ensure/
 .. image:: https://pypip.in/d/ensure/badge.png
         :target: https://warehouse.python.org/project/ensure/
+.. image:: https://readthedocs.org/projects/ensure/badge/?version=latest
+        :target: https://ensure.readthedocs.org/
