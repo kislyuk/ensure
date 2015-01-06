@@ -5,8 +5,7 @@ Pythonic code for validating conditions. It's inspired by `should.js <https://gi
 `expect.js <https://github.com/LearnBoost/expect.js>`_, and builds on top of the
 `unittest/JUnit assert helpers <http://docs.python.org/2/library/unittest.html#assert-methods>`_.
 
-If you use Python 3, you can use *ensure* to enforce your **function signature annotations**
-(at runtime; cf. `Mypy <http://www.mypy-lang.org/>`_ for compile-time type checking): see
+If you use Python 3, you can use *ensure* to enforce your **function signature annotations**: see
 `PEP 3107 <http://www.python.org/dev/peps/pep-3107/>`_ and the
 `@ensure_annotations <https://ensure.readthedocs.org/en/latest/#ensure.ensure_annotations>`_ decorator below.
 
@@ -189,6 +188,8 @@ Use the ``@ensure_annotations`` decorator to enforce
 ::
 
     >>> ensure.EnsureError: Argument y to <function f at 0x109b7c710> does not match annotation type <class 'float'>
+
+Compare this runtime type checking to compile-time checking in `Mypy <http://www.mypy-lang.org/>`_.
 
 Motivation and goals
 ~~~~~~~~~~~~~~~~~~~~
