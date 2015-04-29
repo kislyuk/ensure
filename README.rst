@@ -217,7 +217,7 @@ Links
 -----
 * `Project home page (GitHub) <https://github.com/kislyuk/ensure>`_
 * `Documentation (Read the Docs) <https://ensure.readthedocs.org/en/latest/>`_
-* `Package distribution (PyPI) <https://warehouse.python.org/project/ensure/>`_
+* `Package distribution (PyPI) <https://pypi.python.org/pypi/ensure>`_
 
 Bugs
 ~~~~
@@ -231,9 +231,11 @@ Licensed under the terms of the `Apache License, Version 2.0 <http://www.apache.
         :target: https://travis-ci.org/kislyuk/ensure
 .. image:: https://coveralls.io/repos/kislyuk/ensure/badge.png?branch=master
         :target: https://coveralls.io/r/kislyuk/ensure?branch=master
-.. image:: https://pypip.in/v/ensure/badge.png
-        :target: https://warehouse.python.org/project/ensure/
-.. image:: https://pypip.in/d/ensure/badge.png
-        :target: https://warehouse.python.org/project/ensure/
+.. image:: https://img.shields.io/pypi/v/ensure.svg
+        :target: https://pypi.python.org/pypi/ensure
+.. image:: https://img.shields.io/pypi/dm/ensure.svg
+        :target: https://pypi.python.org/pypi/ensure
+.. image:: https://img.shields.io/pypi/l/ensure.svg
+        :target: https://pypi.python.org/pypi/ensure
 .. image:: https://readthedocs.org/projects/ensure/badge/?version=latest
         :target: https://ensure.readthedocs.org/
