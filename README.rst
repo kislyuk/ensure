@@ -229,7 +229,7 @@ Licensed under the terms of the `Apache License, Version 2.0 <http://www.apache.
 
 .. image:: https://travis-ci.org/kislyuk/ensure.png
         :target: https://travis-ci.org/kislyuk/ensure
-.. image:: https://coveralls.io/repos/kislyuk/ensure/badge.png?branch=master
+.. image:: https://img.shields.io/coveralls/kislyuk/ensure.svg
         :target: https://coveralls.io/r/kislyuk/ensure?branch=master
 .. image:: https://img.shields.io/pypi/v/ensure.svg
         :target: https://pypi.python.org/pypi/ensure
