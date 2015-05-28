@@ -3,8 +3,7 @@
 import os, glob
 from setuptools import setup, find_packages
 
-# install_requires = [line.rstrip() for line in open(os.path.join(os.path.dirname(__file__), "requirements.txt"))]
-install_requires = []
+install_requires = [line.rstrip() for line in open(os.path.join(os.path.dirname(__file__), "requirements.txt"))]
 
 setup(
     name='ensure',
