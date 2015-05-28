@@ -8,7 +8,7 @@ install_requires = []
 
 setup(
     name='ensure',
-    version='0.3.0',
+    version='0.3.1',
     url='https://github.com/kislyuk/ensure',
     license='Apache Software License',
     author='Andrey Kislyuk',

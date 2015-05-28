@@ -1,3 +1,7 @@
+Version 0.3.1 (2015-05-27)
+--------------------------
+- Build universal wheel.
+
 Version 0.3.0 (2015-05-27)
 --------------------------
 - Add numeric string methods (#12).
