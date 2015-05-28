@@ -1,3 +1,7 @@
+Version 0.3.0 (2015-05-27)
+--------------------------
+- Add numeric string methods (#12).
+
 Version 0.2.2 (2014-07-30)
 --------------------------
 - Refactor function annotation enforcement to accommodate extensions (#11).
