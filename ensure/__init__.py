@@ -8,7 +8,7 @@ import functools
 from unittest.case import TestCase
 from collections import namedtuple, Mapping, Iterable
 
-from .types import NumericString, NumericByteString, IntegerString, IntegerByteString
+from ._types import NumericString, NumericByteString, IntegerString, IntegerByteString
 
 USING_PYTHON2 = True if sys.version_info < (3, 0) else False
 
