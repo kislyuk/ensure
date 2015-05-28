@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from __future__ import print_function, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
 import sys
@@ -122,6 +122,37 @@ class TestEnsure(unittest.TestCase):
         with self.assertRaises(EnsureError):
             Ensure(x).called_with().is_an(int)
         Ensure(lambda: True).is_callable()
+
+        Ensure("1.1").is_a_numeric_string()
+        with self.assertRaises(EnsureError):
+            Ensure(b"1").is_a_numeric_string()
+        with self.assertRaises(EnsureError):
+            Ensure("").is_a_numeric_string()
+        with self.assertRaises(EnsureError):
+            Ensure(None).is_a_numeric_string()
+
+        Ensure(b"1").is_a_numeric_bytestring()
+        Ensure(b"1.1").is_a_numeric_bytestring()
+        with self.assertRaises(EnsureError):
+            Ensure("1").is_a_numeric_bytestring()
+        with self.assertRaises(EnsureError):
+            Ensure(b"").is_a_numeric_bytestring()
+        with self.assertRaises(EnsureError):
+            Ensure(None).is_a_numeric_bytestring()
+
+        Ensure("1").is_an_integer_string()
+        with self.assertRaises(EnsureError):
+            Ensure("1.1").is_an_integer_string()
+
+        Ensure(b"1").is_an_integer_bytestring()
+        with self.assertRaises(EnsureError):
+            Ensure(b"1.1").is_an_integer_bytestring()
+        with self.assertRaises(EnsureError):
+            Ensure("1").is_an_integer_bytestring()
+        with self.assertRaises(EnsureError):
+            Ensure(b"").is_an_integer_bytestring()
+        with self.assertRaises(EnsureError):
+            Ensure(None).is_an_integer_bytestring()
 
     def test_called_with(self):
         for i in None, True, 1, {}, [], lambda: True:

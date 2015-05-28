@@ -8,6 +8,8 @@ import functools
 from unittest.case import TestCase
 from collections import namedtuple, Mapping, Iterable
 
+from .types import NumericString, NumericByteString, IntegerString, IntegerByteString
+
 USING_PYTHON2 = True if sys.version_info < (3, 0) else False
 
 __all__ = ['EnsureError', 'Ensure', 'Check', 'ensure', 'check', 'ensure_raises', 'ensure_raises_regex', 'ensure_annotations']
@@ -560,6 +562,18 @@ class Ensure(Inspector):
         """
         return unittest_case.assertRaisesRegexp(expected_exception, expected_regexp, self._orig_subject,
                                                   *self._args, **self._kwargs)
+
+    def is_a_numeric_string(self):
+        return self.is_a(NumericString)
+
+    def is_a_numeric_bytestring(self):
+        return self.is_a(NumericByteString)
+
+    def is_an_integer_string(self):
+        return self.is_an(IntegerString)
+
+    def is_an_integer_bytestring(self):
+        return self.is_an(IntegerByteString)
 
     #def has_schema(self, schema):
     #    import jsonschema
