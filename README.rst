@@ -189,7 +189,7 @@ Use the ``@ensure_annotations`` decorator to enforce
 
     >>> ensure.EnsureError: Argument y to <function f at 0x109b7c710> does not match annotation type <class 'float'>
 
-Compare this runtime type checking to compile-time checking in `Mypy <http://www.mypy-lang.org/>`_ and type hinting in `PEP 484 <https://www.python.org/dev/peps/pep-0484/>`_ (available in Python 3.5+).
+Compare this runtime type checking to compile-time checking in `Mypy <http://www.mypy-lang.org/>`_ and `type hinting in PEP 484/Python 3.5+ <https://www.python.org/dev/peps/pep-0484/>`_.
 
 Motivation and goals
 ~~~~~~~~~~~~~~~~~~~~
