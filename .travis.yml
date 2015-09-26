@@ -23,4 +23,8 @@ after_success:
     - pip install --quiet coveralls
     - coveralls
 
+matrix:
+  allow_failures:
+      - python: 3.2
+
 sudo: false
