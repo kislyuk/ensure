@@ -12,7 +12,8 @@ from ._types import NumericString, NumericByteString, IntegerString, IntegerByte
 
 USING_PYTHON2 = True if sys.version_info < (3, 0) else False
 
-__all__ = ['EnsureError', 'Ensure', 'Check', 'ensure', 'check', 'ensure_raises', 'ensure_raises_regex', 'ensure_annotations']
+__all__ = ['EnsureError', 'Ensure', 'Check', 'ensure', 'check', 'ensure_raises', 'ensure_raises_regex',
+           'ensure_annotations']
 
 if USING_PYTHON2:
     __all__ = map(bytes, __all__)
@@ -242,7 +243,7 @@ class Ensure(Inspector):
         for element in self._subject:
             if element not in elements:
                 raise self._error_factory(_format("Expected {} to have only {}, but it contains {}",
-                                                 self._subject, elements, element))
+                                                  self._subject, elements, element))
         self.contains_all_of(elements)
 
     def contains_some_of(self, elements):
@@ -261,7 +262,7 @@ class Ensure(Inspector):
         for element in elements:
             if element not in self._subject:
                 raise self._error_factory(_format("Expected {} to have all of {}, but it does not contain {}",
-                                                 self._subject, elements, element))
+                                                  self._subject, elements, element))
 
     def does_not_contain(self, element):
         """
@@ -339,6 +340,18 @@ class Ensure(Inspector):
         Ensures :attr:`subject` is ``None``.
         """
         self._run(unittest_case.assertIsNone, (self._subject,))
+
+    @property
+    def is_none_or(self):
+        """
+        Ensures :attr:`subject` is either ``None``, or satisfies subsequent (chained) conditions::
+
+            Ensure(None).is_none_or.is_an(int)
+        """
+        if self._subject is None:
+            return NoOpInspector(subject=self._subject, error_factory=self._error_factory)
+        else:
+            return self
 
     def is_not_none(self):
         """
@@ -561,7 +574,7 @@ class Ensure(Inspector):
         and the string representation of *expected_exception* must match regular expression *expected_regexp*.
         """
         return unittest_case.assertRaisesRegexp(expected_exception, expected_regexp, self._orig_subject,
-                                                  *self._args, **self._kwargs)
+                                                *self._args, **self._kwargs)
 
     def is_a_numeric_string(self):
         return self.is_a(NumericString)
@@ -579,14 +592,7 @@ class Ensure(Inspector):
     #    import jsonschema
     #    self._run(jsonschema.validate, (self._subject, schema))
 
-
-class Check(object):
-    """
-    Like Ensure, but if a check fails, saves the error instead of raising it immediately. The error can then be acted
-    upon using :meth:`or_raise()` or :meth:`or_call()`.
-
-    ``.each_of()`` is not supported by the **Check** inspector; all other methods are supported.
-    """
+class InspectorProxy(object):
     def __init__(self, *args, **kwargs):
         self._inspector = Ensure(*args, **kwargs)
         self._exception = None
@@ -597,7 +603,7 @@ class Check(object):
 
     def __getattr__(self, item):
         inspect_method = getattr(self._inspector, item)
-        if isinstance(inspect_method, Inspector):
+        if isinstance(inspect_method, (Inspector, NoOpInspector)):
             self._inspector = inspect_method
             return self
 
@@ -610,12 +616,23 @@ class Check(object):
             return self
         return inspect
 
+class Check(InspectorProxy):
+    """
+    Like Ensure, but if a check fails, saves the error instead of raising it immediately. The error can then be acted
+    upon using :meth:`or_raise()` or :meth:`or_call()`.
+
+    ``.each_of()`` is not supported by the **Check** inspector; all other methods are supported.
+    """
     def or_raise(self, error_factory, message=None, *args, **kwargs):
         """
         Raises an exception produced by **error_factory** if a predicate fails.
 
-        :param error_factory: Class or callable (e.g. :class:`Exception`) which will be invoked to produce the resulting exception.
-        :param message: String to be formatted and passed as the first argument to *error_factory*. The following substrings are replaced by formatting: "{type}" by the exception type, "{msg}" by the exception's string representation, and "{}" by both. If *message* is ``None``, the original exception is passed.
+        :param error_factory:
+            Class or callable (e.g. :class:`Exception`) which will be invoked to produce the resulting exception.
+        :param message:
+            String to be formatted and passed as the first argument to *error_factory*. The following substrings are
+            replaced by formatting: "{type}" by the exception type, "{msg}" by the exception's string representation,
+            and "{}" by both. If *message* is ``None``, the original exception is passed.
         """
         if self._exception:
             if message is None:
@@ -634,6 +651,11 @@ class Check(object):
         if self._exception:
             _callable(*args, **kwargs)
 
+class NoOpInspector(InspectorProxy):
+    """
+    Goes through the motions of Ensure, but never raises on the error condition. For chaining with conditional
+    predicates like ``is_none_or``.
+    """
 
 def _check_default_argument(f, arg, value):
     if value is not None and arg in f.__annotations__:
@@ -705,8 +727,8 @@ class WrappedFunctionReturn(WrappedFunction):
 
         return_val = self.f(*args, **kwargs)
         if not isinstance(return_val, self.return_templ):
-                msg = "Return value of {f} does not match annotation type {t}"
-                raise EnsureError(msg.format(f=self.f, t=self.return_templ))
+            msg = "Return value of {f} does not match annotation type {t}"
+            raise EnsureError(msg.format(f=self.f, t=self.return_templ))
         return return_val
 
 

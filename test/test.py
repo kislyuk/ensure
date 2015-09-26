@@ -63,13 +63,17 @@ class TestEnsure(unittest.TestCase):
                       'Ensure(os.path.join).called_with("a", "b").returns(os.path.join("a", "b"))',
                       'Ensure(int).called_with("1100101", base=2).returns(101)',
                       'Ensure.each_of([1,2,3]).is_an(int)',
-                      'Ensure.each_of([lambda x: x, lambda y: y]).called_with(1).returns(1)')
+                      'Ensure.each_of([lambda x: x, lambda y: y]).called_with(1).returns(1)',
+                      'Ensure(None).is_none_or.is_a_negative(int)',
+                      'Ensure(-5).is_none_or.is_a_negative(int)',
+                      'Ensure({"a": "b"}).is_none_or.has_key("a")')
 
         for clause in ok_clauses:
             print("Testing OK clause", clause)
             eval(clause)
             if 'each_of' not in clause:
                 for sub in r'Check\1.otherwise(Exception)', r'Check\1.or_raise(Exception)', r'Check\1.or_call(self.assertTrue, False)':
+                    print("Testing OK clause", re.sub(r'^Ensure(.+)', sub, clause))
                     eval(re.sub(r'^Ensure(.+)', sub, clause))
 
         bad_clauses = ('Ensure(x).contains(-1)',
@@ -104,7 +108,9 @@ class TestEnsure(unittest.TestCase):
                        'Ensure({1: "a", 2: "b"}).has_only_keys([1, 2, 3])',
                        'Ensure([1, 2, 3]).has_only_keys([1, 2, 3])',
                        'Ensure(os.path.join).called_with("a", "b").returns(None)',
-                       'Ensure.each_of([lambda x: x, lambda y: y]).called_with(2).returns(1)')
+                       'Ensure.each_of([lambda x: x, lambda y: y]).called_with(2).returns(1)',
+                       'Ensure(5).is_none_or.is_a_negative(int)',
+                       'Ensure(None).is_a_negative(int)')
 
         for clause in bad_clauses:
             print("Testing bad clause", clause)
@@ -113,6 +119,7 @@ class TestEnsure(unittest.TestCase):
             if 'each_of' not in clause:
                 for sub in r'Check\1.otherwise(Exception)', r'Check\1.or_raise(Exception)', r'Check\1.or_call(self.assertTrue, False)':
                     with self.assertRaises(Exception):
+                        print("Testing bad clause", re.sub(r'^Ensure(.+)', sub, clause))
                         eval(re.sub(r'^Ensure(.+)', sub, clause))
 
         with self.assertRaises(EnsureError):
