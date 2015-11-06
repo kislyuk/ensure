@@ -110,6 +110,7 @@ class TestEnsure(unittest.TestCase):
                        'Ensure(os.path.join).called_with("a", "b").returns(None)',
                        'Ensure.each_of([lambda x: x, lambda y: y]).called_with(2).returns(1)',
                        'Ensure(5).is_none_or.is_a_negative(int)',
+                       'ensure(True).is_none_or.is_an(int)',
                        'Ensure(None).is_a_negative(int)')
 
         for clause in bad_clauses:
