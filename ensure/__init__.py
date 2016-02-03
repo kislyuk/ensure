@@ -105,7 +105,7 @@ class MappingInspector(Inspector):
         return self.to(prototype)
 
 
-class AttributeInspector(Inspector):
+class ReferenceInspector(Inspector):
     @property
     def which(self):
         return Ensure(self._subject)
@@ -305,7 +305,7 @@ class Ensure(Inspector):
         """
         if not hasattr(self._subject, attr):
             raise self._error_factory(_format("Expected {} to have attribute {}", self._subject, attr))
-        return AttributeInspector(getattr(self._subject, attr))
+        return ReferenceInspector(getattr(self._subject, attr))
 
     hasattr = has_attribute
 
@@ -380,6 +380,8 @@ class Ensure(Inspector):
         self._run(unittest_case.assertIsInstance, (self._subject, prototype))
         if hasattr(self._subject, '__iter__'):
             return IterableInspector(self._subject)
+        else:
+            return ReferenceInspector(self._subject)
 
     is_an = is_a
     is_an_instance_of = is_a
