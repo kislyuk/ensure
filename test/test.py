@@ -12,6 +12,7 @@ import re
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ensure import *
+from ensure._types import str
 
 
 class TestEnsure(unittest.TestCase):
@@ -68,7 +69,11 @@ class TestEnsure(unittest.TestCase):
                       'Ensure(True).is_none_or.is_an(int)', # See https://www.python.org/dev/peps/pep-0285/ (section 6)
                       'Ensure(None).is_none_or.is_a_negative(int)',
                       'Ensure(-5).is_none_or.is_a_negative(int)',
-                      'Ensure({"a": "b"}).is_none_or.has_key("a")')
+                      'Ensure({"a": "b"}).is_none_or.has_key("a")',
+                      'Ensure("A").satisfies(str.isupper)',
+                      'Ensure("A").satisfies(".isupper")',
+                      'Ensure("ABC").satisfies(str.startswith, "AB")',
+                      'Ensure("ABC").satisfies(".startswith", "AB")')
 
         for clause in ok_clauses:
             print("Testing OK clause", clause)
@@ -113,7 +118,13 @@ class TestEnsure(unittest.TestCase):
                        'Ensure(1).is_a_positive(int).which.equals(1.2)',
                        'Ensure.each_of([lambda x: x, lambda y: y]).called_with(2).returns(1)',
                        'Ensure(5).is_none_or.is_a_negative(int)',
-                       'Ensure(None).is_a_negative(int)')
+                       'Ensure(None).is_a_negative(int)',
+                       'Ensure("a").satisfies(str.isupper)',
+                       'Ensure("a").satisfies(".isupper")',
+                       'Ensure("ABC").satisfies(str.startswith, "Z")',
+                       'Ensure("ABC").satisfies(".startswith", "Z")',
+                       'Ensure(5).satisfies(str.isupper)',
+                       'Ensure(5).satisfies(".isupper")')
 
         for clause in bad_clauses:
             print("Testing bad clause", clause)
