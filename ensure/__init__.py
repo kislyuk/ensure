@@ -7,8 +7,10 @@ import re
 import functools
 from unittest.case import TestCase
 from collections import namedtuple, Mapping, Iterable
+from six import string_types
 
-from ._types import NumericString, NumericByteString, IntegerString, IntegerByteString, str
+from ._types import NumericString, NumericByteString, IntegerString, IntegerByteString
+
 
 USING_PYTHON2 = True if sys.version_info < (3, 0) else False
 
@@ -596,7 +598,7 @@ class Ensure(Inspector):
 
     def satisfies(self, predicate, *args):
         def run():
-            if isinstance(predicate, str):
+            if isinstance(predicate, string_types):
                 # `predicate` can be a string that names a method.
                 # In this case, look up the method and use that as the actual predicate.
                 if not predicate.startswith('.'):

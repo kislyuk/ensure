@@ -9,10 +9,10 @@ import unittest
 import collections
 import copy
 import re
+from six import text_type as str
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ensure import *
-from ensure._types import str
 
 
 class TestEnsure(unittest.TestCase):
