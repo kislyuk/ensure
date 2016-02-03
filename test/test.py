@@ -65,6 +65,7 @@ class TestEnsure(unittest.TestCase):
                       'Ensure(int).called_with("1100101", base=2).returns(101)',
                       'Ensure.each_of([1,2,3]).is_an(int)',
                       'Ensure.each_of([lambda x: x, lambda y: y]).called_with(1).returns(1)',
+                      'Ensure(True).is_none_or.is_an(int)', # See https://www.python.org/dev/peps/pep-0285/ (section 6)
                       'Ensure(None).is_none_or.is_a_negative(int)',
                       'Ensure(-5).is_none_or.is_a_negative(int)',
                       'Ensure({"a": "b"}).is_none_or.has_key("a")')
@@ -112,7 +113,6 @@ class TestEnsure(unittest.TestCase):
                        'Ensure(1).is_a_positive(int).which.equals(1.2)',
                        'Ensure.each_of([lambda x: x, lambda y: y]).called_with(2).returns(1)',
                        'Ensure(5).is_none_or.is_a_negative(int)',
-                       'ensure(True).is_none_or.is_an(int)',
                        'Ensure(None).is_a_negative(int)')
 
         for clause in bad_clauses:
