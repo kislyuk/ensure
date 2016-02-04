@@ -6,7 +6,7 @@ API documentation
 .. automodule:: ensure
    :members:
 
-#.. autofunction:: ensure.ensure_annotations
+.. autofunction:: ensure.ensure_annotations
 
 Table of Contents
 =================
