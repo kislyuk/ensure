@@ -39,8 +39,8 @@ class TestEnsure(unittest.TestCase):
                       'Ensure(x).does_not_contain(-1)',
                       'Ensure(x).does_not_equal(range(10))',
                       'Ensure(x).has_attribute("__iter__")',
-                      'Ensure(x).has_length(10)',
-                      'Ensure(x).is_nonempty()',
+                      'Ensure(x).has_length(10).also.is_nonempty()',
+                      'Ensure(x).is_nonempty().also.has_length(10)',
                       'Ensure(x).is_a(collections.Mapping)',
                       'Ensure(x).is_a_dict_of(int).to(int)',
                       'Ensure(x).is_a(collections.Mapping).of(int).to(int)',
@@ -79,6 +79,7 @@ class TestEnsure(unittest.TestCase):
                     eval(re.sub(r'^Ensure(.+)', sub, clause))
 
         bad_clauses = ('Ensure(x).contains(-1)',
+                       'Ensure(x).has_length(10).also.is_empty()',
                        'Ensure(x).contains_all_of(range(20))',
                        'Ensure(x).contains_no(int)',
                        'Ensure(x).contains_none_of(range(0, 30))',

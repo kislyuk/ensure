@@ -111,6 +111,11 @@ class ReferenceInspector(Inspector):
         return Ensure(self._subject)
 
 
+class ChainInspector(Inspector):
+    @property
+    def also(self):
+        return Ensure(self._subject)
+
 class KeyInspector(Inspector):
     @property
     def whose_value(self):
@@ -195,12 +200,14 @@ class Ensure(Inspector):
         Ensures :attr:`subject` is equal to *other*.
         """
         self._run(unittest_case.assertEqual, (self._subject, other))
+        return ChainInspector(self._subject)
 
     def is_not_equal_to(self, other):
         """
         Ensures :attr:`subject` is not equal to *other*.
         """
         self._run(unittest_case.assertNotEqual, (self._subject, other))
+        return ChainInspector(self._subject)
 
     does_not_equal = is_not_equal_to
 
@@ -209,18 +216,21 @@ class Ensure(Inspector):
         Ensures :attr:`subject` is *other* (object identity check).
         """
         self._run(unittest_case.assertIs, (self._subject, other))
+        return ChainInspector(self._subject)
 
     def is_not(self, other):
         """
         Ensures :attr:`subject` is not *other* (object identity check).
         """
         self._run(unittest_case.assertIsNot, (self._subject, other))
+        return ChainInspector(self._subject)
 
     def contains(self, element):
         """
         Ensures :attr:`subject` contains *other*.
         """
         self._run(unittest_case.assertIn, (element, self._subject))
+        return ChainInspector(self._subject)
 
     def contains_none_of(self, elements):
         """
@@ -228,6 +238,7 @@ class Ensure(Inspector):
         """
         for element in elements:
             self._run(unittest_case.assertNotIn, (element, self._subject))
+        return ChainInspector(self._subject)
 
     def contains_one_of(self, elements):
         """
@@ -235,6 +246,7 @@ class Ensure(Inspector):
         """
         if sum(e in self._subject for e in elements) != 1:
             raise self._error_factory(_format("Expected {} to have exactly one of {}", self._subject, elements))
+        return ChainInspector(self._subject)
 
     def contains_only(self, elements):
         """
@@ -245,6 +257,7 @@ class Ensure(Inspector):
                 raise self._error_factory(_format("Expected {} to have only {}, but it contains {}",
                                                   self._subject, elements, element))
         self.contains_all_of(elements)
+        return ChainInspector(self._subject)
 
     def contains_some_of(self, elements):
         """
@@ -252,6 +265,7 @@ class Ensure(Inspector):
         """
         if all(e not in self._subject for e in elements):
             raise self._error_factory(_format("Expected {} to have some of {}", self._subject, elements))
+        return ChainInspector(self._subject)
 
     contains_one_or_more_of = contains_some_of
 
@@ -263,12 +277,14 @@ class Ensure(Inspector):
             if element not in self._subject:
                 raise self._error_factory(_format("Expected {} to have all of {}, but it does not contain {}",
                                                   self._subject, elements, element))
+        return ChainInspector(self._subject)
 
     def does_not_contain(self, element):
         """
         Ensures :attr:`subject` does not contain *element*.
         """
         self._run(unittest_case.assertNotIn, (element, self._subject))
+        return ChainInspector(self._subject)
 
     def contains_no(self, prototype):
         """
@@ -276,6 +292,7 @@ class Ensure(Inspector):
         """
         for element in self._subject:
             self._run(unittest_case.assertNotIsInstance, (element, prototype))
+        return ChainInspector(self._subject)
 
     def has_key(self, key):
         """
@@ -291,6 +308,7 @@ class Ensure(Inspector):
         """
         self.is_a(Mapping)
         self.contains_all_of(keys)
+        return ChainInspector(self._subject)
 
     def has_only_keys(self, keys):
         """
@@ -298,6 +316,7 @@ class Ensure(Inspector):
         """
         self.is_a(Mapping)
         self.contains_only(keys)
+        return ChainInspector(self._subject)
 
     def has_attribute(self, attr):
         """
@@ -314,12 +333,14 @@ class Ensure(Inspector):
         Ensures :attr:`subject` is contained in *iterable*.
         """
         self._run(unittest_case.assertIn, (self._subject, iterable))
+        return ChainInspector(self._subject)
 
     def is_not_in(self, iterable):
         """
         Ensures :attr:`subject` is not contained in *iterable*.
         """
         self._run(unittest_case.assertNotIn, (self._subject, iterable))
+        return ChainInspector(self._subject)
 
     not_in = is_not_in
 
@@ -328,18 +349,21 @@ class Ensure(Inspector):
         Ensures :attr:`subject` is ``True``.
         """
         self._run(unittest_case.assertTrue, (self._subject,))
+        return ChainInspector(self._subject)
 
     def is_false(self):
         """
         Ensures :attr:`subject` is ``False``.
         """
         self._run(unittest_case.assertFalse, (self._subject,))
+        return ChainInspector(self._subject)
 
     def is_none(self):
         """
         Ensures :attr:`subject` is ``None``.
         """
         self._run(unittest_case.assertIsNone, (self._subject,))
+        return ChainInspector(self._subject)
 
     @property
     def is_none_or(self):
@@ -358,6 +382,7 @@ class Ensure(Inspector):
         Ensures :attr:`subject` is not ``None``.
         """
         self._run(unittest_case.assertIsNotNone, (self._subject,))
+        return ChainInspector(self._subject)
 
     def is_empty(self):
         """
@@ -365,6 +390,7 @@ class Ensure(Inspector):
         """
         if len(self._subject) > 0:
             raise self._error_factory(_format("Expected {} to be empty", self._subject))
+        return ChainInspector(self._subject)
 
     def is_nonempty(self):
         """
@@ -372,6 +398,7 @@ class Ensure(Inspector):
         """
         if len(self._subject) == 0:
             raise self._error_factory(_format("Expected {} to be non-empty", self._subject))
+        return ChainInspector(self._subject)
 
     def is_a(self, prototype):
         """
@@ -405,6 +432,7 @@ class Ensure(Inspector):
         Ensures :attr:`subject` is greater than 0.
         """
         self._run(unittest_case.assertGreater, (self._subject, 0))
+        return ChainInspector(self._subject)
 
     def is_a_positive(self, prototype):
         """
@@ -418,6 +446,7 @@ class Ensure(Inspector):
         Ensures :attr:`subject` is less than 0.
         """
         self._run(unittest_case.assertLess, (self._subject, 0))
+        return ChainInspector(self._subject)
 
     def is_a_negative(self, prototype):
         """
@@ -431,6 +460,7 @@ class Ensure(Inspector):
         Ensures :attr:`subject` is greater than or equal to 0.
         """
         self._run(unittest_case.assertGreaterEqual, (self._subject, 0))
+        return ChainInspector(self._subject)
 
     def is_a_nonnegative(self, prototype):
         """
@@ -444,6 +474,7 @@ class Ensure(Inspector):
         Ensures :attr:`subject` is not an object of class *prototype*.
         """
         self._run(unittest_case.assertNotIsInstance, (self._subject, prototype))
+        return ChainInspector(self._subject)
 
     not_a = is_not_a
 
@@ -453,6 +484,7 @@ class Ensure(Inspector):
         """
         if not re.match(pattern, self._subject, flags):
             raise self._error_factory(_format("Expected {} to match {}", self._subject, pattern))
+        return ChainInspector(self._subject)
 
     def is_an_iterable_of(self, prototype):
         """
@@ -513,6 +545,7 @@ class Ensure(Inspector):
             unittest_case.assertTrue(len(self._subject) == length)
         except self._catch as err:
             raise self._error_factory(_format("Expected {} to have length {}", self._subject, length))
+        return ChainInspector(self._subject)
 
     def is_greater_than(self, other):
         """
@@ -522,6 +555,7 @@ class Ensure(Inspector):
             unittest_case.assertTrue(self._subject > other)
         except self._catch as err:
             raise self._error_factory(_format("Expected {} to be greater than {}", self._subject, other))
+        return ChainInspector(self._subject)
 
     exceeds = is_greater_than
 
@@ -533,6 +567,7 @@ class Ensure(Inspector):
             unittest_case.assertTrue(self._subject < other)
         except self._catch as err:
             raise self._error_factory(_format("Expected {} to be less than {}", self._subject, other))
+        return ChainInspector(self._subject)
 
     def is_greater_than_or_equal_to(self, other):
         """
@@ -542,6 +577,7 @@ class Ensure(Inspector):
             unittest_case.assertTrue(self._subject >= other)
         except self._catch as err:
             raise self._error_factory(_format("Expected {} to be greater than or equal to {}", self._subject, other))
+        return ChainInspector(self._subject)
 
     def is_less_than_or_equal_to(self, other):
         """
@@ -551,6 +587,7 @@ class Ensure(Inspector):
             unittest_case.assertTrue(self._subject <= other)
         except self._catch as err:
             raise self._error_factory(_format("Expected {} to be less than or equal to {}", self._subject, other))
+        return ChainInspector(self._subject)
 
     def called_with(self, *args, **kwargs):
         """

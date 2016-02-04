@@ -118,7 +118,7 @@ More examples
     ensure(None).is_none()
     ensure(1).is_not_none()
     ensure("").is_empty()
-    ensure([1, 2]).is_nonempty()
+    ensure([1, 2]).is_nonempty().also.has_length(2)
     ensure(1.1).is_a(float).which.equals(1.10)
     ensure(KeyError()).is_an(Exception)
     ensure({x: str(x) for x in range(5)}).is_a_nonempty(dict).of(int).to(str)
