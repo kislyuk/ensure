@@ -1,3 +1,7 @@
+Version 0.4.0 (2016-02-04)
+--------------------------
+- Add .also and expand use of .which predicate chaining proxies (#15).
+
 Version 0.3.3 (2015-11-06)
 --------------------------
 - Add Ensure.is_none_or (#13).
