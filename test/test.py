@@ -73,7 +73,8 @@ class TestEnsure(unittest.TestCase):
                       'Ensure("A").satisfies(str.isupper)',
                       'Ensure("A").satisfies(".isupper")',
                       'Ensure("ABC").satisfies(str.startswith, "AB")',
-                      'Ensure("ABC").satisfies(".startswith", "AB")')
+                      'Ensure("ABC").satisfies(".startswith", "AB")',
+                      'Ensure(3).satisfies(lambda x, y: x < y, y=4)')
 
         for clause in ok_clauses:
             print("Testing OK clause", clause)

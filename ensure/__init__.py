@@ -596,7 +596,8 @@ class Ensure(Inspector):
     #    import jsonschema
     #    self._run(jsonschema.validate, (self._subject, schema))
 
-    def satisfies(self, predicate, *args):
+    def satisfies(self, predicate, *args, **kwargs):
+        print("satisfies", predicate, args, kwargs)
         def run():
             if isinstance(predicate, string_types):
                 # `predicate` can be a string that names a method.
@@ -605,14 +606,14 @@ class Ensure(Inspector):
                     raise TypeError('Predicate must be a callable or method name, '
                                     'and method names must start with ".": {}'.format(predicate))
                 method_name = predicate[1:]
-                actual_predicate = lambda subj, *args: getattr(subj, method_name)(*args)
+                actual_predicate = lambda subj, *args: getattr(subj, method_name)(*args, **kwargs)
                 predicate_name = predicate
             else:
                 # Otherwise assume `predicate` is some kind of callable
                 actual_predicate = predicate
                 predicate_name = getattr(predicate, '__name__', predicate)
 
-            if not actual_predicate(self._subject, *args):
+            if not actual_predicate(self._subject, *args, **kwargs):
                 # Note the error message uses the original `predicate`
                 msg = _format("Expected {} to satisfy {}", self._subject, predicate_name)
                 if args:
