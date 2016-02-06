@@ -7,8 +7,10 @@ import re
 import functools
 from unittest.case import TestCase
 from collections import namedtuple, Mapping, Iterable
+from six import string_types
 
 from ._types import NumericString, NumericByteString, IntegerString, IntegerByteString
+
 
 USING_PYTHON2 = True if sys.version_info < (3, 0) else False
 
@@ -630,6 +632,30 @@ class Ensure(Inspector):
     #def has_schema(self, schema):
     #    import jsonschema
     #    self._run(jsonschema.validate, (self._subject, schema))
+
+    def satisfies(self, predicate, *args, **kwargs):
+        def run():
+            if isinstance(predicate, string_types):
+                # `predicate` can be a string that names a method.
+                # In this case, look up the method and use that as the actual predicate.
+                if not predicate.startswith('.'):
+                    raise TypeError('Predicate must be a callable or method name, '
+                                    'and method names must start with ".": {}'.format(predicate))
+                method_name = predicate[1:]
+                actual_predicate = lambda subj, *args: getattr(subj, method_name)(*args, **kwargs)
+                predicate_name = predicate
+            else:
+                # Otherwise assume `predicate` is some kind of callable
+                actual_predicate = predicate
+                predicate_name = getattr(predicate, '__name__', predicate)
+
+            if not actual_predicate(self._subject, *args, **kwargs):
+                # Note the error message uses the original `predicate`
+                msg = _format("Expected {} to satisfy {}", self._subject, predicate_name)
+                if args:
+                    msg += _format(" on args {}", args)
+                raise ValueError(msg)
+        return self._run(run)
 
 class InspectorProxy(object):
     def __init__(self, *args, **kwargs):
