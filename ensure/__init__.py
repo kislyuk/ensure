@@ -597,7 +597,6 @@ class Ensure(Inspector):
     #    self._run(jsonschema.validate, (self._subject, schema))
 
     def satisfies(self, predicate, *args, **kwargs):
-        print("satisfies", predicate, args, kwargs)
         def run():
             if isinstance(predicate, string_types):
                 # `predicate` can be a string that names a method.
