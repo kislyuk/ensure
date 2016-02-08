@@ -58,6 +58,9 @@ seen above).
 
 The class raises ``EnsureError`` (a subclass of ``AssertionError``) by default.
 
+There are several ways to **chain clauses**, depending on the grammatical context: ``.also``, ``.which``, and
+``.whose_value`` are available per examples below.
+
 Raising custom exceptions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 You can pass a callable or exception class as the ``error_factory`` keyword argument to ``Ensure()``, or you can use the
