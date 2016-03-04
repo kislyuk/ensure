@@ -1,3 +1,7 @@
+Version 0.5.0 (2016-03-04)
+--------------------------
+- Add .satisfies(predicate, *args) (#16).
+
 Version 0.4.0 (2016-02-04)
 --------------------------
 - Add .also and expand use of .which predicate chaining proxies (#15).

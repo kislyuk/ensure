@@ -118,6 +118,9 @@ class ChainInspector(Inspector):
     def also(self):
         return Ensure(self._subject)
 
+    def __repr__(self):
+        return "{}: OK".format(Inspector.__repr__(self))
+
 class KeyInspector(Inspector):
     @property
     def whose_value(self):
