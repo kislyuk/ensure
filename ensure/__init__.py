@@ -19,6 +19,7 @@ __all__ = ['EnsureError', 'Ensure', 'Check', 'ensure', 'check', 'ensure_raises',
 
 if USING_PYTHON2:
     __all__ = map(bytes, __all__)
+    from builtins import int
 
 try:
     from repr import Repr
@@ -532,7 +533,7 @@ class Ensure(Inspector):
         """
         Ensures :attr:`subject` is an int, float, or long.
         """
-        if not isinstance(self._subject, (int, float, long)):
+        if not isinstance(self._subject, (int, float)):
             raise self._error_factory(_format("Expected {} to be numeric (int, float, or long)", self._subject))
 
     def is_callable(self):
