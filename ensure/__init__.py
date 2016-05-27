@@ -544,14 +544,28 @@ class Ensure(Inspector):
         if not callable(self._subject):
             raise self._error_factory(_format("Expected {} to be callable", self._subject))
 
-    def has_length(self, length):
+    def has_length(self, length=None, min=None, max=None):
         """
-        Ensures :attr:`subject` has length *length*.
+        Ensures :attr:`subject` has length *length* (if given), length at least *min* (if given), and length at most
+        *max* (if given).
         """
-        try:
-            unittest_case.assertTrue(len(self._subject) == length)
-        except self._catch as err:
-            raise self._error_factory(_format("Expected {} to have length {}", self._subject, length))
+        unittest_case.assertFalse(length is None and min is None and max is None)
+        my_length = len(self._subject)
+        if length is not None:
+            try:
+                unittest_case.assertTrue(my_length == length)
+            except self._catch as err:
+                raise self._error_factory(_format("Expected {} to have length {}", self._subject, length))
+        if min is not None:
+            try:
+                unittest_case.assertTrue(my_length >= min)
+            except self._catch as err:
+                raise self._error_factory(_format("Expected {} to have length at least {}", self._subject, min))
+        if max is not None:
+            try:
+                unittest_case.assertTrue(my_length <= max)
+            except self._catch as err:
+                raise self._error_factory(_format("Expected {} to have length at most {}", self._subject, max))
         return ChainInspector(self._subject)
 
     def is_greater_than(self, other):
