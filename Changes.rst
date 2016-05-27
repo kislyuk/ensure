@@ -1,3 +1,8 @@
+Version 0.6.0 (2016-05-26)
+--------------------------
+- Pass format args directly to format in or_raise (may need further work to pass custom args to factory)
+- Changes to test infrastructure: linter, etc.
+
 Version 0.5.0 (2016-03-04)
 --------------------------
 - Add .satisfies(predicate, *args) (#16).

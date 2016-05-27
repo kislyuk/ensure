@@ -12,7 +12,7 @@ import re
 from six import text_type as str
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from ensure import ensure, check, Ensure, Check, EnsureError
+from ensure import ensure, check, Ensure, Check, EnsureError, ensure_annotations
 
 
 class TestEnsure(unittest.TestCase):
