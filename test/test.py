@@ -12,7 +12,7 @@ import re
 from six import text_type as str
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from ensure import *
+from ensure import ensure, check, Ensure, Check, EnsureError
 
 
 class TestEnsure(unittest.TestCase):
@@ -66,7 +66,7 @@ class TestEnsure(unittest.TestCase):
                       'Ensure(int).called_with("1100101", base=2).returns(101)',
                       'Ensure.each_of([1,2,3]).is_an(int)',
                       'Ensure.each_of([lambda x: x, lambda y: y]).called_with(1).returns(1)',
-                      'Ensure(True).is_none_or.is_an(int)', # See https://www.python.org/dev/peps/pep-0285/ (section 6)
+                      'Ensure(True).is_none_or.is_an(int)',  # See https://www.python.org/dev/peps/pep-0285/ (section 6)
                       'Ensure(None).is_none_or.is_a_negative(int)',
                       'Ensure(-5).is_none_or.is_a_negative(int)',
                       'Ensure({"a": "b"}).is_none_or.has_key("a")',
@@ -355,6 +355,9 @@ class C(object):
         with self.assertRaisesRegex(EnsureError, "Argument x to <function (C.g|g) at .+> does not match annotation type <class 'int'>"):
             g = C().g(3.2, 1)
 
+    def test_error_formatting(self):
+        with self.assertRaisesRegexp(Exception, "Major fail detected"):
+            check(False).is_true().or_raise(KeyError, "{} {error} detected", "Major", error="fail")
 
 if __name__ == '__main__':
     unittest.main()
