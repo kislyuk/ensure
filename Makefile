@@ -5,6 +5,7 @@ env: requirements.txt
 	source env/bin/activate; pip install --requirement=requirements.txt
 
 lint:
+	env/bin/pip install flake8
 	env/bin/python setup.py flake8
 
 test: env lint
