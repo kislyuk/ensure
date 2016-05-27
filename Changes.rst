@@ -1,3 +1,7 @@
+Version 0.6.1 (2016-05-26)
+--------------------------
+Remove unneeded dependency
+
 Version 0.6.0 (2016-05-26)
 --------------------------
 - Pass format args directly to format in or_raise (may need further work to pass custom args to factory)
