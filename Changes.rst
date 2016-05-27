@@ -1,3 +1,7 @@
+Version 0.6.2 (2016-05-27)
+--------------------------
+Length assertion helpers
+
 Version 0.6.1 (2016-05-26)
 --------------------------
 Remove unneeded dependency
