@@ -1,36 +1,32 @@
-*.py[cod]
+# Reminder:
+# - A leading slash means the pattern is anchored at the root.
+# - No leading slash means the pattern matches at any depth.
 
-# C extensions
-*.so
+# Python files
+*.pyc
+__pycache__/
+.tox/
+*.egg-info/
+/build/
+/dist/
+/.eggs/
 
-# Packages
-*.egg
-*.egg-info
-dist
-build
-eggs
-parts
-bin
-var
-sdist
-develop-eggs
-.installed.cfg
-lib
-lib64
-__pycache__
+# Sphinx documentation
+/docs/_build/
 
-# Installer logs
-pip-log.txt
+# IDE project files
+/.pydevproject
 
-# Unit test / coverage reports
-.coverage
-.tox
-nosetests.xml
+# vim python-mode plugin
+/.ropeproject
 
-# Translations
-*.mo
+# IntelliJ IDEA / PyCharm project files
+/.idea
+/*.iml
 
-# Mr Developer
-.mr.developer.cfg
-.project
-.pydevproject
+# JS/node/npm/web dev files
+node_modules
+npm-debug.log
+
+# OS X metadata files
+.DS_Store

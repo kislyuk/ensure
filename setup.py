@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, glob
+import os
 from setuptools import setup, find_packages
 
 install_requires = [line.rstrip() for line in open(os.path.join(os.path.dirname(__file__), "requirements.txt"))]
@@ -15,7 +15,7 @@ setup(
     description='Literate BDD assertions in Python with no magic',
     long_description=open('README.rst').read(),
     install_requires=install_requires,
-    packages = find_packages(exclude=['test']),
+    packages=find_packages(exclude=['test']),
     include_package_data=True,
     platforms=['MacOS X', 'Posix'],
     classifiers=[

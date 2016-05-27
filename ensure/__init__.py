@@ -633,7 +633,7 @@ class Ensure(Inspector):
     def is_an_integer_bytestring(self):
         return self.is_an(IntegerByteString)
 
-    #def has_schema(self, schema):
+    # def has_schema(self, schema):
     #    import jsonschema
     #    self._run(jsonschema.validate, (self._subject, schema))
 
@@ -646,7 +646,8 @@ class Ensure(Inspector):
                     raise TypeError('Predicate must be a callable or method name, '
                                     'and method names must start with ".": {}'.format(predicate))
                 method_name = predicate[1:]
-                actual_predicate = lambda subj, *args: getattr(subj, method_name)(*args, **kwargs)
+                def actual_predicate(subj, *args):
+                    return getattr(subj, method_name)(*args, **kwargs)
                 predicate_name = predicate
             else:
                 # Otherwise assume `predicate` is some kind of callable

@@ -4,12 +4,11 @@ env: requirements.txt
 	virtualenv env
 	source env/bin/activate; pip install --requirement=requirements.txt
 
-test: env
-	-pylint -E ensure
-	source env/bin/activate; ./test/test.py -v
+lint:
+	env/bin/python setup.py flake8
 
-test3: env
-	python3 ./test/test.py -v
+test: env lint
+	env/bin/python setup.py test -v
 
 release: docs
 	python setup.py sdist bdist_wheel upload -s -i D2069255
