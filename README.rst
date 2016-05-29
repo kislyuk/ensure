@@ -141,6 +141,7 @@ More examples
     ensure(10**100).is_numeric()
     ensure(lambda: 1).is_callable()
     ensure("abc").has_length(3)
+    ensure("abc").has_length(min=3, max=8)
     ensure(1).is_greater_than(0)
     ensure(1).exceeds(0)
     ensure(0).is_less_than(1)
