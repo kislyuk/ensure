@@ -661,6 +661,7 @@ class Ensure(Inspector):
                     raise TypeError('Predicate must be a callable or method name, '
                                     'and method names must start with ".": {}'.format(predicate))
                 method_name = predicate[1:]
+
                 def actual_predicate(subj, *args):
                     return getattr(subj, method_name)(*args, **kwargs)
                 predicate_name = predicate
