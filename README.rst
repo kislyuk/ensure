@@ -237,8 +237,6 @@ Licensed under the terms of the `Apache License, Version 2.0 <http://www.apache.
         :target: https://codecov.io/github/kislyuk/ensure?branch=master
 .. image:: https://img.shields.io/pypi/v/ensure.svg
         :target: https://pypi.python.org/pypi/ensure
-.. image:: https://img.shields.io/pypi/dm/ensure.svg
-        :target: https://pypi.python.org/pypi/ensure
 .. image:: https://img.shields.io/pypi/l/ensure.svg
         :target: https://pypi.python.org/pypi/ensure
 .. image:: https://readthedocs.org/projects/ensure/badge/?version=latest
