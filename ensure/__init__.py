@@ -11,7 +11,6 @@ from six import string_types
 
 from ._types import NumericString, NumericByteString, IntegerString, IntegerByteString
 
-
 USING_PYTHON2 = True if sys.version_info < (3, 0) else False
 
 __all__ = ['EnsureError', 'Ensure', 'Check', 'ensure', 'check', 'ensure_raises', 'ensure_raises_regex',
@@ -737,6 +736,11 @@ class Check(InspectorProxy):
         """
         if self._exception:
             _callable(*args, **kwargs)
+
+    def __bool__(self):
+        return not self._exception
+
+    __nonzero__ = __bool__  # Python 2 compatibility
 
 class NoOpInspector(InspectorProxy):
     """
