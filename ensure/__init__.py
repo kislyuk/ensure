@@ -738,6 +738,9 @@ class Check(InspectorProxy):
         if self._exception:
             _callable(*args, **kwargs)
 
+    def __bool__(self):
+        return not self._exception
+
 class NoOpInspector(InspectorProxy):
     """
     Goes through the motions of Ensure, but never raises on the error condition. For chaining with conditional
