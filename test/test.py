@@ -86,6 +86,10 @@ class TestEnsure(unittest.TestCase):
                     print("Testing OK clause", re.sub(r'^Ensure(.+)', sub, clause))
                     eval(re.sub(r'^Ensure(.+)', sub, clause))
 
+                print("Testing OK clause", re.sub(r'Ensure(.+)', r'bool(Check\1)', clause))
+                self.assertEqual(eval(re.sub(r'Ensure(.+)', r'bool(Check\1)', clause)), True)
+
+
         bad_clauses = ('Ensure(x).contains(-1)',
                        'Ensure(x).has_length(10).also.is_empty()',
                        'Ensure(x).contains_all_of(range(20))',
@@ -142,6 +146,9 @@ class TestEnsure(unittest.TestCase):
                     with self.assertRaises(Exception):
                         print("Testing bad clause", re.sub(r'^Ensure(.+)', sub, clause))
                         eval(re.sub(r'^Ensure(.+)', sub, clause))
+
+                print("Testing bad clause", re.sub(r'^Ensure(.+)', r'bool(Check\1)', clause))
+                self.assertEqual(eval(re.sub(r'^Ensure(.+)', r'bool(Check\1)', clause)), False)
 
         with self.assertRaises(EnsureError):
             Ensure(x).is_a_dict_of(int).to(str)
