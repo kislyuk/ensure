@@ -647,6 +647,11 @@ class Ensure(Inspector):
     def is_an_integer_bytestring(self):
         return self.is_an(IntegerByteString)
 
+    def is_sorted(self, key=None):
+        sorted_subject = self._run(sorted, [self._subject], {"key": key})
+        self._run(unittest_case.assertEqual, (self._subject, sorted_subject))
+        return ChainInspector(self._subject)
+
     # def has_schema(self, schema):
     #    import jsonschema
     #    self._run(jsonschema.validate, (self._subject, schema))
