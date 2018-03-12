@@ -153,6 +153,7 @@ More examples
     ensure(-1).is_a_negative(int)
     ensure(0).is_nonnegative()
     ensure(0).is_a_nonnegative(int)
+    ensure([1,2,3]).is_sorted()
 
 .. code-block:: python
 
