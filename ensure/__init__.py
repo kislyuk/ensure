@@ -648,8 +648,20 @@ class Ensure(Inspector):
         return self.is_an(IntegerByteString)
 
     def is_sorted(self, key=None):
-        sorted_subject = self._run(sorted, [self._subject], {"key": key})
-        self._run(unittest_case.assertEqual, (self._subject, sorted_subject))
+        try:
+            previous_element, at_head, index = None, True, 0
+            for index, i in enumerate(self._subject):
+                if at_head:
+                    previous_element = key(i) if key is not None else i
+                    at_head = False
+                    continue
+                else:
+                    current_element = key(i) if key is not None else i
+                    unittest_case.assertLessEqual(previous_element, current_element)
+                    previous_element = current_element
+        except self._catch as err:
+            msg = "Expected {} to be sorted, but element at position {} is out of order ({})"
+            raise self._error_factory(msg.format(_repr(self._subject), index, str(err)))
         return ChainInspector(self._subject)
 
     # def has_schema(self, schema):
