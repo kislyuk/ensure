@@ -7,7 +7,7 @@ from six import add_metaclass
 USING_PYTHON2 = True if sys.version_info < (3, 0) else False
 
 if USING_PYTHON2:
-    str = unicode
+    str = unicode  # noqa
 
 class NumericStringType(type):
     _type = str
