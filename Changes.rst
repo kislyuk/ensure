@@ -1,3 +1,8 @@
+Changes for v0.8.2 (2019-01-14)
+===============================
+
+-  Fix version range compat error with collections.abc
+
 Changes for v0.8.1 (2019-01-14)
 ===============================
 
