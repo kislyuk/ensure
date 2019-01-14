@@ -1,3 +1,10 @@
+Changes for v0.8.0 (2019-01-14)
+===============================
+
+-  Return type of the incorrect value in EnsureError (#28)
+
+-  Move implmentation into submodule to clean up namespace
+
 Changes for v0.6.2 (2016-05-27)
 ===============================
 Length assertion helpers
