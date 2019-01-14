@@ -1,3 +1,8 @@
+Changes for v0.8.1 (2019-01-14)
+===============================
+
+-  Import ABCs from collections.abc. Fixes #27.
+
 Changes for v0.8.0 (2019-01-14)
 ===============================
 
