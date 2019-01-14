@@ -1,29 +1,22 @@
 language: python
+sudo: required
+dist: xenial
 python:
   - 2.7
-  - 3.2
   - 3.4
   - 3.5
   - 3.6
-  - pypy
-  - pypy3
+  - 3.7
+#  - pypy3
 
 before_install:
-  - pip install --quiet coverage
+  - pip install --quiet coverage flake8 wheel
 
 install:
-  - python setup.py install
+  - make install
 
 script:
   - make test
-  - coverage run --omit='*/site-packages/*,*/distutils/*' ./test/test.py
-  - coverage report --show-missing
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-
-matrix:
-  allow_failures:
-      - python: 3.2
-
-sudo: false
