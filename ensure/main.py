@@ -4,7 +4,10 @@ import sys
 import types
 import re
 from unittest.case import TestCase
-from collections.abc import Mapping, Iterable
+try:
+    from collections.abc import Mapping, Iterable
+except ImportError:
+    from collections import Mapping, Iterable
 
 from six import string_types
 
