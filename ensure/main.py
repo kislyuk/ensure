@@ -763,8 +763,13 @@ def _check_default_argument(f, arg, value):
     if value is not None and arg in f.__annotations__:
         templ = f.__annotations__[arg]
         if not isinstance(value, templ):
-            msg = "Default argument {arg} to {f} does not match annotation type {t}"
-            raise EnsureError(msg.format(arg=arg, f=f, t=templ))
+            msg = (
+                "Default argument {arg} of type {valt} to {f} "
+                "does not match annotation type {t}"
+            )
+            raise EnsureError(msg.format(
+                arg=arg, f=f, t=templ, valt=type(value)
+            ))
 
 
 class WrappedFunction:
@@ -787,8 +792,13 @@ class WrappedFunction:
                 continue
 
             if not isinstance(value, templ):
-                msg = "Argument {arg} to {f} does not match annotation type {t}"
-                raise EnsureError(msg.format(arg=arg, f=self.f, t=templ))
+                msg = (
+                    "Argument {arg} of type {valt} to {f} "
+                    "does not match annotation type {t}"
+                )
+                raise EnsureError(msg.format(
+                    arg=arg, f=self.f, t=templ, valt=type(value)
+                ))
 
         return self.f(*args, **kwargs)
 
@@ -824,13 +834,23 @@ class WrappedFunctionReturn(WrappedFunction):
                 continue
 
             if not isinstance(value, templ):
-                msg = "Argument {arg} to {f} does not match annotation type {t}"
-                raise EnsureError(msg.format(arg=arg, f=self.f, t=templ))
+                msg = (
+                    "Argument {arg} of type {valt} to {f} "
+                    "does not match annotation type {t}"
+                )
+                raise EnsureError(msg.format(
+                    arg=arg, f=self.f, t=templ, valt=type(value)
+                ))
 
         return_val = self.f(*args, **kwargs)
         if not isinstance(return_val, self.return_templ):
-            msg = "Return value of {f} does not match annotation type {t}"
-            raise EnsureError(msg.format(f=self.f, t=self.return_templ))
+            msg = (
+                "Return value of {f} of type {valt} "
+                "does not match annotation type {t}"
+            )
+            raise EnsureError(msg.format(
+                f=self.f, t=self.return_templ, valt=type(return_val)
+            ))
         return return_val
 
 
@@ -854,7 +874,8 @@ def ensure_annotations(f):
 
         print(f(1, y=2))
 
-        >>> ensure.EnsureError: Argument y to <function f at 0x109b7c710> does not match annotation type <class 'float'>
+        >>> ensure.EnsureError: Argument y of type <class 'int'> to
+        <function f at 0x109b7c710> does not match annotation type <class 'float'>
     """
 
     if f.__defaults__:

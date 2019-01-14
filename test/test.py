@@ -232,9 +232,10 @@ def h(x: str, y: int):
         self.assertEqual(f(1, 2.3), 3.3)
         self.assertEqual(f(1, y=2.3), 3.3)
         self.assertEqual(f(y=1.2, x=3), 4.2)
-        with self.assertRaisesRegex(EnsureError, "Argument y to <function f at .+> does not match annotation type <class 'float'>"):
+        with self.assertRaisesRegex(
+                EnsureError, "Argument y of type <class 'int'> to <function f at .+> does not match annotation type <class 'float'>"):
             self.assertEqual(f(1, 2), 3.3)
-        with self.assertRaisesRegex(EnsureError, "Argument y to <function f at .+> does not match annotation type <class 'float'>"):
+        with self.assertRaisesRegex(EnsureError, "Argument y of type <class 'int'> to <function f at .+> does not match annotation type <class 'float'>"):
             self.assertEqual(f(y=2, x=1), 3.3)
         with self.assertRaisesRegex(EnsureError, "Return value of <function f at .+> does not match annotation type <class 'float'>"):
             self.assertEqual(f(1, -2.3), 4)
@@ -248,10 +249,10 @@ def h(x: str, y: int):
 
         self.assertEqual('g', g.__name__)
         self.assertEqual('Simply add numbers together', g.__doc__)
-        self.assertRegex(repr(g), '<function g at 0x[0-9a-f]+>')
+        self.assertRegex(repr(g), '<function g at 0x[0-9a-fA-F]+>')
         self.assertEqual('h', h.__name__)
         self.assertEqual('Does some work', h.__doc__)
-        self.assertRegex(repr(h), '<function h at 0x[0-9a-f]+>')
+        self.assertRegex(repr(h), '<function h at 0x[0-9a-fA-F]+>')
 
     @unittest.skipIf(sys.version_info < (3, 0), "Skipping test that requires Python 3 features")
     def test_annotations_with_bad_default(self):
@@ -268,7 +269,7 @@ def f(x: int, y: float=None) -> float:
 def g(x: str, y: str=5, z='untyped with default') -> str:
     return x+y+str(z)
 """
-        with self.assertRaisesRegex(EnsureError, "Default argument y to <function g at .+> does not match annotation type <class 'str'>"):
+        with self.assertRaisesRegex(EnsureError, "Default argument y of type <class 'int'> to <function g at .+> does not match annotation type <class 'str'>"):
             exec(f_code)
         # Make sure f still works as None should be excluded from default test
         self.assertEqual(f(1, 2.3), 3.3)
@@ -295,7 +296,7 @@ def f(x: int, y: float, *args, z: int=5) -> float:
         self.assertEqual(2.0, f(3, 4.0))
         self.assertEqual(62.0, f(3, 4.0, 10, 20, 30))
         self.assertEqual(66.0, f(3, 4.0, 10, 20, 30, z=1))
-        with self.assertRaisesRegex(EnsureError, "Argument z to <function f at .+> does not match annotation type <class 'int'>"):
+        with self.assertRaisesRegex(EnsureError, "Argument z of type <class 'str'> to <function f at .+> does not match annotation type <class 'int'>"):
             self.assertEqual(66.0, f(3, 4.0, 10, 20, 30, z='hello world'))
 
     @unittest.skipIf(sys.version_info < (3, 0), "Skipping test that requires Python 3 features")
@@ -321,7 +322,7 @@ def f(x: int, y: float, *args, z: int=5) -> str:
         self.assertEqual('2.0abc', f(3, 4.0, 'abc'))
         self.assertEqual('2.0abc2.0def', f(3, 4.0, 'abc', 'def'))
         self.assertEqual('3.0abc3.0def', f(3, 4.0, 'abc', 'def', z=4))
-        with self.assertRaisesRegex(EnsureError, "Argument z to <function f at .+> does not match annotation type <class 'int'>"):
+        with self.assertRaisesRegex(EnsureError, "Argument z of type <class 'str'> to <function f at .+> does not match annotation type <class 'int'>"):
             self.assertEqual('3.0abc3.0def', f(3, 4.0, 'abc', 'def', z='school'))
 
     @unittest.skipIf(sys.version_info < (3, 0), "Skipping test that requires Python 3 features")
@@ -340,7 +341,7 @@ def f(x: int, y: float, *args, z: int='not an int') -> str:
 
     return r
 """
-        with self.assertRaisesRegex(EnsureError, "Default argument z to <function f at .+> does not match annotation type <class 'int'>"):
+        with self.assertRaisesRegex(EnsureError, "Default argument z of type <class 'str'> to <function f at .+> does not match annotation type <class 'int'>"):
             exec(f_code)
 
     @unittest.skipIf(sys.version_info < (3, 0), "Skipping test that requires Python 3 features")
@@ -363,13 +364,13 @@ class C(object):
         exec(f_code)
         c = C()
         self.assertEqual('3.3', c.f(1, 2.3))
-        self.assertRegex(repr(c.f), '<bound method C.f of <.+.C object at 0x[0-9a-f]+>>')
-        with self.assertRaisesRegex(EnsureError, "Argument x to <function (C.f|f) at .+> does not match annotation type <class 'int'>"):
+        self.assertRegex(repr(c.f), '<bound method C.f of <.+.C object at 0x[0-9a-fA-F]+>>')
+        with self.assertRaisesRegex(EnsureError, "Argument x of type <class 'float'> to <function (C.f|f) at .+> does not match annotation type <class 'int'>"):
             g = C().f(3.2, 1)
 
         self.assertEqual('3.3', c.g(1, 2.3))
-        self.assertRegex(repr(c.g), '<bound method C.g of <.+.C object at 0x[0-9a-f]+>>')
-        with self.assertRaisesRegex(EnsureError, "Argument x to <function (C.g|g) at .+> does not match annotation type <class 'int'>"):
+        self.assertRegex(repr(c.g), '<bound method C.g of <.+.C object at 0x[0-9a-fA-F]+>>')
+        with self.assertRaisesRegex(EnsureError, "Argument x of type <class 'float'> to <function (C.g|g) at .+> does not match annotation type <class 'int'>"):
             g = C().g(3.2, 1)
 
     def test_error_formatting(self):
