@@ -12,6 +12,7 @@ if USING_PYTHON2:
 class NumericStringType(type):
     _type = str
     _cast = float
+
     def __instancecheck__(self, other):
         try:
             if not isinstance(other, self._type):

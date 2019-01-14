@@ -1,12 +1,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import sys
-import collections
 import types
 import re
-import functools
 from unittest.case import TestCase
-from collections import namedtuple, Mapping, Iterable
+from collections.abc import Mapping, Iterable
+
 from six import string_types
 
 from ._types import NumericString, NumericByteString, IntegerString, IntegerByteString
