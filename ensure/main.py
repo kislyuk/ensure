@@ -874,7 +874,8 @@ def ensure_annotations(f):
 
         print(f(1, y=2))
 
-        >>> ensure.EnsureError: Argument y of type <class 'int'> to <function f at 0x109b7c710> does not match annotation type <class 'float'>
+        >>> ensure.EnsureError: Argument y of type <class 'int'> to
+        <function f at 0x109b7c710> does not match annotation type <class 'float'>
     """
 
     if f.__defaults__:
