@@ -1,8 +1,8 @@
 ensure: Literate assertions in Python
 =====================================
 *ensure* is a set of simple assertion helpers that let you write more expressive, literate, concise, and readable
-Pythonic code for validating conditions. It's inspired by `should.js <https://github.com/visionmedia/should.js>`_,
-`expect.js <https://github.com/LearnBoost/expect.js>`_, and builds on top of the
+Pythonic code for validating conditions. It's inspired by `should.js <https://github.com/shouldjs/should.js>`_,
+`expect.js <https://github.com/Automattic/expect.js>`_, and builds on top of the
 `unittest/JUnit assert helpers <http://docs.python.org/2/library/unittest.html#assert-methods>`_.
 
 If you use Python 3, you can use *ensure* to enforce your **function signature annotations**: see
