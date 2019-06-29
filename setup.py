@@ -3,11 +3,13 @@
 import os
 from setuptools import setup, find_packages
 
+VERSION = '0.8.2'
+
 install_requires = [line.rstrip() for line in open(os.path.join(os.path.dirname(__file__), "requirements.txt"))]
 
 KWARGS = dict(
     name='ensure',
-    version='0.8.2',
+    version=VERSION,
     url='https://github.com/kislyuk/ensure',
     license='Apache Software License',
     author='Andrey Kislyuk',
