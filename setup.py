@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 install_requires = [line.rstrip() for line in open(os.path.join(os.path.dirname(__file__), "requirements.txt"))]
 
-setup(
+KWARGS = dict(
     name='ensure',
     version='0.8.2',
     url='https://github.com/kislyuk/ensure',
@@ -32,3 +32,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules'
     ]
 )
+
+
+if __name__ == '__main__':
+    setup(**KWARGS)
