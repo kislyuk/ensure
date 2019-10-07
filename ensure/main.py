@@ -878,6 +878,12 @@ def ensure_annotations(f):
 
         >>> ensure.EnsureError: Argument y of type <class 'int'> to
         <function f at 0x109b7c710> does not match annotation type <class 'float'>
+
+    .. warning::
+
+       The current implementation of the decorator might trigger
+       a ``_pickle.PicklingError`` when a decorated function is run through
+       ``multiprocessing``.
     """
 
     if f.__defaults__:
