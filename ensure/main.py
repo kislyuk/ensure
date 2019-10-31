@@ -302,6 +302,8 @@ class Ensure(Inspector):
         self.contains(key)
         return KeyInspector(self._subject[key])
 
+    contains_key = has_key
+
     def has_keys(self, keys):
         """
         Ensures :attr:`subject` is a :class:`collections.Mapping` and contains *keys*, which must be an iterable.
