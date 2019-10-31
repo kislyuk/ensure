@@ -1,3 +1,13 @@
+Changes for v1.0.0 (2019-10-30)
+===============================
+
+-  Add contains_key, an alias for has_key
+
+-  Document PicklingError for ensure_annotations in multiprocessing
+   (#32)
+
+-  Package is stable
+
 Changes for v0.8.2 (2019-01-14)
 ===============================
 
