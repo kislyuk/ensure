@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import os
 import sys
 import unittest
-import collections
+import collections, collections.abc
 import copy
 import re
 from six import text_type as str
@@ -44,9 +44,9 @@ class TestEnsure(unittest.TestCase):
                       'Ensure(x).has_length(length=10, min=9, max=10)',
                       'Ensure(x).has_length(max=99.9)',
                       'Ensure(x).is_nonempty().also.has_length(10)',
-                      'Ensure(x).is_a(collections.Mapping)',
+                      'Ensure(x).is_a(collections.abc.Mapping)',
                       'Ensure(x).is_a_dict_of(int).to(int)',
-                      'Ensure(x).is_a(collections.Mapping).of(int).to(int)',
+                      'Ensure(x).is_a(collections.abc.Mapping).of(int).to(int)',
                       'Ensure(6).is_greater_than(5)',
                       'Ensure(6).exceeds(5)',
                       'Ensure(1.1).is_greater_than_or_equal_to(1.1)',
