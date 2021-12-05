@@ -12,10 +12,10 @@ setup(
     author_email='kislyuk@gmail.com',
     description='Literate BDD assertions in Python with no magic',
     long_description=open('README.rst').read(),
-    python_requires=">=3.5",
-    install_requires=["six >= 1.11.0"],
+    python_requires='>=3.5',
+    install_requires=['six >= 1.11.0'],
     extras_require={
-        "test": ["coverage", "flake8"]
+        'test': ['coverage', 'flake8']
     },
     include_package_data=True,
     platforms=['MacOS X', 'Posix'],
