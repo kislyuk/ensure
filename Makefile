@@ -11,7 +11,7 @@ init_docs:
 	cd docs; sphinx-quickstart
 
 docs:
-	$(MAKE) -C docs html
+	sphinx-build docs docs/html
 
 install: clean
 	pip install wheel
