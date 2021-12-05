@@ -7,7 +7,7 @@ Pythonic code for validating conditions. It's inspired by `should.js <https://gi
 
 If you use Python 3, you can use *ensure* to enforce your **function signature annotations**: see
 `PEP 3107 <http://www.python.org/dev/peps/pep-3107/>`_ and the
-`@ensure_annotations <https://ensure.readthedocs.io/en/latest/#ensure.ensure_annotations>`_ decorator below.
+@ensure_annotations decorator below.
 
 Because *ensure* is fast, is a standalone library (not part of a test framework), doesn't monkey-patch anything or use DSLs,
 and doesn't use the assert statement (which is liable to be turned off with the ``-O`` flag), it can be used to validate
@@ -165,7 +165,7 @@ More examples
     with ensure().raises_regex(NameError, "'w00t' is not defined"):
         w00t
 
-See `complete API documentation <https://ensure.readthedocs.io/en/latest/#module-ensure>`_.
+See `complete API documentation <https://kislyuk.github.io/ensure/#module-ensure>`_.
 
 Enforcing function annotations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -221,7 +221,7 @@ Authors
 Links
 -----
 * `Project home page (GitHub) <https://github.com/kislyuk/ensure>`_
-* `Documentation (Read the Docs) <https://ensure.readthedocs.io/en/latest/>`_
+* `Documentation <https://kislyuk.github.io/ensure/>`_
 * `Package distribution (PyPI) <https://pypi.python.org/pypi/ensure>`_
 
 Bugs
@@ -232,13 +232,11 @@ License
 -------
 Licensed under the terms of the `Apache License, Version 2.0 <http://www.apache.org/licenses/LICENSE-2.0>`_.
 
-.. image:: https://travis-ci.org/kislyuk/ensure.png
-        :target: https://travis-ci.org/kislyuk/ensure
+.. image:: https://github.com/kislyuk/ensure/workflows/CI/badge.svg
+        :target: https://github.com/kislyuk/ensure/actions
 .. image:: https://codecov.io/github/kislyuk/ensure/coverage.svg?branch=master
         :target: https://codecov.io/github/kislyuk/ensure?branch=master
 .. image:: https://img.shields.io/pypi/v/ensure.svg
         :target: https://pypi.python.org/pypi/ensure
 .. image:: https://img.shields.io/pypi/l/ensure.svg
         :target: https://pypi.python.org/pypi/ensure
-.. image:: https://readthedocs.org/projects/ensure/badge/?version=latest
-        :target: https://ensure.readthedocs.io/
