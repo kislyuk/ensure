@@ -1,3 +1,10 @@
+Changes for v1.0.1 (2021-12-05)
+===============================
+
+-  Update Python compatibility markers
+
+-  Update test and documentation infrastructure
+
 Changes for v1.0.0 (2019-10-30)
 ===============================
 
