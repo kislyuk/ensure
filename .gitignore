@@ -5,7 +5,7 @@
 # Python files
 *.pyc
 __pycache__/
-.tox/
+.coverage
 *.egg-info/
 /build/
 /dist/
