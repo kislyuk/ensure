@@ -17,6 +17,7 @@ setup(
     extras_require={
         'test': ['coverage', 'flake8']
     },
+    packages=find_packages(exclude=['test']),
     include_package_data=True,
     platforms=['MacOS X', 'Posix'],
     test_suite='test',
