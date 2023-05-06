@@ -1,19 +1,15 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-import sys
-import types
 import re
+import types
 from unittest.case import TestCase
+
 try:
-    from collections.abc import Mapping, Iterable
+    from collections.abc import Iterable, Mapping
 except ImportError:
     from collections import Mapping, Iterable
 
 from six import string_types
 
-from ._types import NumericString, NumericByteString, IntegerString, IntegerByteString
-
-USING_PYTHON2 = True if sys.version_info < (3, 0) else False
+from ._types import IntegerByteString, IntegerString, NumericByteString, NumericString
 
 try:
     from repr import Repr
@@ -22,7 +18,7 @@ except ImportError:
 
 _repr = Repr().repr
 
-unittest_case = TestCase(methodName='__init__')
+unittest_case = TestCase(methodName="__init__")
 
 
 def _format(message, *args):
@@ -52,10 +48,12 @@ class Inspector(object):
 
     def __repr__(self):
         desc = "<{module}.{classname} object at 0x{mem_loc:x} inspecting {subject}>"
-        return desc.format(module=self.__module__,
-                           classname=self.__class__.__name__,
-                           mem_loc=id(self),
-                           subject=_repr(self._orig_subject))
+        return desc.format(
+            module=self.__module__,
+            classname=self.__class__.__name__,
+            mem_loc=id(self),
+            subject=_repr(self._orig_subject),
+        )
 
     @property
     def _subject(self):
@@ -116,6 +114,7 @@ class ChainInspector(Inspector):
     def __repr__(self):
         return "{}: OK".format(Inspector.__repr__(self))
 
+
 class KeyInspector(Inspector):
     @property
     def whose_value(self):
@@ -137,6 +136,7 @@ class MultiInspector(Inspector):
     """
     Calls a list of inspector objects on a single subject.
     """
+
     def _get_inspector(self, subject):
         return subject
 
@@ -150,6 +150,7 @@ class MultiInspector(Inspector):
                 sub_inspectors.append(inspect_method(*args, **kwargs))
             if not all(i is None for i in sub_inspectors):
                 return MultiInspector(sub_inspectors)
+
         return inspect
 
 
@@ -157,6 +158,7 @@ class MultiEnsure(MultiInspector):
     """
     Maps a single Ensure object to an iterable of subjects.
     """
+
     def __init__(self, iterable, inspector):
         Inspector.__init__(self, iterable)
         self._inspector = inspector
@@ -167,7 +169,7 @@ class MultiEnsure(MultiInspector):
 
 
 class Ensure(Inspector):
-    ''' Constructs a root-level inspector, which can perform a variety of checks (*predicates*) on subjects passed to
+    """Constructs a root-level inspector, which can perform a variety of checks (*predicates*) on subjects passed to
     it. If the checks do not pass, by default :class:`EnsureError` is raised. This can be configured by passing the
     ``error_factory`` keyword to the constructor.
 
@@ -187,7 +189,8 @@ class Ensure(Inspector):
 
         ensure({1: {2: "a"}}).has_key(1).whose_value.is_a(dict).of(int).to(str)
 
-    '''
+    """
+
     @classmethod
     def each_of(cls, iterable):
         """
@@ -254,8 +257,14 @@ class Ensure(Inspector):
         """
         for element in self._subject:
             if element not in elements:
-                raise self._error_factory(_format("Expected {} to have only {}, but it contains {}",
-                                                  self._subject, elements, element))
+                raise self._error_factory(
+                    _format(
+                        "Expected {} to have only {}, but it contains {}",
+                        self._subject,
+                        elements,
+                        element,
+                    )
+                )
         self.contains_all_of(elements)
         return ChainInspector(self._subject)
 
@@ -275,8 +284,14 @@ class Ensure(Inspector):
         """
         for element in elements:
             if element not in self._subject:
-                raise self._error_factory(_format("Expected {} to have all of {}, but it does not contain {}",
-                                                  self._subject, elements, element))
+                raise self._error_factory(
+                    _format(
+                        "Expected {} to have all of {}, but it does not contain {}",
+                        self._subject,
+                        elements,
+                        element,
+                    )
+                )
         return ChainInspector(self._subject)
 
     def does_not_contain(self, element):
@@ -407,7 +422,7 @@ class Ensure(Inspector):
         Ensures :attr:`subject` is an object of class *prototype*.
         """
         self._run(unittest_case.assertIsInstance, (self._subject, prototype))
-        if hasattr(self._subject, '__iter__'):
+        if hasattr(self._subject, "__iter__"):
             return IterableInspector(self._subject)
         else:
             return ReferenceInspector(self._subject)
@@ -530,9 +545,15 @@ class Ensure(Inspector):
         Ensures :attr:`subject` is an int, float, or long.
         """
         from decimal import Decimal
-        numeric_types = (int, float, long, Decimal) if USING_PYTHON2 else (int, float, Decimal)  # noqa
+
+        numeric_types = (int, float, Decimal)
         if not isinstance(self._subject, numeric_types):
-            raise self._error_factory(_format("Expected {} to be numeric (int, float, long or Decimal)", self._subject))
+            raise self._error_factory(
+                _format(
+                    "Expected {} to be numeric (int, float, long or Decimal)",
+                    self._subject,
+                )
+            )
 
     def is_callable(self):
         """
@@ -551,17 +572,17 @@ class Ensure(Inspector):
         if length is not None:
             try:
                 unittest_case.assertTrue(my_length == length)
-            except self._catch as err:
+            except self._catch:
                 raise self._error_factory(_format("Expected {} to have length {}", self._subject, length))
         if min is not None:
             try:
                 unittest_case.assertTrue(my_length >= min)
-            except self._catch as err:
+            except self._catch:
                 raise self._error_factory(_format("Expected {} to have length at least {}", self._subject, min))
         if max is not None:
             try:
                 unittest_case.assertTrue(my_length <= max)
-            except self._catch as err:
+            except self._catch:
                 raise self._error_factory(_format("Expected {} to have length at most {}", self._subject, max))
         return ChainInspector(self._subject)
 
@@ -571,7 +592,7 @@ class Ensure(Inspector):
         """
         try:
             unittest_case.assertTrue(self._subject > other)
-        except self._catch as err:
+        except self._catch:
             raise self._error_factory(_format("Expected {} to be greater than {}", self._subject, other))
         return ChainInspector(self._subject)
 
@@ -583,7 +604,7 @@ class Ensure(Inspector):
         """
         try:
             unittest_case.assertTrue(self._subject < other)
-        except self._catch as err:
+        except self._catch:
             raise self._error_factory(_format("Expected {} to be less than {}", self._subject, other))
         return ChainInspector(self._subject)
 
@@ -593,8 +614,14 @@ class Ensure(Inspector):
         """
         try:
             unittest_case.assertTrue(self._subject >= other)
-        except self._catch as err:
-            raise self._error_factory(_format("Expected {} to be greater than or equal to {}", self._subject, other))
+        except self._catch:
+            raise self._error_factory(
+                _format(
+                    "Expected {} to be greater than or equal to {}",
+                    self._subject,
+                    other,
+                )
+            )
         return ChainInspector(self._subject)
 
     def is_less_than_or_equal_to(self, other):
@@ -603,7 +630,7 @@ class Ensure(Inspector):
         """
         try:
             unittest_case.assertTrue(self._subject <= other)
-        except self._catch as err:
+        except self._catch:
             raise self._error_factory(_format("Expected {} to be less than or equal to {}", self._subject, other))
         return ChainInspector(self._subject)
 
@@ -630,8 +657,9 @@ class Ensure(Inspector):
         Ensures preceding predicates (specifically, :meth:`called_with()`) result in *expected_exception* being raised,
         and the string representation of *expected_exception* must match regular expression *expected_regexp*.
         """
-        return unittest_case.assertRaisesRegexp(expected_exception, expected_regexp, self._orig_subject,
-                                                *self._args, **self._kwargs)
+        return unittest_case.assertRaisesRegexp(
+            expected_exception, expected_regexp, self._orig_subject, *self._args, **self._kwargs
+        )
 
     def is_a_numeric_string(self):
         return self.is_a(NumericString)
@@ -671,18 +699,21 @@ class Ensure(Inspector):
             if isinstance(predicate, string_types):
                 # `predicate` can be a string that names a method.
                 # In this case, look up the method and use that as the actual predicate.
-                if not predicate.startswith('.'):
-                    raise TypeError('Predicate must be a callable or method name, '
-                                    'and method names must start with ".": {}'.format(predicate))
+                if not predicate.startswith("."):
+                    raise TypeError(
+                        "Predicate must be a callable or method name, "
+                        'and method names must start with ".": {}'.format(predicate)
+                    )
                 method_name = predicate[1:]
 
                 def actual_predicate(subj, *args):
                     return getattr(subj, method_name)(*args, **kwargs)
+
                 predicate_name = predicate
             else:
                 # Otherwise assume `predicate` is some kind of callable
                 actual_predicate = predicate
-                predicate_name = getattr(predicate, '__name__', predicate)
+                predicate_name = getattr(predicate, "__name__", predicate)
 
             if not actual_predicate(self._subject, *args, **kwargs):
                 # Note the error message uses the original `predicate`
@@ -690,7 +721,9 @@ class Ensure(Inspector):
                 if args:
                     msg += _format(" on args {}", args)
                 raise ValueError(msg)
+
         return self._run(run)
+
 
 class InspectorProxy(object):
     def __init__(self, *args, **kwargs):
@@ -714,7 +747,9 @@ class InspectorProxy(object):
                 except self._inspector._catch as e:
                     self._exception = e
             return self
+
         return inspect
+
 
 class Check(InspectorProxy):
     """
@@ -723,6 +758,7 @@ class Check(InspectorProxy):
 
     ``.each_of()`` is not supported by the **Check** inspector; all other methods are supported.
     """
+
     def or_raise(self, error_factory, message=None, *args, **kwargs):
         """
         Raises an exception produced by **error_factory** if a predicate fails.
@@ -757,23 +793,20 @@ class Check(InspectorProxy):
 
     __nonzero__ = __bool__  # Python 2 compatibility
 
+
 class NoOpInspector(InspectorProxy):
     """
     Goes through the motions of Ensure, but never raises on the error condition. For chaining with conditional
     predicates like ``is_none_or``.
     """
 
+
 def _check_default_argument(f, arg, value):
     if value is not None and arg in f.__annotations__:
         templ = f.__annotations__[arg]
         if not isinstance(value, templ):
-            msg = (
-                "Default argument {arg} of type {valt} to {f} "
-                "does not match annotation type {t}"
-            )
-            raise EnsureError(msg.format(
-                arg=arg, f=f, t=templ, valt=type(value)
-            ))
+            msg = "Default argument {arg} of type {valt} to {f} " "does not match annotation type {t}"
+            raise EnsureError(msg.format(arg=arg, f=f, t=templ, valt=type(value)))
 
 
 class WrappedFunction:
@@ -796,13 +829,8 @@ class WrappedFunction:
                 continue
 
             if not isinstance(value, templ):
-                msg = (
-                    "Argument {arg} of type {valt} to {f} "
-                    "does not match annotation type {t}"
-                )
-                raise EnsureError(msg.format(
-                    arg=arg, f=self.f, t=templ, valt=type(value)
-                ))
+                msg = "Argument {arg} of type {valt} to {f} " "does not match annotation type {t}"
+                raise EnsureError(msg.format(arg=arg, f=self.f, t=templ, valt=type(value)))
 
         return self.f(*args, **kwargs)
 
@@ -838,23 +866,13 @@ class WrappedFunctionReturn(WrappedFunction):
                 continue
 
             if not isinstance(value, templ):
-                msg = (
-                    "Argument {arg} of type {valt} to {f} "
-                    "does not match annotation type {t}"
-                )
-                raise EnsureError(msg.format(
-                    arg=arg, f=self.f, t=templ, valt=type(value)
-                ))
+                msg = "Argument {arg} of type {valt} to {f} " "does not match annotation type {t}"
+                raise EnsureError(msg.format(arg=arg, f=self.f, t=templ, valt=type(value)))
 
         return_val = self.f(*args, **kwargs)
         if not isinstance(return_val, self.return_templ):
-            msg = (
-                "Return value of {f} of type {valt} "
-                "does not match annotation type {t}"
-            )
-            raise EnsureError(msg.format(
-                f=self.f, t=self.return_templ, valt=type(return_val)
-            ))
+            msg = "Return value of {f} of type {valt} " "does not match annotation type {t}"
+            raise EnsureError(msg.format(f=self.f, t=self.return_templ, valt=type(return_val)))
         return return_val
 
 
@@ -908,8 +926,8 @@ def ensure_annotations(f):
             else:
                 arg_properties.append((arg, templ, pos))
 
-    if 'return' in f.__annotations__:
-        return_templ = f.__annotations__['return']
+    if "return" in f.__annotations__:
+        return_templ = f.__annotations__["return"]
         return WrappedFunctionReturn(arg_properties, f, return_templ)
     else:
         return WrappedFunction(arg_properties, f)

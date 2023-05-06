@@ -2,7 +2,7 @@ test_deps:
 	pip install .[test]
 
 lint: test_deps
-	flake8 $$(python setup.py --name)
+	ruff $$(dirname */__init__.py)
 
 test: test_deps lint
 	coverage run --source=$$(python setup.py --name) ./test/test.py
