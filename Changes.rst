@@ -1,3 +1,10 @@
+Changes for v1.0.3 (2023-05-06)
+===============================
+
+-  Update Python compatibility markers
+
+-  Update test, linting, and release management infrastructure
+
 Changes for v1.0.2 (2021-12-05)
 ===============================
 

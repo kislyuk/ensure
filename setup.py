@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="ensure",
-    version="1.0.2",
+    version="1.0.3",
     url="https://github.com/kislyuk/ensure",
     license="Apache Software License",
     author="Andrey Kislyuk",
