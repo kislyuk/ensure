@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>ensure._types &#8212; ensure  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/guzzle.css?v=ee5bbeb1" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">ensure  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ensure._types</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">ensure</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../../index.html">Docs</a></li>
+              
+                <li><a href="../index.html">Module code</a></li>
+              
+              <li>ensure._types</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <h1>Source code for ensure._types</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">six</span> <span class="kn">import</span> <span class="n">add_metaclass</span>
+
+
+<span class="k">class</span> <span class="nc">NumericStringType</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="n">_type</span> <span class="o">=</span> <span class="nb">str</span>
+    <span class="n">_cast</span> <span class="o">=</span> <span class="nb">float</span>
+
+    <span class="k">def</span> <span class="fm">__instancecheck__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cast</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">class</span> <span class="nc">NumericByteStringType</span><span class="p">(</span><span class="n">NumericStringType</span><span class="p">):</span>
+    <span class="n">_type</span> <span class="o">=</span> <span class="nb">bytes</span>
+
+
+<span class="k">class</span> <span class="nc">IntegerStringType</span><span class="p">(</span><span class="n">NumericStringType</span><span class="p">):</span>
+    <span class="n">_cast</span> <span class="o">=</span> <span class="nb">int</span>
+
+
+<span class="k">class</span> <span class="nc">IntegerByteStringType</span><span class="p">(</span><span class="n">IntegerStringType</span><span class="p">):</span>
+    <span class="n">_type</span> <span class="o">=</span> <span class="nb">bytes</span>
+
+
+<div class="viewcode-block" id="NumericString">
+<a class="viewcode-back" href="../../index.html#ensure.NumericString">[docs]</a>
+<span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">NumericStringType</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">NumericString</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="NumericByteString">
+<a class="viewcode-back" href="../../index.html#ensure.NumericByteString">[docs]</a>
+<span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">NumericByteStringType</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">NumericByteString</span><span class="p">(</span><span class="nb">bytes</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="IntegerString">
+<a class="viewcode-back" href="../../index.html#ensure.IntegerString">[docs]</a>
+<span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">IntegerStringType</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">IntegerString</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="IntegerByteString">
+<a class="viewcode-back" href="../../index.html#ensure.IntegerByteString">[docs]</a>
+<span class="nd">@add_metaclass</span><span class="p">(</span><span class="n">IntegerByteStringType</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">IntegerByteString</span><span class="p">(</span><span class="nb">bytes</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+</pre></div>
+
+          </div>
+            
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">ensure  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ensure._types</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright Andrey Kislyuk and ensure contributors. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

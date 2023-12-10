@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>ensure: Literate assertions in Python &#8212; ensure  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/guzzle.css?v=ee5bbeb1" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">ensure  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ensure: Literate assertions in Python</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    #" class="text-logo">ensure</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Contents</h2>
+    <div class="sidebar-localtoc">
+      <ul>
+<li><a class="reference internal" href="#">ensure: Literate assertions in Python</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#synopsis">Synopsis</a><ul>
+<li><a class="reference internal" href="#notes">Notes</a></li>
+<li><a class="reference internal" href="#raising-custom-exceptions">Raising custom exceptions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#more-examples">More examples</a><ul>
+<li><a class="reference internal" href="#enforcing-function-annotations">Enforcing function annotations</a></li>
+<li><a class="reference internal" href="#id1">Motivation and goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#authors">Authors</a></li>
+<li><a class="reference internal" href="#links">Links</a><ul>
+<li><a class="reference internal" href="#bugs">Bugs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ensure">API documentation</a><ul>
+<li><a class="reference internal" href="#ensure.Check"><code class="docutils literal notranslate"><span class="pre">Check</span></code></a><ul>
+<li><a class="reference internal" href="#ensure.Check.or_call"><code class="docutils literal notranslate"><span class="pre">Check.or_call()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Check.or_raise"><code class="docutils literal notranslate"><span class="pre">Check.or_raise()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Check.otherwise"><code class="docutils literal notranslate"><span class="pre">Check.otherwise()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ensure.Ensure"><code class="docutils literal notranslate"><span class="pre">Ensure</span></code></a><ul>
+<li><a class="reference internal" href="#ensure.Ensure.called_with"><code class="docutils literal notranslate"><span class="pre">Ensure.called_with()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.contains"><code class="docutils literal notranslate"><span class="pre">Ensure.contains()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.contains_all_of"><code class="docutils literal notranslate"><span class="pre">Ensure.contains_all_of()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.contains_key"><code class="docutils literal notranslate"><span class="pre">Ensure.contains_key()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.contains_no"><code class="docutils literal notranslate"><span class="pre">Ensure.contains_no()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.contains_none_of"><code class="docutils literal notranslate"><span class="pre">Ensure.contains_none_of()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.contains_one_of"><code class="docutils literal notranslate"><span class="pre">Ensure.contains_one_of()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.contains_one_or_more_of"><code class="docutils literal notranslate"><span class="pre">Ensure.contains_one_or_more_of()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.contains_only"><code class="docutils literal notranslate"><span class="pre">Ensure.contains_only()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.contains_some_of"><code class="docutils literal notranslate"><span class="pre">Ensure.contains_some_of()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.does_not_contain"><code class="docutils literal notranslate"><span class="pre">Ensure.does_not_contain()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.does_not_equal"><code class="docutils literal notranslate"><span class="pre">Ensure.does_not_equal()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.each_of"><code class="docutils literal notranslate"><span class="pre">Ensure.each_of()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.equals"><code class="docutils literal notranslate"><span class="pre">Ensure.equals()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.exceeds"><code class="docutils literal notranslate"><span class="pre">Ensure.exceeds()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.has_attribute"><code class="docutils literal notranslate"><span class="pre">Ensure.has_attribute()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.has_key"><code class="docutils literal notranslate"><span class="pre">Ensure.has_key()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.has_keys"><code class="docutils literal notranslate"><span class="pre">Ensure.has_keys()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.has_length"><code class="docutils literal notranslate"><span class="pre">Ensure.has_length()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.has_only_keys"><code class="docutils literal notranslate"><span class="pre">Ensure.has_only_keys()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.hasattr"><code class="docutils literal notranslate"><span class="pre">Ensure.hasattr()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_"><code class="docutils literal notranslate"><span class="pre">Ensure.is_()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_a"><code class="docutils literal notranslate"><span class="pre">Ensure.is_a()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_a_dict_of"><code class="docutils literal notranslate"><span class="pre">Ensure.is_a_dict_of()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_a_list_of"><code class="docutils literal notranslate"><span class="pre">Ensure.is_a_list_of()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_a_mapping_of"><code class="docutils literal notranslate"><span class="pre">Ensure.is_a_mapping_of()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_a_negative"><code class="docutils literal notranslate"><span class="pre">Ensure.is_a_negative()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_a_nonempty"><code class="docutils literal notranslate"><span class="pre">Ensure.is_a_nonempty()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_a_nonnegative"><code class="docutils literal notranslate"><span class="pre">Ensure.is_a_nonnegative()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_a_positive"><code class="docutils literal notranslate"><span class="pre">Ensure.is_a_positive()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_a_set_of"><code class="docutils literal notranslate"><span class="pre">Ensure.is_a_set_of()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_an"><code class="docutils literal notranslate"><span class="pre">Ensure.is_an()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_an_empty"><code class="docutils literal notranslate"><span class="pre">Ensure.is_an_empty()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_an_instance_of"><code class="docutils literal notranslate"><span class="pre">Ensure.is_an_instance_of()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_an_iterable_of"><code class="docutils literal notranslate"><span class="pre">Ensure.is_an_iterable_of()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_callable"><code class="docutils literal notranslate"><span class="pre">Ensure.is_callable()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_empty"><code class="docutils literal notranslate"><span class="pre">Ensure.is_empty()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_false"><code class="docutils literal notranslate"><span class="pre">Ensure.is_false()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_greater_than"><code class="docutils literal notranslate"><span class="pre">Ensure.is_greater_than()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_greater_than_or_equal_to"><code class="docutils literal notranslate"><span class="pre">Ensure.is_greater_than_or_equal_to()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_in"><code class="docutils literal notranslate"><span class="pre">Ensure.is_in()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_less_than"><code class="docutils literal notranslate"><span class="pre">Ensure.is_less_than()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_less_than_or_equal_to"><code class="docutils literal notranslate"><span class="pre">Ensure.is_less_than_or_equal_to()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_negative"><code class="docutils literal notranslate"><span class="pre">Ensure.is_negative()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_none"><code class="docutils literal notranslate"><span class="pre">Ensure.is_none()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_none_or"><code class="docutils literal notranslate"><span class="pre">Ensure.is_none_or</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_nonempty"><code class="docutils literal notranslate"><span class="pre">Ensure.is_nonempty()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_nonnegative"><code class="docutils literal notranslate"><span class="pre">Ensure.is_nonnegative()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_not"><code class="docutils literal notranslate"><span class="pre">Ensure.is_not()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_not_a"><code class="docutils literal notranslate"><span class="pre">Ensure.is_not_a()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_not_equal_to"><code class="docutils literal notranslate"><span class="pre">Ensure.is_not_equal_to()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_not_in"><code class="docutils literal notranslate"><span class="pre">Ensure.is_not_in()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_not_none"><code class="docutils literal notranslate"><span class="pre">Ensure.is_not_none()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_numeric"><code class="docutils literal notranslate"><span class="pre">Ensure.is_numeric()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_positive"><code class="docutils literal notranslate"><span class="pre">Ensure.is_positive()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.is_true"><code class="docutils literal notranslate"><span class="pre">Ensure.is_true()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.matches"><code class="docutils literal notranslate"><span class="pre">Ensure.matches()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.not_a"><code class="docutils literal notranslate"><span class="pre">Ensure.not_a()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.not_in"><code class="docutils literal notranslate"><span class="pre">Ensure.not_in()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.raises"><code class="docutils literal notranslate"><span class="pre">Ensure.raises()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.raises_regex"><code class="docutils literal notranslate"><span class="pre">Ensure.raises_regex()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.Ensure.with_args"><code class="docutils literal notranslate"><span class="pre">Ensure.with_args()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ensure.EnsureError"><code class="docutils literal notranslate"><span class="pre">EnsureError</span></code></a></li>
+<li><a class="reference internal" href="#ensure.IntegerByteString"><code class="docutils literal notranslate"><span class="pre">IntegerByteString</span></code></a></li>
+<li><a class="reference internal" href="#ensure.IntegerString"><code class="docutils literal notranslate"><span class="pre">IntegerString</span></code></a></li>
+<li><a class="reference internal" href="#ensure.NumericByteString"><code class="docutils literal notranslate"><span class="pre">NumericByteString</span></code></a></li>
+<li><a class="reference internal" href="#ensure.NumericString"><code class="docutils literal notranslate"><span class="pre">NumericString</span></code></a></li>
+<li><a class="reference internal" href="#ensure.ensure_annotations"><code class="docutils literal notranslate"><span class="pre">ensure_annotations()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.ensure_raises"><code class="docutils literal notranslate"><span class="pre">ensure_raises()</span></code></a></li>
+<li><a class="reference internal" href="#ensure.ensure_raises_regex"><code class="docutils literal notranslate"><span class="pre">ensure_raises_regex()</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">ensure_annotations()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#table-of-contents">Table of Contents</a></li>
+</ul>
+
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="#">Docs</a></li>
+              
+              <li>ensure: Literate assertions in Python</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <section id="ensure-literate-assertions-in-python">
+<h1>ensure: Literate assertions in Python<a class="headerlink" href="#ensure-literate-assertions-in-python" title="Link to this heading">¶</a></h1>
+<p><em>ensure</em> is a set of simple assertion helpers that let you write more expressive, literate, concise, and readable
+Pythonic code for validating conditions. It’s inspired by <a class="reference external" href="https://github.com/shouldjs/should.js">should.js</a>,
+<a class="reference external" href="https://github.com/Automattic/expect.js">expect.js</a>, and builds on top of the
+<a class="reference external" href="http://docs.python.org/2/library/unittest.html#assert-methods">unittest/JUnit assert helpers</a>.</p>
+<p>If you use Python 3, you can use <em>ensure</em> to enforce your <strong>function signature annotations</strong>: see
+<a class="reference external" href="http://www.python.org/dev/peps/pep-3107/">PEP 3107</a> and the
+&#64;ensure_annotations decorator below.</p>
+<p>Because <em>ensure</em> is fast, is a standalone library (not part of a test framework), doesn’t monkey-patch anything or use DSLs,
+and doesn’t use the assert statement (which is liable to be turned off with the <code class="docutils literal notranslate"><span class="pre">-O</span></code> flag), it can be used to validate
+conditions in production code, not just for testing (though it certainly works as a BDD test utility library).</p>
+<p>Aside from better looking code, a big reason to use <em>ensure</em> is that it provides more consistent, readable, and
+informative error messages when things go wrong. See
+<a class="reference external" href="https://github.com/kislyuk/ensure#motivation-and-goals">Motivation and Goals</a> for more.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">ensure</span>
+</pre></div>
+</div>
+</section>
+<section id="synopsis">
+<h2>Synopsis<a class="headerlink" href="#synopsis" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ensure</span> <span class="kn">import</span> <span class="n">ensure</span>
+
+<span class="n">ensure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_an</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">3</span><span class="p">}})</span><span class="o">.</span><span class="n">equals</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">3</span><span class="p">}})</span><span class="o">.</span><span class="n">also</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">whose_value</span><span class="o">.</span><span class="n">has_length</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ensure</span><span class="o">.</span><span class="n">each_of</span><span class="p">([{</span><span class="mi">1</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span> <span class="p">{</span><span class="mi">3</span><span class="p">:</span> <span class="mi">4</span><span class="p">}])</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">called_with</span><span class="p">(</span><span class="s2">&quot;1100101&quot;</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">returns</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span><span class="o">.</span><span class="n">called_with</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">)</span>
+<span class="n">check</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">or_raise</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="s2">&quot;An error happened: </span><span class="si">{msg}</span><span class="s2">. See http://example.com for more information.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In Python 3:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ensure</span> <span class="kn">import</span> <span class="n">ensure_annotations</span>
+
+<span class="nd">@ensure_annotations</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span>
+</pre></div>
+</div>
+<p>See <strong>More examples</strong> below.</p>
+<section id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">ensure</span></code> module exports the <code class="docutils literal notranslate"><span class="pre">Ensure</span></code> class and its convenience instance <code class="docutils literal notranslate"><span class="pre">ensure</span></code>. Instances of the class are
+callable, and the call will reset the contents that the instance is inspecting, so you can reuse it for many checks (as
+seen above).</p>
+<p>The class raises <code class="docutils literal notranslate"><span class="pre">EnsureError</span></code> (a subclass of <code class="docutils literal notranslate"><span class="pre">AssertionError</span></code>) by default.</p>
+<p>There are several ways to <strong>chain clauses</strong>, depending on the grammatical context: <code class="docutils literal notranslate"><span class="pre">.also</span></code>, <code class="docutils literal notranslate"><span class="pre">.which</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">.whose_value</span></code> are available per examples below.</p>
+</section>
+<section id="raising-custom-exceptions">
+<h3>Raising custom exceptions<a class="headerlink" href="#raising-custom-exceptions" title="Link to this heading">¶</a></h3>
+<p>You can pass a callable or exception class as the <code class="docutils literal notranslate"><span class="pre">error_factory</span></code> keyword argument to <code class="docutils literal notranslate"><span class="pre">Ensure()</span></code>, or you can use the
+<code class="docutils literal notranslate"><span class="pre">Check</span></code> class or its convenience instance <code class="docutils literal notranslate"><span class="pre">check()</span></code>. This class behaves like <code class="docutils literal notranslate"><span class="pre">Ensure</span></code>, but does not raise errors
+immediately. It saves them and chains the methods <code class="docutils literal notranslate"><span class="pre">otherwise()</span></code>, <code class="docutils literal notranslate"><span class="pre">or_raise()</span></code> and <code class="docutils literal notranslate"><span class="pre">or_call()</span></code> to the end of the
+clauses.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ensure</span> <span class="kn">import</span> <span class="n">check</span>
+
+<span class="n">check</span><span class="p">(</span><span class="s2">&quot;w00t&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_an</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">or_raise</span><span class="p">(</span><span class="ne">Exception</span><span class="p">)</span>
+<span class="n">check</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">or_raise</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="s2">&quot;An error happened: </span><span class="si">{msg}</span><span class="s2">. See http://example.com for more information.&quot;</span><span class="p">)</span>
+<span class="n">check</span><span class="p">(</span><span class="s2">&quot;w00t&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_an</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">or_raise</span><span class="p">(</span><span class="n">MyException</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">build_fancy_exception</span><span class="p">(</span><span class="n">original_exception</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">MyException</span><span class="p">(</span><span class="n">original_exception</span><span class="p">)</span>
+
+<span class="n">check</span><span class="p">(</span><span class="s2">&quot;w00t&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_an</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="n">build_fancy_exception</span><span class="p">)</span>
+<span class="n">check</span><span class="p">(</span><span class="s2">&quot;w00t&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_an</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">or_call</span><span class="p">(</span><span class="n">build_fancy_exception</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="more-examples">
+<h2>More examples<a class="headerlink" href="#more-examples" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ensure</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">3</span><span class="p">}})</span><span class="o">.</span><span class="n">is_not_equal_to</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">4</span><span class="p">}})</span>
+<span class="n">ensure</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">does_not_equal</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_in</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">ensure</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">is_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">is_not</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ensure</span><span class="p">([</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;boat&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">contains_one_of</span><span class="p">([</span><span class="s2">&quot;train&quot;</span><span class="p">])</span>
+<span class="n">ensure</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">([</span><span class="s2">&quot;spam&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">contains_none_of</span><span class="p">([</span><span class="s2">&quot;eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;ham&quot;</span><span class="p">])</span>
+<span class="n">ensure</span><span class="p">(</span><span class="s2">&quot;abcdef&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">contains_some_of</span><span class="p">(</span><span class="s2">&quot;abcxyz&quot;</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="s2">&quot;abcdef&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">contains_one_or_more_of</span><span class="p">(</span><span class="s2">&quot;abcxyz&quot;</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="s2">&quot;abcdef&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">contains_all_of</span><span class="p">(</span><span class="s2">&quot;acf&quot;</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="s2">&quot;abcd&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">contains_only</span><span class="p">(</span><span class="s2">&quot;dcba&quot;</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="s2">&quot;abc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">does_not_contain</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">contains_no</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_in</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">ensure</span><span class="p">(</span><span class="s2">&quot;z&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_not_in</span><span class="p">(</span><span class="s2">&quot;abc&quot;</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">is_not_in</span><span class="p">([])</span>
+<span class="n">ensure</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span><span class="o">.</span><span class="n">has_attribute</span><span class="p">(</span><span class="s1">&#39;__contains__&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">which</span><span class="o">.</span><span class="n">is_callable</span><span class="p">()</span>
+<span class="n">ensure</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;c&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">has_keys</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">ensure</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;b&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">has_only_keys</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ensure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_true</span><span class="p">()</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">is_false</span><span class="p">()</span>
+<span class="n">ensure</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">is_none</span><span class="p">()</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_not_none</span><span class="p">()</span>
+<span class="n">ensure</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span>
+<span class="n">ensure</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">is_nonempty</span><span class="p">()</span><span class="o">.</span><span class="n">also</span><span class="o">.</span><span class="n">has_length</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mf">1.1</span><span class="p">)</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">which</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="mf">1.10</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">())</span><span class="o">.</span><span class="n">is_an</span><span class="p">(</span><span class="ne">Exception</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">({</span><span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)})</span><span class="o">.</span><span class="n">is_a_nonempty</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">({})</span><span class="o">.</span><span class="n">is_an_empty</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">is_not_a</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="n">ensure</span><span class="p">(</span><span class="s2">&quot;abc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">is_an_iterable_of</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">is_a_list_of</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">})</span><span class="o">.</span><span class="n">is_a_set_of</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span><span class="o">.</span><span class="n">is_a_mapping_of</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span><span class="o">.</span><span class="n">is_a_dict_of</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">is_numeric</span><span class="p">()</span>
+<span class="n">ensure</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_callable</span><span class="p">()</span>
+<span class="n">ensure</span><span class="p">(</span><span class="s2">&quot;abc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">has_length</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="s2">&quot;abc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">has_length</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_greater_than</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">exceeds</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">is_less_than</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_greater_than_or_equal_to</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">is_less_than_or_equal_to</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_positive</span><span class="p">()</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mf">1.1</span><span class="p">)</span><span class="o">.</span><span class="n">is_a_positive</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_negative</span><span class="p">()</span>
+<span class="n">ensure</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_a_negative</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">is_nonnegative</span><span class="p">()</span>
+<span class="n">ensure</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">is_a_nonnegative</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">is_sorted</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ensure</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{x}</span><span class="s2"> </span><span class="si">{y}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span><span class="o">.</span><span class="n">called_with</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s2">&quot;1 2&quot;</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">called_with</span><span class="p">(</span><span class="s2">&quot;1100101&quot;</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">returns</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span>
+<span class="n">ensure</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{x}</span><span class="s2"> </span><span class="si">{y}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">ensure</span><span class="p">()</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ZeroDivisionError</span><span class="p">):</span>
+    <span class="mi">1</span><span class="o">/</span><span class="mi">0</span>
+<span class="k">with</span> <span class="n">ensure</span><span class="p">()</span><span class="o">.</span><span class="n">raises_regex</span><span class="p">(</span><span class="ne">NameError</span><span class="p">,</span> <span class="s2">&quot;&#39;w00t&#39; is not defined&quot;</span><span class="p">):</span>
+    <span class="n">w00t</span>
+</pre></div>
+</div>
+<p>See <a class="reference external" href="https://kislyuk.github.io/ensure/#module-ensure">complete API documentation</a>.</p>
+<section id="enforcing-function-annotations">
+<h3>Enforcing function annotations<a class="headerlink" href="#enforcing-function-annotations" title="Link to this heading">¶</a></h3>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">&#64;ensure_annotations</span></code> decorator to enforce
+<a class="reference external" href="http://www.python.org/dev/peps/pep-3107/">function signature annotations</a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ensure</span> <span class="kn">import</span> <span class="n">ensure_annotations</span>
+
+<span class="nd">@ensure_annotations</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span>
+
+<span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.3</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="mf">3.3</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; ensure.EnsureError: Argument y to &lt;function f at 0x109b7c710&gt; does not match annotation type &lt;class &#39;float&#39;&gt;
+</pre></div>
+</div>
+<p>Compare this runtime type checking to compile-time checking in <a class="reference external" href="http://www.mypy-lang.org/">Mypy</a> and <a class="reference external" href="https://www.python.org/dev/peps/pep-0484/">type hinting in PEP 484/Python 3.5+</a>.</p>
+</section>
+<section id="id1">
+<h3>Motivation and goals<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<p>Many BDD assertion libraries suffer from an excess of magic, or end up having to construct statements that don’t parse
+as English easily. <em>ensure</em> is deliberately kept simple to avoid succumbing to either issue. The
+<a class="reference external" href="https://github.com/kislyuk/ensure/blob/master/ensure/__init__.py">source</a> is easy to read and extend.</p>
+<p>Work remains to make error messages raised by <em>ensure</em> even more readable, informative, and consistent. Going forward,
+ability to introspect exceptions to extract structured error information will be a major development
+focus. You will be in control of how much information is presented in each error, which context it’s thrown from, and
+what introspection capabilities the exception object will have.</p>
+<p>The original use case for <em>ensure</em> is as an I/O validation helper for API endpoints, where the client needs to be sent a
+very clear message about what went wrong, some structured information (such as an HTTP error code and machine-readable
+reference to a failing element) may need to be added, and some information may need to be hidden from the client. To
+further improve on that, we will work on better error translation, marshalling, message formatting, and schema
+validation helpers.</p>
+</section>
+</section>
+<section id="authors">
+<h2>Authors<a class="headerlink" href="#authors" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Andrey Kislyuk</p></li>
+<li><p>Harrison Metzger</p></li>
+</ul>
+</section>
+<section id="links">
+<h2>Links<a class="headerlink" href="#links" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/kislyuk/ensure">Project home page (GitHub)</a></p></li>
+<li><p><a class="reference external" href="https://kislyuk.github.io/ensure/">Documentation</a></p></li>
+<li><p><a class="reference external" href="https://pypi.python.org/pypi/ensure">Package distribution (PyPI)</a></p></li>
+</ul>
+<section id="bugs">
+<h3>Bugs<a class="headerlink" href="#bugs" title="Link to this heading">¶</a></h3>
+<p>Please report bugs, issues, feature requests, etc. on <a class="reference external" href="https://github.com/kislyuk/ensure/issues">GitHub</a>.</p>
+</section>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading">¶</a></h2>
+<p>Licensed under the terms of the <a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.</p>
+<a class="reference external image-reference" href="https://github.com/kislyuk/ensure/actions"><img alt="https://github.com/kislyuk/ensure/workflows/CI/badge.svg" src="https://github.com/kislyuk/ensure/workflows/CI/badge.svg" /></a>
+<a class="reference external image-reference" href="https://codecov.io/github/kislyuk/ensure?branch=master"><img alt="https://codecov.io/github/kislyuk/ensure/coverage.svg?branch=master" src="https://codecov.io/github/kislyuk/ensure/coverage.svg?branch=master" /></a>
+<a class="reference external image-reference" href="https://pypi.python.org/pypi/ensure"><img alt="https://img.shields.io/pypi/v/ensure.svg" src="https://img.shields.io/pypi/v/ensure.svg" /></a>
+<a class="reference external image-reference" href="https://pypi.python.org/pypi/ensure"><img alt="https://img.shields.io/pypi/l/ensure.svg" src="https://img.shields.io/pypi/l/ensure.svg" /></a>
+</section>
+</section>
+<section id="module-ensure">
+<span id="api-documentation"></span><h1>API documentation<a class="headerlink" href="#module-ensure" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ensure.Check">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ensure.</span></span><span class="sig-name descname"><span class="pre">Check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Check" title="Link to this definition">¶</a></dt>
+<dd><p>Like Ensure, but if a check fails, saves the error instead of raising it immediately. The error can then be acted
+upon using <a class="reference internal" href="#ensure.Check.or_raise" title="ensure.Check.or_raise"><code class="xref py py-meth docutils literal notranslate"><span class="pre">or_raise()</span></code></a> or <a class="reference internal" href="#ensure.Check.or_call" title="ensure.Check.or_call"><code class="xref py py-meth docutils literal notranslate"><span class="pre">or_call()</span></code></a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">.each_of()</span></code> is not supported by the <strong>Check</strong> inspector; all other methods are supported.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Check.or_call">
+<span class="sig-name descname"><span class="pre">or_call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_callable</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Check.or_call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Check.or_call" title="Link to this definition">¶</a></dt>
+<dd><p>Calls <strong>_callable</strong> with supplied args and kwargs if a predicate fails.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Check.or_raise">
+<span class="sig-name descname"><span class="pre">or_raise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error_factory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Check.or_raise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Check.or_raise" title="Link to this definition">¶</a></dt>
+<dd><p>Raises an exception produced by <strong>error_factory</strong> if a predicate fails.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>error_factory</strong> – Class or callable (e.g. <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code>) which will be invoked to produce the resulting exception.
+You can define a custom callable here; it will be given the underlying predicate’s exception (AssertError)
+as the first argument, followed by any arguments passed to <code class="docutils literal notranslate"><span class="pre">or_raise</span></code>.</p></li>
+<li><p><strong>message</strong> – String to be formatted and passed as the first argument to <em>error_factory</em>. If this is given, subsequent
+arguments passed to <code class="docutils literal notranslate"><span class="pre">or_raise</span></code> will be used to format contents of the string, and will not be passed to
+<code class="docutils literal notranslate"><span class="pre">error_factory</span></code>. The keyword argument <code class="docutils literal notranslate"><span class="pre">error</span></code> will be set to the underlying predicate’s exception.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Check.otherwise">
+<span class="sig-name descname"><span class="pre">otherwise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error_factory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ensure.Check.otherwise" title="Link to this definition">¶</a></dt>
+<dd><p>Raises an exception produced by <strong>error_factory</strong> if a predicate fails.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>error_factory</strong> – Class or callable (e.g. <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code>) which will be invoked to produce the resulting exception.
+You can define a custom callable here; it will be given the underlying predicate’s exception (AssertError)
+as the first argument, followed by any arguments passed to <code class="docutils literal notranslate"><span class="pre">or_raise</span></code>.</p></li>
+<li><p><strong>message</strong> – String to be formatted and passed as the first argument to <em>error_factory</em>. If this is given, subsequent
+arguments passed to <code class="docutils literal notranslate"><span class="pre">or_raise</span></code> will be used to format contents of the string, and will not be passed to
+<code class="docutils literal notranslate"><span class="pre">error_factory</span></code>. The keyword argument <code class="docutils literal notranslate"><span class="pre">error</span></code> will be set to the underlying predicate’s exception.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ensure.Ensure">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ensure.</span></span><span class="sig-name descname"><span class="pre">Ensure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_factory=&lt;class</span> <span class="pre">'ensure.main.EnsureError'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catch=&lt;class</span> <span class="pre">'Exception'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure" title="Link to this definition">¶</a></dt>
+<dd><p>Constructs a root-level inspector, which can perform a variety of checks (<em>predicates</em>) on subjects passed to
+it. If the checks do not pass, by default <a class="reference internal" href="#ensure.EnsureError" title="ensure.EnsureError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsureError</span></code></a> is raised. This can be configured by passing the
+<code class="docutils literal notranslate"><span class="pre">error_factory</span></code> keyword to the constructor.</p>
+<p>Subjects can be passed to the inspector at construction time or by calling the resulting object (each call resets
+the subject):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Ensure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_an</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="n">e</span> <span class="o">=</span> <span class="n">Ensure</span><span class="p">()</span>
+<span class="n">e</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_an</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Some predicates return child inspectors which can be chained into a series of predicates, for example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ensure</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">}})</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">whose_value</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.called_with">
+<span class="sig-name descname"><span class="pre">called_with</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.called_with"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.called_with" title="Link to this definition">¶</a></dt>
+<dd><p>Before evaluating subsequent predicates, calls <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> with given arguments (but unlike a direct call,
+catches and transforms any exceptions that arise during the call).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.contains">
+<span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.contains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.contains" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> contains <em>other</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.contains_all_of">
+<span class="sig-name descname"><span class="pre">contains_all_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.contains_all_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.contains_all_of" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> contains all of <em>elements</em>, which must be an iterable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.contains_key">
+<span class="sig-name descname"><span class="pre">contains_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ensure.Ensure.contains_key" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is a <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.Mapping</span></code> and contains <em>key</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.contains_no">
+<span class="sig-name descname"><span class="pre">contains_no</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.contains_no"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.contains_no" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures no item of <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is of class <em>prototype</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.contains_none_of">
+<span class="sig-name descname"><span class="pre">contains_none_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.contains_none_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.contains_none_of" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> contains none of <em>elements</em>, which must be an iterable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.contains_one_of">
+<span class="sig-name descname"><span class="pre">contains_one_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.contains_one_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.contains_one_of" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> contains exactly one of <em>elements</em>, which must be an iterable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.contains_one_or_more_of">
+<span class="sig-name descname"><span class="pre">contains_one_or_more_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elements</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ensure.Ensure.contains_one_or_more_of" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> contains at least one of <em>elements</em>, which must be an iterable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.contains_only">
+<span class="sig-name descname"><span class="pre">contains_only</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.contains_only"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.contains_only" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> contains all of <em>elements</em>, which must be an iterable, and no other items.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.contains_some_of">
+<span class="sig-name descname"><span class="pre">contains_some_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.contains_some_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.contains_some_of" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> contains at least one of <em>elements</em>, which must be an iterable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.does_not_contain">
+<span class="sig-name descname"><span class="pre">does_not_contain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.does_not_contain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.does_not_contain" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> does not contain <em>element</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.does_not_equal">
+<span class="sig-name descname"><span class="pre">does_not_equal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ensure.Ensure.does_not_equal" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is not equal to <em>other</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.each_of">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">each_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.each_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.each_of" title="Link to this definition">¶</a></dt>
+<dd><p>Applies subsequent predicate(s) to all items in <em>iterable</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.equals">
+<span class="sig-name descname"><span class="pre">equals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.equals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.equals" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is equal to <em>other</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.exceeds">
+<span class="sig-name descname"><span class="pre">exceeds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ensure.Ensure.exceeds" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is greater than <em>other</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.has_attribute">
+<span class="sig-name descname"><span class="pre">has_attribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.has_attribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.has_attribute" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> has an attribute <em>attr</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.has_key">
+<span class="sig-name descname"><span class="pre">has_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.has_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.has_key" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is a <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.Mapping</span></code> and contains <em>key</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.has_keys">
+<span class="sig-name descname"><span class="pre">has_keys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.has_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.has_keys" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is a <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.Mapping</span></code> and contains <em>keys</em>, which must be an iterable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.has_length">
+<span class="sig-name descname"><span class="pre">has_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.has_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.has_length" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> has length <em>length</em> (if given), length at least <em>min</em> (if given), and length at most
+<em>max</em> (if given).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.has_only_keys">
+<span class="sig-name descname"><span class="pre">has_only_keys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.has_only_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.has_only_keys" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is a <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.Mapping</span></code> and contains <em>keys</em>, and no other keys.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.hasattr">
+<span class="sig-name descname"><span class="pre">hasattr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ensure.Ensure.hasattr" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> has an attribute <em>attr</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_">
+<span class="sig-name descname"><span class="pre">is_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is <em>other</em> (object identity check).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_a">
+<span class="sig-name descname"><span class="pre">is_a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_a"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_a" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is an object of class <em>prototype</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_a_dict_of">
+<span class="sig-name descname"><span class="pre">is_a_dict_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_a_dict_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_a_dict_of" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is a <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> containing only objects of class <em>prototype</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_a_list_of">
+<span class="sig-name descname"><span class="pre">is_a_list_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_a_list_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_a_list_of" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is a <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> containing only objects of class <em>prototype</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_a_mapping_of">
+<span class="sig-name descname"><span class="pre">is_a_mapping_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_a_mapping_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_a_mapping_of" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is a <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.Mapping</span></code> containing only objects of class <em>prototype</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_a_negative">
+<span class="sig-name descname"><span class="pre">is_a_negative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_a_negative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_a_negative" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is less than 0 and is an object of class <em>prototype</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_a_nonempty">
+<span class="sig-name descname"><span class="pre">is_a_nonempty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_a_nonempty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_a_nonempty" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is an object of class <em>prototype</em> and has non-zero length.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_a_nonnegative">
+<span class="sig-name descname"><span class="pre">is_a_nonnegative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_a_nonnegative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_a_nonnegative" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is greater than or equal to 0 and is an object of class <em>prototype</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_a_positive">
+<span class="sig-name descname"><span class="pre">is_a_positive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_a_positive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_a_positive" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is greater than 0 and is an object of class <em>prototype</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_a_set_of">
+<span class="sig-name descname"><span class="pre">is_a_set_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_a_set_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_a_set_of" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is a <code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code> containing only objects of class <em>prototype</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_an">
+<span class="sig-name descname"><span class="pre">is_an</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ensure.Ensure.is_an" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is an object of class <em>prototype</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_an_empty">
+<span class="sig-name descname"><span class="pre">is_an_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_an_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_an_empty" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is an object of class <em>prototype</em> and has zero length.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_an_instance_of">
+<span class="sig-name descname"><span class="pre">is_an_instance_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ensure.Ensure.is_an_instance_of" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is an object of class <em>prototype</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_an_iterable_of">
+<span class="sig-name descname"><span class="pre">is_an_iterable_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_an_iterable_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_an_iterable_of" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is an iterable containing only objects of class <em>prototype</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_callable">
+<span class="sig-name descname"><span class="pre">is_callable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_callable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_callable" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is a callable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_empty">
+<span class="sig-name descname"><span class="pre">is_empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_empty" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> has length zero.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_false">
+<span class="sig-name descname"><span class="pre">is_false</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_false"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_false" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_greater_than">
+<span class="sig-name descname"><span class="pre">is_greater_than</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_greater_than"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_greater_than" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is greater than <em>other</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_greater_than_or_equal_to">
+<span class="sig-name descname"><span class="pre">is_greater_than_or_equal_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_greater_than_or_equal_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_greater_than_or_equal_to" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is greater than or equal to <em>other</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_in">
+<span class="sig-name descname"><span class="pre">is_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_in"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_in" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is contained in <em>iterable</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_less_than">
+<span class="sig-name descname"><span class="pre">is_less_than</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_less_than"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_less_than" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is less than <em>other</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_less_than_or_equal_to">
+<span class="sig-name descname"><span class="pre">is_less_than_or_equal_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_less_than_or_equal_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_less_than_or_equal_to" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is less than or equal to <em>other</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_negative">
+<span class="sig-name descname"><span class="pre">is_negative</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_negative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_negative" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is less than 0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_none">
+<span class="sig-name descname"><span class="pre">is_none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_none"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_none" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ensure.Ensure.is_none_or">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_none_or</span></span><a class="headerlink" href="#ensure.Ensure.is_none_or" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is either <code class="docutils literal notranslate"><span class="pre">None</span></code>, or satisfies subsequent (chained) conditions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Ensure</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">is_none_or</span><span class="o">.</span><span class="n">is_an</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_nonempty">
+<span class="sig-name descname"><span class="pre">is_nonempty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_nonempty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_nonempty" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> has non-zero length.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_nonnegative">
+<span class="sig-name descname"><span class="pre">is_nonnegative</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_nonnegative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_nonnegative" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is greater than or equal to 0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_not">
+<span class="sig-name descname"><span class="pre">is_not</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_not"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_not" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is not <em>other</em> (object identity check).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_not_a">
+<span class="sig-name descname"><span class="pre">is_not_a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_not_a"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_not_a" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is not an object of class <em>prototype</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_not_equal_to">
+<span class="sig-name descname"><span class="pre">is_not_equal_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_not_equal_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_not_equal_to" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is not equal to <em>other</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_not_in">
+<span class="sig-name descname"><span class="pre">is_not_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_not_in"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_not_in" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is not contained in <em>iterable</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_not_none">
+<span class="sig-name descname"><span class="pre">is_not_none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_not_none"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_not_none" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_numeric">
+<span class="sig-name descname"><span class="pre">is_numeric</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_numeric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_numeric" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is an int, float, or long.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_positive">
+<span class="sig-name descname"><span class="pre">is_positive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_positive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_positive" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is greater than 0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.is_true">
+<span class="sig-name descname"><span class="pre">is_true</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.is_true"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.is_true" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.matches">
+<span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.matches" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> matches regular expression <em>pattern</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.not_a">
+<span class="sig-name descname"><span class="pre">not_a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prototype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ensure.Ensure.not_a" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is not an object of class <em>prototype</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.not_in">
+<span class="sig-name descname"><span class="pre">not_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ensure.Ensure.not_in" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> is not contained in <em>iterable</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.raises">
+<span class="sig-name descname"><span class="pre">raises</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expected_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.raises"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.raises" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures preceding predicates (specifically, <a class="reference internal" href="#ensure.Ensure.called_with" title="ensure.Ensure.called_with"><code class="xref py py-meth docutils literal notranslate"><span class="pre">called_with()</span></code></a>) result in <em>expected_exception</em> being raised.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.raises_regex">
+<span class="sig-name descname"><span class="pre">raises_regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expected_exception</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_regexp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#Ensure.raises_regex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.Ensure.raises_regex" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures preceding predicates (specifically, <a class="reference internal" href="#ensure.Ensure.called_with" title="ensure.Ensure.called_with"><code class="xref py py-meth docutils literal notranslate"><span class="pre">called_with()</span></code></a>) result in <em>expected_exception</em> being raised,
+and the string representation of <em>expected_exception</em> must match regular expression <em>expected_regexp</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensure.Ensure.with_args">
+<span class="sig-name descname"><span class="pre">with_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ensure.Ensure.with_args" title="Link to this definition">¶</a></dt>
+<dd><p>Before evaluating subsequent predicates, calls <code class="xref py py-attr docutils literal notranslate"><span class="pre">subject</span></code> with given arguments (but unlike a direct call,
+catches and transforms any exceptions that arise during the call).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ensure.EnsureError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ensure.</span></span><span class="sig-name descname"><span class="pre">EnsureError</span></span><a class="reference internal" href="_modules/ensure/main.html#EnsureError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.EnsureError" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ensure.IntegerByteString">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ensure.</span></span><span class="sig-name descname"><span class="pre">IntegerByteString</span></span><a class="reference internal" href="_modules/ensure/_types.html#IntegerByteString"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.IntegerByteString" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ensure.IntegerString">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ensure.</span></span><span class="sig-name descname"><span class="pre">IntegerString</span></span><a class="reference internal" href="_modules/ensure/_types.html#IntegerString"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.IntegerString" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ensure.NumericByteString">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ensure.</span></span><span class="sig-name descname"><span class="pre">NumericByteString</span></span><a class="reference internal" href="_modules/ensure/_types.html#NumericByteString"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.NumericByteString" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ensure.NumericString">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ensure.</span></span><span class="sig-name descname"><span class="pre">NumericString</span></span><a class="reference internal" href="_modules/ensure/_types.html#NumericString"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.NumericString" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensure.ensure_annotations">
+<span class="sig-prename descclassname"><span class="pre">ensure.</span></span><span class="sig-name descname"><span class="pre">ensure_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#ensure_annotations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensure.ensure_annotations" title="Link to this definition">¶</a></dt>
+<dd><p>Decorator to be used on functions with annotations. Runs type checks to enforce annotations. Raises
+<a class="reference internal" href="#ensure.EnsureError" title="ensure.EnsureError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsureError</span></code></a> if any argument passed to <em>f</em> is not of the type specified by the annotation. Also raises
+<a class="reference internal" href="#ensure.EnsureError" title="ensure.EnsureError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsureError</span></code></a> if the return value of <em>f</em> is not of the type specified by the annotation. Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ensure</span> <span class="kn">import</span> <span class="n">ensure_annotations</span>
+
+<span class="nd">@ensure_annotations</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">2.2</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="mf">3.2</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">ensure</span><span class="o">.</span><span class="n">EnsureError</span><span class="p">:</span> <span class="n">Argument</span> <span class="n">y</span> <span class="n">of</span> <span class="nb">type</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">int</span><span class="s1">&#39;&gt; to</span>
+<span class="o">&lt;</span><span class="n">function</span> <span class="n">f</span> <span class="n">at</span> <span class="mh">0x109b7c710</span><span class="o">&gt;</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">match</span> <span class="n">annotation</span> <span class="nb">type</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">float</span><span class="s1">&#39;&gt;</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The current implementation of the decorator might trigger
+a <code class="docutils literal notranslate"><span class="pre">_pickle.PicklingError</span></code> when a decorated function is run through
+<code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code>.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensure.ensure_raises">
+<span class="sig-prename descclassname"><span class="pre">ensure.</span></span><span class="sig-name descname"><span class="pre">ensure_raises</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expected_exception</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ensure.ensure_raises" title="Link to this definition">¶</a></dt>
+<dd><p>Fail unless an exception of class expected_exception is raised
+by the callable when invoked with specified positional and
+keyword arguments. If a different type of exception is
+raised, it will not be caught, and the test case will be
+deemed to have suffered an error, exactly as for an
+unexpected exception.</p>
+<p>If called with the callable and arguments omitted, will return a
+context object used like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">):</span>
+    <span class="n">do_something</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>An optional keyword argument ‘msg’ can be provided when assertRaises
+is used as a context object.</p>
+<p>The context manager keeps a reference to the exception as
+the ‘exception’ attribute. This allows you to inspect the
+exception after the assertion:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">SomeException</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
+    <span class="n">do_something</span><span class="p">()</span>
+<span class="n">the_exception</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">exception</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">the_exception</span><span class="o">.</span><span class="n">error_code</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensure.ensure_raises_regex">
+<span class="sig-prename descclassname"><span class="pre">ensure.</span></span><span class="sig-name descname"><span class="pre">ensure_raises_regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expected_exception</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_regex</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ensure.ensure_raises_regex" title="Link to this definition">¶</a></dt>
+<dd><p>Asserts that the message in a raised exception matches a regex.</p>
+<dl>
+<dt>Args:</dt><dd><p>expected_exception: Exception class expected to be raised.
+expected_regex: Regex (re.Pattern object or string) expected</p>
+<blockquote>
+<div><p>to be found in error message.</p>
+</div></blockquote>
+<p>args: Function to be called and extra positional args.
+kwargs: Extra kwargs.
+msg: Optional message used in case of failure. Can only be used</p>
+<blockquote>
+<div><p>when assertRaisesRegex is used as a context manager.</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-prename descclassname"><span class="pre">ensure.</span></span><span class="sig-name descname"><span class="pre">ensure_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ensure/main.html#ensure_annotations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd><p>Decorator to be used on functions with annotations. Runs type checks to enforce annotations. Raises
+<a class="reference internal" href="#ensure.EnsureError" title="ensure.EnsureError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsureError</span></code></a> if any argument passed to <em>f</em> is not of the type specified by the annotation. Also raises
+<a class="reference internal" href="#ensure.EnsureError" title="ensure.EnsureError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsureError</span></code></a> if the return value of <em>f</em> is not of the type specified by the annotation. Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ensure</span> <span class="kn">import</span> <span class="n">ensure_annotations</span>
+
+<span class="nd">@ensure_annotations</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">2.2</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="mf">3.2</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">ensure</span><span class="o">.</span><span class="n">EnsureError</span><span class="p">:</span> <span class="n">Argument</span> <span class="n">y</span> <span class="n">of</span> <span class="nb">type</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">int</span><span class="s1">&#39;&gt; to</span>
+<span class="o">&lt;</span><span class="n">function</span> <span class="n">f</span> <span class="n">at</span> <span class="mh">0x109b7c710</span><span class="o">&gt;</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">match</span> <span class="n">annotation</span> <span class="nb">type</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">float</span><span class="s1">&#39;&gt;</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The current implementation of the decorator might trigger
+a <code class="docutils literal notranslate"><span class="pre">_pickle.PicklingError</span></code> when a decorated function is run through
+<code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code>.</p>
+</div>
+</dd></dl>
+
+</section>
+<section id="table-of-contents">
+<h1>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+          </div>
+            
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">ensure  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ensure: Literate assertions in Python</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright Andrey Kislyuk and ensure contributors. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

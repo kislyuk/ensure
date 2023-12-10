@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>ensure.main &#8212; ensure  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/guzzle.css?v=ee5bbeb1" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">ensure  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ensure.main</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">ensure</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../../index.html">Docs</a></li>
+              
+                <li><a href="../index.html">Module code</a></li>
+              
+              <li>ensure.main</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <h1>Source code for ensure.main</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">from</span> <span class="nn">unittest.case</span> <span class="kn">import</span> <span class="n">TestCase</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Iterable</span>
+
+<span class="kn">from</span> <span class="nn">six</span> <span class="kn">import</span> <span class="n">string_types</span>
+
+<span class="kn">from</span> <span class="nn">._types</span> <span class="kn">import</span> <span class="n">IntegerByteString</span><span class="p">,</span> <span class="n">IntegerString</span><span class="p">,</span> <span class="n">NumericByteString</span><span class="p">,</span> <span class="n">NumericString</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">repr</span> <span class="kn">import</span> <span class="n">Repr</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">reprlib</span> <span class="kn">import</span> <span class="n">Repr</span>
+
+<span class="n">_repr</span> <span class="o">=</span> <span class="n">Repr</span><span class="p">()</span><span class="o">.</span><span class="n">repr</span>
+
+<span class="n">unittest_case</span> <span class="o">=</span> <span class="n">TestCase</span><span class="p">(</span><span class="n">methodName</span><span class="o">=</span><span class="s2">&quot;__init__&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">message</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="n">_repr</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="EnsureError">
+<a class="viewcode-back" href="../../index.html#ensure.EnsureError">[docs]</a>
+<span class="k">class</span> <span class="nc">EnsureError</span><span class="p">(</span><span class="ne">AssertionError</span><span class="p">):</span>
+    <span class="c1"># TODO: preserve original error type, define API for introspecting EnsureError</span>
+    <span class="k">pass</span></div>
+
+
+
+<span class="k">class</span> <span class="nc">Inspector</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">error_factory</span><span class="o">=</span><span class="n">EnsureError</span><span class="p">,</span> <span class="n">catch</span><span class="o">=</span><span class="ne">Exception</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_orig_subject</span> <span class="o">=</span> <span class="n">subject</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span> <span class="o">=</span> <span class="n">error_factory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_catch</span> <span class="o">=</span> <span class="n">catch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_call_subject</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_orig_subject</span> <span class="o">=</span> <span class="n">subject</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_call_subject</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;&lt;</span><span class="si">{module}</span><span class="s2">.</span><span class="si">{classname}</span><span class="s2"> object at 0x</span><span class="si">{mem_loc:x}</span><span class="s2"> inspecting </span><span class="si">{subject}</span><span class="s2">&gt;&quot;</span>
+        <span class="k">return</span> <span class="n">desc</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">module</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+            <span class="n">classname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">mem_loc</span><span class="o">=</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+            <span class="n">subject</span><span class="o">=</span><span class="n">_repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_orig_subject</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_subject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_subject</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_orig_subject</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_subject</span>
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">_catch</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">new_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">new_err</span>
+
+
+<span class="k">class</span> <span class="nc">IterableInspector</span><span class="p">(</span><span class="n">Inspector</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertIsInstance</span><span class="p">,</span> <span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">prototype</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">MappingInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">of_nonempty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to be non-empty&quot;</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">MappingInspector</span><span class="p">(</span><span class="n">Inspector</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertIsInstance</span><span class="p">,</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">prototype</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">to_nonempty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to be non-empty&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ReferenceInspector</span><span class="p">(</span><span class="n">Inspector</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">which</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Ensure</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ChainInspector</span><span class="p">(</span><span class="n">Inspector</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">also</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Ensure</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: OK&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Inspector</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">KeyInspector</span><span class="p">(</span><span class="n">Inspector</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">whose_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Ensure</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">CallableInspector</span><span class="p">(</span><span class="n">Inspector</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">returns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returns is a synonym for equals only for called_with()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">MultiInspector</span><span class="p">(</span><span class="n">Inspector</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calls a list of inspector objects on a single subject.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_get_inspector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">subject</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="c1"># @functools.wraps(getattr(self._subject[0], item))</span>
+        <span class="k">def</span> <span class="nf">inspect</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">sub_inspectors</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">:</span>
+                <span class="n">inspector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_inspector</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+                <span class="n">inspect_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">inspector</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+                <span class="n">sub_inspectors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inspect_method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">i</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sub_inspectors</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">MultiInspector</span><span class="p">(</span><span class="n">sub_inspectors</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">inspect</span>
+
+
+<span class="k">class</span> <span class="nc">MultiEnsure</span><span class="p">(</span><span class="n">MultiInspector</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Maps a single Ensure object to an iterable of subjects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">inspector</span><span class="p">):</span>
+        <span class="n">Inspector</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inspector</span> <span class="o">=</span> <span class="n">inspector</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inspector</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span><span class="o">.</span><span class="n">is_an</span><span class="p">(</span><span class="n">Iterable</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_inspector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inspector</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Ensure">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure">[docs]</a>
+<span class="k">class</span> <span class="nc">Ensure</span><span class="p">(</span><span class="n">Inspector</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a root-level inspector, which can perform a variety of checks (*predicates*) on subjects passed to</span>
+<span class="sd">    it. If the checks do not pass, by default :class:`EnsureError` is raised. This can be configured by passing the</span>
+<span class="sd">    ``error_factory`` keyword to the constructor.</span>
+
+<span class="sd">    Subjects can be passed to the inspector at construction time or by calling the resulting object (each call resets</span>
+<span class="sd">    the subject):</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        Ensure(1).is_an(int)</span>
+
+<span class="sd">        e = Ensure()</span>
+<span class="sd">        e(1).is_an(int)</span>
+
+<span class="sd">    Some predicates return child inspectors which can be chained into a series of predicates, for example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        ensure({1: {2: &quot;a&quot;}}).has_key(1).whose_value.is_a(dict).of(int).to(str)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Ensure.each_of">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.each_of">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">each_of</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">iterable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applies subsequent predicate(s) to all items in *iterable*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">MultiEnsure</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="bp">cls</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="Ensure.equals">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.equals">[docs]</a>
+    <span class="k">def</span> <span class="nf">equals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is equal to *other*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_not_equal_to">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_not_equal_to">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_not_equal_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is not equal to *other*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertNotEqual</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+    <span class="n">does_not_equal</span> <span class="o">=</span> <span class="n">is_not_equal_to</span>
+
+<div class="viewcode-block" id="Ensure.is_">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is *other* (object identity check).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertIs</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_not">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_not">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_not</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is not *other* (object identity check).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertIsNot</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.contains">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.contains">[docs]</a>
+    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` contains *other*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertIn</span><span class="p">,</span> <span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.contains_none_of">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.contains_none_of">[docs]</a>
+    <span class="k">def</span> <span class="nf">contains_none_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` contains none of *elements*, which must be an iterable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">,</span> <span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.contains_one_of">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.contains_one_of">[docs]</a>
+    <span class="k">def</span> <span class="nf">contains_one_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` contains exactly one of *elements*, which must be an iterable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to have exactly one of </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">elements</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.contains_only">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.contains_only">[docs]</a>
+    <span class="k">def</span> <span class="nf">contains_only</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` contains all of *elements*, which must be an iterable, and no other items.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span>
+                    <span class="n">_format</span><span class="p">(</span>
+                        <span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to have only </span><span class="si">{}</span><span class="s2">, but it contains </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span>
+                        <span class="n">elements</span><span class="p">,</span>
+                        <span class="n">element</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contains_all_of</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.contains_some_of">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.contains_some_of">[docs]</a>
+    <span class="k">def</span> <span class="nf">contains_some_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` contains at least one of *elements*, which must be an iterable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">e</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to have some of </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">elements</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+    <span class="n">contains_one_or_more_of</span> <span class="o">=</span> <span class="n">contains_some_of</span>
+
+<div class="viewcode-block" id="Ensure.contains_all_of">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.contains_all_of">[docs]</a>
+    <span class="k">def</span> <span class="nf">contains_all_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` contains all of *elements*, which must be an iterable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span>
+                    <span class="n">_format</span><span class="p">(</span>
+                        <span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to have all of </span><span class="si">{}</span><span class="s2">, but it does not contain </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span>
+                        <span class="n">elements</span><span class="p">,</span>
+                        <span class="n">element</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.does_not_contain">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.does_not_contain">[docs]</a>
+    <span class="k">def</span> <span class="nf">does_not_contain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` does not contain *element*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">,</span> <span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.contains_no">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.contains_no">[docs]</a>
+    <span class="k">def</span> <span class="nf">contains_no</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures no item of :attr:`subject` is of class *prototype*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertNotIsInstance</span><span class="p">,</span> <span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">prototype</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.has_key">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.has_key">[docs]</a>
+    <span class="k">def</span> <span class="nf">has_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is a :class:`collections.Mapping` and contains *key*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="n">Mapping</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">KeyInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">[</span><span class="n">key</span><span class="p">])</span></div>
+
+
+    <span class="n">contains_key</span> <span class="o">=</span> <span class="n">has_key</span>
+
+<div class="viewcode-block" id="Ensure.has_keys">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.has_keys">[docs]</a>
+    <span class="k">def</span> <span class="nf">has_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is a :class:`collections.Mapping` and contains *keys*, which must be an iterable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="n">Mapping</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contains_all_of</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.has_only_keys">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.has_only_keys">[docs]</a>
+    <span class="k">def</span> <span class="nf">has_only_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is a :class:`collections.Mapping` and contains *keys*, and no other keys.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="n">Mapping</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contains_only</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.has_attribute">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.has_attribute">[docs]</a>
+    <span class="k">def</span> <span class="nf">has_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` has an attribute *attr*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to have attribute </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ReferenceInspector</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span></div>
+
+
+    <span class="nb">hasattr</span> <span class="o">=</span> <span class="n">has_attribute</span>
+
+<div class="viewcode-block" id="Ensure.is_in">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_in">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is contained in *iterable*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertIn</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">iterable</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_not_in">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_not_in">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_not_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is not contained in *iterable*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">iterable</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+    <span class="n">not_in</span> <span class="o">=</span> <span class="n">is_not_in</span>
+
+<div class="viewcode-block" id="Ensure.is_true">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_true">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_true</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is ``True``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_false">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_false">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_false</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is ``False``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_none">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_none">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_none</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_none_or</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is either ``None``, or satisfies subsequent (chained) conditions::</span>
+
+<span class="sd">            Ensure(None).is_none_or.is_an(int)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">NoOpInspector</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">error_factory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+<div class="viewcode-block" id="Ensure.is_not_none">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_not_none">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_not_none</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is not ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertIsNotNone</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_empty">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_empty">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` has length zero.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to be empty&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_nonempty">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_nonempty">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_nonempty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` has non-zero length.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to be non-empty&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_a">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_a">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_a</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is an object of class *prototype*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertIsInstance</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">prototype</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="s2">&quot;__iter__&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">IterableInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ReferenceInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+    <span class="n">is_an</span> <span class="o">=</span> <span class="n">is_a</span>
+    <span class="n">is_an_instance_of</span> <span class="o">=</span> <span class="n">is_a</span>
+
+<div class="viewcode-block" id="Ensure.is_a_nonempty">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_a_nonempty">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_a_nonempty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is an object of class *prototype* and has non-zero length.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_nonempty</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_an_empty">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_an_empty">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_an_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is an object of class *prototype* and has zero length.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_positive">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_positive">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_positive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is greater than 0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertGreater</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_a_positive">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_a_positive">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_a_positive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is greater than 0 and is an object of class *prototype*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_positive</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_negative">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_negative">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_negative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is less than 0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertLess</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_a_negative">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_a_negative">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_a_negative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is less than 0 and is an object of class *prototype*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_negative</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_nonnegative">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_nonnegative">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_nonnegative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is greater than or equal to 0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertGreaterEqual</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_a_nonnegative">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_a_nonnegative">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_a_nonnegative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is greater than or equal to 0 and is an object of class *prototype*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_nonnegative</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_not_a">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_not_a">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_not_a</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is not an object of class *prototype*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertNotIsInstance</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">prototype</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+    <span class="n">not_a</span> <span class="o">=</span> <span class="n">is_not_a</span>
+
+<div class="viewcode-block" id="Ensure.matches">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` matches regular expression *pattern*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">flags</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to match </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">pattern</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_an_iterable_of">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_an_iterable_of">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_an_iterable_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is an iterable containing only objects of class *prototype*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">unittest_case</span><span class="o">.</span><span class="n">assertIsInstance</span><span class="p">,</span> <span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">prototype</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">MappingInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_a_list_of">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_a_list_of">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_a_list_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is a :class:`list` containing only objects of class *prototype*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_an_iterable_of</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_a_set_of">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_a_set_of">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_a_set_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is a :class:`set` containing only objects of class *prototype*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_an_iterable_of</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_a_mapping_of">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_a_mapping_of">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_a_mapping_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is a :class:`collections.Mapping` containing only objects of class *prototype*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="n">Mapping</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_an_iterable_of</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_a_dict_of">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_a_dict_of">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_a_dict_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is a :class:`dict` containing only objects of class *prototype*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_an_iterable_of</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_numeric">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_numeric">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_numeric</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is an int, float, or long.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
+
+        <span class="n">numeric_types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Decimal</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">numeric_types</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span>
+                <span class="n">_format</span><span class="p">(</span>
+                    <span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to be numeric (int, float, long or Decimal)&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_callable">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_callable">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_callable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is a callable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to be callable&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Ensure.has_length">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.has_length">[docs]</a>
+    <span class="k">def</span> <span class="nf">has_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` has length *length* (if given), length at least *min* (if given), and length at most</span>
+<span class="sd">        *max* (if given).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">unittest_case</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">length</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">min</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">max</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">my_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">unittest_case</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">my_length</span> <span class="o">==</span> <span class="n">length</span><span class="p">)</span>
+            <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">_catch</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to have length </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">length</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">min</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">unittest_case</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">my_length</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">)</span>
+            <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">_catch</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to have length at least </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="nb">min</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">max</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">unittest_case</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">my_length</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">)</span>
+            <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">_catch</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to have length at most </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="nb">max</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_greater_than">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_greater_than">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_greater_than</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is greater than *other*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">unittest_case</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span> <span class="o">&gt;</span> <span class="n">other</span><span class="p">)</span>
+        <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">_catch</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to be greater than </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+    <span class="n">exceeds</span> <span class="o">=</span> <span class="n">is_greater_than</span>
+
+<div class="viewcode-block" id="Ensure.is_less_than">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_less_than">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_less_than</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is less than *other*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">unittest_case</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span> <span class="o">&lt;</span> <span class="n">other</span><span class="p">)</span>
+        <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">_catch</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to be less than </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_greater_than_or_equal_to">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_greater_than_or_equal_to">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_greater_than_or_equal_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is greater than or equal to *other*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">unittest_case</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span> <span class="o">&gt;=</span> <span class="n">other</span><span class="p">)</span>
+        <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">_catch</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span>
+                <span class="n">_format</span><span class="p">(</span>
+                    <span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to be greater than or equal to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span>
+                    <span class="n">other</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.is_less_than_or_equal_to">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.is_less_than_or_equal_to">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_less_than_or_equal_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures :attr:`subject` is less than or equal to *other*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">unittest_case</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="p">)</span>
+        <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">_catch</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to be less than or equal to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.called_with">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.called_with">[docs]</a>
+    <span class="k">def</span> <span class="nf">called_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Before evaluating subsequent predicates, calls :attr:`subject` with given arguments (but unlike a direct call,</span>
+<span class="sd">        catches and transforms any exceptions that arise during the call).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_call_subject</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">CallableInspector</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+    <span class="n">with_args</span> <span class="o">=</span> <span class="n">called_with</span>
+
+<div class="viewcode-block" id="Ensure.raises">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.raises">[docs]</a>
+    <span class="k">def</span> <span class="nf">raises</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures preceding predicates (specifically, :meth:`called_with()`) result in *expected_exception* being raised.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">unittest_case</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">expected_exception</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_subject</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ensure.raises_regex">
+<a class="viewcode-back" href="../../index.html#ensure.Ensure.raises_regex">[docs]</a>
+    <span class="k">def</span> <span class="nf">raises_regex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected_exception</span><span class="p">,</span> <span class="n">expected_regexp</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures preceding predicates (specifically, :meth:`called_with()`) result in *expected_exception* being raised,</span>
+<span class="sd">        and the string representation of *expected_exception* must match regular expression *expected_regexp*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">unittest_case</span><span class="o">.</span><span class="n">assertRaisesRegex</span><span class="p">(</span>
+            <span class="n">expected_exception</span><span class="p">,</span> <span class="n">expected_regexp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_subject</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">is_a_numeric_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="n">NumericString</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_a_numeric_bytestring</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_a</span><span class="p">(</span><span class="n">NumericByteString</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_an_integer_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_an</span><span class="p">(</span><span class="n">IntegerString</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_an_integer_bytestring</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_an</span><span class="p">(</span><span class="n">IntegerByteString</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_sorted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">previous_element</span><span class="p">,</span> <span class="n">at_head</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">at_head</span><span class="p">:</span>
+                    <span class="n">previous_element</span> <span class="o">=</span> <span class="n">key</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">i</span>
+                    <span class="n">at_head</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">current_element</span> <span class="o">=</span> <span class="n">key</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">i</span>
+                    <span class="n">unittest_case</span><span class="o">.</span><span class="n">assertLessEqual</span><span class="p">(</span><span class="n">previous_element</span><span class="p">,</span> <span class="n">current_element</span><span class="p">)</span>
+                    <span class="n">previous_element</span> <span class="o">=</span> <span class="n">current_element</span>
+        <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">_catch</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to be sorted, but element at position </span><span class="si">{}</span><span class="s2"> is out of order (</span><span class="si">{}</span><span class="s2">)&quot;</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_factory</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">),</span> <span class="n">index</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">ChainInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">)</span>
+
+    <span class="c1"># def has_schema(self, schema):</span>
+    <span class="c1">#    import jsonschema</span>
+    <span class="c1">#    self._run(jsonschema.validate, (self._subject, schema))</span>
+
+    <span class="k">def</span> <span class="nf">satisfies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicate</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">predicate</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+                <span class="c1"># `predicate` can be a string that names a method.</span>
+                <span class="c1"># In this case, look up the method and use that as the actual predicate.</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">predicate</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                        <span class="s2">&quot;Predicate must be a callable or method name, &quot;</span>
+                        <span class="s1">&#39;and method names must start with &quot;.&quot;: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">predicate</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="n">method_name</span> <span class="o">=</span> <span class="n">predicate</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+                <span class="k">def</span> <span class="nf">actual_predicate</span><span class="p">(</span><span class="n">subj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">subj</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+                <span class="n">predicate_name</span> <span class="o">=</span> <span class="n">predicate</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Otherwise assume `predicate` is some kind of callable</span>
+                <span class="n">actual_predicate</span> <span class="o">=</span> <span class="n">predicate</span>
+                <span class="n">predicate_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">predicate</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="n">predicate</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">actual_predicate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="c1"># Note the error message uses the original `predicate`</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">_format</span><span class="p">(</span><span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> to satisfy </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject</span><span class="p">,</span> <span class="n">predicate_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="n">_format</span><span class="p">(</span><span class="s2">&quot; on args </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">run</span><span class="p">)</span></div>
+
+
+
+<span class="k">class</span> <span class="nc">InspectorProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inspector</span> <span class="o">=</span> <span class="n">Ensure</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="n">inspect_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inspector</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inspect_method</span><span class="p">,</span> <span class="p">(</span><span class="n">Inspector</span><span class="p">,</span> <span class="n">NoOpInspector</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_inspector</span> <span class="o">=</span> <span class="n">inspect_method</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="k">def</span> <span class="nf">inspect</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_inspector</span> <span class="o">=</span> <span class="n">inspect_method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inspector</span><span class="o">.</span><span class="n">_catch</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span> <span class="o">=</span> <span class="n">e</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="k">return</span> <span class="n">inspect</span>
+
+
+<div class="viewcode-block" id="Check">
+<a class="viewcode-back" href="../../index.html#ensure.Check">[docs]</a>
+<span class="k">class</span> <span class="nc">Check</span><span class="p">(</span><span class="n">InspectorProxy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Like Ensure, but if a check fails, saves the error instead of raising it immediately. The error can then be acted</span>
+<span class="sd">    upon using :meth:`or_raise()` or :meth:`or_call()`.</span>
+
+<span class="sd">    ``.each_of()`` is not supported by the **Check** inspector; all other methods are supported.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Check.or_raise">
+<a class="viewcode-back" href="../../index.html#ensure.Check.or_raise">[docs]</a>
+    <span class="k">def</span> <span class="nf">or_raise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_factory</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Raises an exception produced by **error_factory** if a predicate fails.</span>
+
+<span class="sd">        :param error_factory:</span>
+<span class="sd">            Class or callable (e.g. :class:`Exception`) which will be invoked to produce the resulting exception.</span>
+<span class="sd">            You can define a custom callable here; it will be given the underlying predicate&#39;s exception (AssertError)</span>
+<span class="sd">            as the first argument, followed by any arguments passed to ``or_raise``.</span>
+<span class="sd">        :param message:</span>
+<span class="sd">            String to be formatted and passed as the first argument to *error_factory*. If this is given, subsequent</span>
+<span class="sd">            arguments passed to ``or_raise`` will be used to format contents of the string, and will not be passed to</span>
+<span class="sd">            ``error_factory``. The keyword argument ``error`` will be set to the underlying predicate&#39;s exception.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">message</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">error_factory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_exception</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">error_factory</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+
+
+    <span class="n">otherwise</span> <span class="o">=</span> <span class="n">or_raise</span>
+
+<div class="viewcode-block" id="Check.or_call">
+<a class="viewcode-back" href="../../index.html#ensure.Check.or_call">[docs]</a>
+    <span class="k">def</span> <span class="nf">or_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls **_callable** with supplied args and kwargs if a predicate fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span><span class="p">:</span>
+            <span class="n">_callable</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span>
+
+    <span class="n">__nonzero__</span> <span class="o">=</span> <span class="fm">__bool__</span>  <span class="c1"># Python 2 compatibility</span></div>
+
+
+
+<span class="k">class</span> <span class="nc">NoOpInspector</span><span class="p">(</span><span class="n">InspectorProxy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Goes through the motions of Ensure, but never raises on the error condition. For chaining with conditional</span>
+<span class="sd">    predicates like ``is_none_or``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_check_default_argument</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">:</span>
+        <span class="n">templ</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">templ</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Default argument </span><span class="si">{arg}</span><span class="s2"> of type </span><span class="si">{valt}</span><span class="s2"> to </span><span class="si">{f}</span><span class="s2"> &quot;</span> <span class="s2">&quot;does not match annotation type </span><span class="si">{t}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="n">EnsureError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">arg</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">templ</span><span class="p">,</span> <span class="n">valt</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+
+<span class="k">class</span> <span class="nc">WrappedFunction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper for functions to check argument annotations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_properties</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arg_properties</span> <span class="o">=</span> <span class="n">arg_properties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__doc__</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">arg_properties</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">pos</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">templ</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Argument </span><span class="si">{arg}</span><span class="s2"> of type </span><span class="si">{valt}</span><span class="s2"> to </span><span class="si">{f}</span><span class="s2"> &quot;</span> <span class="s2">&quot;does not match annotation type </span><span class="si">{t}</span><span class="s2">&quot;</span>
+                <span class="k">raise</span> <span class="n">EnsureError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">arg</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">templ</span><span class="p">,</span> <span class="n">valt</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">WrappedFunctionReturn</span><span class="p">(</span><span class="n">WrappedFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper for functions to check argument annotations with return checking</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_properties</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">return_templ</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">arg_properties</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_templ</span> <span class="o">=</span> <span class="n">return_templ</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">arg_properties</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">pos</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">templ</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Argument </span><span class="si">{arg}</span><span class="s2"> of type </span><span class="si">{valt}</span><span class="s2"> to </span><span class="si">{f}</span><span class="s2"> &quot;</span> <span class="s2">&quot;does not match annotation type </span><span class="si">{t}</span><span class="s2">&quot;</span>
+                <span class="k">raise</span> <span class="n">EnsureError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">arg</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">templ</span><span class="p">,</span> <span class="n">valt</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+        <span class="n">return_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_val</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_templ</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Return value of </span><span class="si">{f}</span><span class="s2"> of type </span><span class="si">{valt}</span><span class="s2"> &quot;</span> <span class="s2">&quot;does not match annotation type </span><span class="si">{t}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="n">EnsureError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">return_templ</span><span class="p">,</span> <span class="n">valt</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">return_val</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">return_val</span>
+
+
+<div class="viewcode-block" id="ensure_annotations">
+<a class="viewcode-back" href="../../index.html#ensure.ensure_annotations">[docs]</a>
+<span class="k">def</span> <span class="nf">ensure_annotations</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator to be used on functions with annotations. Runs type checks to enforce annotations. Raises</span>
+<span class="sd">    :class:`EnsureError` if any argument passed to *f* is not of the type specified by the annotation. Also raises</span>
+<span class="sd">    :class:`EnsureError` if the return value of *f* is not of the type specified by the annotation. Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from ensure import ensure_annotations</span>
+
+<span class="sd">        @ensure_annotations</span>
+<span class="sd">        def f(x: int, y: float) -&gt; float:</span>
+<span class="sd">            return x+y</span>
+
+<span class="sd">        print(f(1, y=2.2))</span>
+
+<span class="sd">        &gt;&gt;&gt; 3.2</span>
+
+<span class="sd">        print(f(1, y=2))</span>
+
+<span class="sd">        &gt;&gt;&gt; ensure.EnsureError: Argument y of type &lt;class &#39;int&#39;&gt; to</span>
+<span class="sd">        &lt;function f at 0x109b7c710&gt; does not match annotation type &lt;class &#39;float&#39;&gt;</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">       The current implementation of the decorator might trigger</span>
+<span class="sd">       a ``_pickle.PicklingError`` when a decorated function is run through</span>
+<span class="sd">       ``multiprocessing``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">rpos</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">):</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_argcount</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">)</span> <span class="o">+</span> <span class="n">rpos</span>
+            <span class="n">arg</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+            <span class="n">_check_default_argument</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="vm">__kwdefaults__</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="vm">__kwdefaults__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">_check_default_argument</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="n">arg_properties</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">pos</span> <span class="o">&gt;=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_argcount</span> <span class="o">+</span> <span class="n">f</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_kwonlyargcount</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">elif</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">:</span>
+            <span class="n">templ</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">pos</span> <span class="o">&gt;=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_argcount</span><span class="p">:</span>
+                <span class="n">arg_properties</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">arg</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">arg_properties</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">arg</span><span class="p">,</span> <span class="n">templ</span><span class="p">,</span> <span class="n">pos</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="s2">&quot;return&quot;</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">:</span>
+        <span class="n">return_templ</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">[</span><span class="s2">&quot;return&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">WrappedFunctionReturn</span><span class="p">(</span><span class="n">arg_properties</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">return_templ</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">WrappedFunction</span><span class="p">(</span><span class="n">arg_properties</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+
+
+<span class="n">ensure</span> <span class="o">=</span> <span class="n">Ensure</span><span class="p">()</span>
+<span class="n">check</span> <span class="o">=</span> <span class="n">Check</span><span class="p">()</span>
+
+<span class="n">ensure_raises</span> <span class="o">=</span> <span class="n">unittest_case</span><span class="o">.</span><span class="n">assertRaises</span>
+<span class="n">ensure_raises_regex</span> <span class="o">=</span> <span class="n">unittest_case</span><span class="o">.</span><span class="n">assertRaisesRegex</span>
+</pre></div>
+
+          </div>
+            
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">ensure  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ensure.main</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright Andrey Kislyuk and ensure contributors. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>
