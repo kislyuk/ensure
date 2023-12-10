@@ -657,7 +657,7 @@ class Ensure(Inspector):
         Ensures preceding predicates (specifically, :meth:`called_with()`) result in *expected_exception* being raised,
         and the string representation of *expected_exception* must match regular expression *expected_regexp*.
         """
-        return unittest_case.assertRaisesRegexp(
+        return unittest_case.assertRaisesRegex(
             expected_exception, expected_regexp, self._orig_subject, *self._args, **self._kwargs
         )
 
@@ -937,4 +937,4 @@ ensure = Ensure()
 check = Check()
 
 ensure_raises = unittest_case.assertRaises
-ensure_raises_regex = unittest_case.assertRaisesRegexp
+ensure_raises_regex = unittest_case.assertRaisesRegex
