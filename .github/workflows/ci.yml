@@ -8,10 +8,10 @@ jobs:
     strategy:
       max-parallel: 8
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/setup-python@v4
       with:
         python-version: ${{matrix.python-version}}
@@ -22,8 +22,10 @@ jobs:
   black:
     runs-on: ubuntu-22.04
     steps:
+      - uses: actions/checkout@v4
       - uses: psf/black@stable
   isort:
     runs-on: ubuntu-22.04
     steps:
+      - uses: actions/checkout@v4
       - uses: isort/isort-action@v1.1.0
