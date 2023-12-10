@@ -1,3 +1,11 @@
+Changes for v1.0.4 (2023-12-09)
+===============================
+
+-  Add support for Python 3.12: use assertRaisesRegex instead of
+   assertRaisesRegexp
+
+-  Test infrastructure improvements
+
 Changes for v1.0.3 (2023-05-06)
 ===============================
 
